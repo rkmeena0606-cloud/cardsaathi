@@ -1,1656 +1,721 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CardSaathi — India Credit Card Optimizer</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CardSaathi | India's Credit Card Optimizer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#005245", "on-primary": "#ffffff", "primary-container": "#1a6b5c",
+        "on-primary-container": "#9ee9d5", "secondary": "#7e5700", "on-secondary": "#ffffff",
+        "secondary-container": "#ffc157", "on-secondary-container": "#744f00",
+        "surface": "#f9f9ff", "surface-dim": "#cfdaf1", "surface-bright": "#f9f9ff",
+        "surface-container-lowest": "#ffffff", "surface-container-low": "#f0f3ff",
+        "surface-container": "#e7eeff", "surface-container-high": "#dee8ff",
+        "surface-container-highest": "#d8e3fa", "on-surface": "#111c2c",
+        "on-surface-variant": "#3f4946", "outline": "#6f7976", "outline-variant": "#bec9c4",
+        "error": "#ba1a1a", "on-error": "#ffffff", "error-container": "#ffdad6",
+        "on-error-container": "#93000a", "background": "#f9f9ff", "on-background": "#111c2c",
+        "inverse-surface": "#263142", "inverse-on-surface": "#ebf1ff",
+        "surface-tint": "#186a5b", "inverse-primary": "#8ad5c2",
+        "surface-variant": "#d8e3fa", "tertiary": "#444848", "on-tertiary": "#ffffff",
+        "tertiary-container": "#5c6060", "on-tertiary-container": "#d7dbda",
+      },
+      borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+      fontFamily: { "sans": ["Inter", "system-ui", "sans-serif"] },
+    },
+  },
+}
+</script>
 <style>
-:root {
-  --ink: #0d0d0d;
-  --paper: #f4f1eb;
-  --cream: #ece8df;
-  --gold: #c8912a;
-  --gold-lt: #f5e6c8;
-  --teal: #1a6b5c;
-  --teal-lt: #d4ede8;
-  --red: #b83232;
-  --red-lt: #f7dada;
-  --amber: #d97706;
-  --amber-lt: #fef3c7;
-  --muted: #6b6760;
-  --border: rgba(13,13,13,0.12);
-  --border-strong: rgba(13,13,13,0.25);
-  --card-bg: #ffffff;
-  --font-head: 'Syne', sans-serif;
-  --font-body: 'Instrument Sans', sans-serif;
-  --r: 10px;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-.grain {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
-  opacity: 0.6;
-}
-
-/* NAV */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(244,241,235,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display: flex; align-items: center; gap: 0;
-}
-
-.nav-logo {
-  font-family: var(--font-head);
-  font-size: 18px; font-weight: 800;
-  letter-spacing: -0.5px;
-  padding: 1rem 1.5rem 1rem 0;
-  border-right: 1px solid var(--border);
-  margin-right: 1.5rem;
-  color: var(--ink);
-  text-decoration: none;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.nav-logo span { color: var(--gold); }
-
-.nav-tabs { display: flex; gap: 0; }
-.nav-tab {
-  font-family: var(--font-body); font-size: 14px; font-weight: 500;
-  color: var(--muted); padding: 1.1rem 1.2rem;
-  cursor: pointer; border: none; background: none;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s; white-space: nowrap;
-}
-.nav-tab:hover { color: var(--ink); }
-.nav-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
-
-/* SECTIONS */
-.section { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
-.section.active { display: block; }
-
-/* HERO */
-.hero {
-  text-align: center; padding: 3.5rem 2rem 2.5rem;
-  max-width: 700px; margin: 0 auto 2.5rem;
-}
-.hero h1 {
-  font-family: var(--font-head); font-size: clamp(32px, 5vw, 52px);
-  font-weight: 800; line-height: 1.1; letter-spacing: -1.5px;
-  margin-bottom: 1rem;
-}
-.hero h1 em { font-style: normal; color: var(--gold); }
-.hero p { color: var(--muted); font-size: 16px; max-width: 500px; margin: 0 auto 1.5rem; }
-
-.stat-strip {
-  display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
-  padding: 1.5rem; background: var(--cream);
-  border: 1px solid var(--border); border-radius: var(--r);
-  margin-bottom: 2rem;
-}
-.stat-item { text-align: center; }
-.stat-num {
-  font-family: var(--font-head); font-size: 26px; font-weight: 800;
-  color: var(--gold); letter-spacing: -1px; display: block;
-}
-.stat-lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* CARDS */
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.25rem 1.5rem;
-  position: relative; overflow: hidden;
-}
-.card-head {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 1rem;
-}
-.card-title {
-  font-family: var(--font-head); font-size: 15px; font-weight: 700;
-  letter-spacing: -0.3px;
-}
-.card-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-.badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600; padding: 3px 8px;
-  border-radius: 20px; letter-spacing: 0.02em; text-transform: uppercase;
-}
-.badge-gold { background: var(--gold-lt); color: #8a5c0a; }
-.badge-teal { background: var(--teal-lt); color: #0f4a3c; }
-.badge-red { background: var(--red-lt); color: #7a1a1a; }
-.badge-amber { background: var(--amber-lt); color: #78400a; }
-.badge-gray { background: var(--cream); color: var(--muted); }
-
-/* EXPENSE PLANNER */
-.planner-layout {
-  display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;
-}
-@media (max-width: 900px) { .planner-layout { grid-template-columns: 1fr; } }
-
-.expense-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.exp-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-.exp-row:last-child { border-bottom: none; }
-.exp-icon {
-  width: 36px; height: 36px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-  background: var(--cream);
-}
-.exp-label { flex: 1; font-size: 14px; font-weight: 500; }
-.exp-sub { font-size: 11px; color: var(--muted); }
-.exp-input {
-  width: 110px; padding: 6px 10px;
-  border: 1px solid var(--border-strong); border-radius: 7px;
-  background: var(--paper); font-family: var(--font-body); font-size: 14px;
-  text-align: right; outline: none;
-}
-.exp-input:focus { border-color: var(--gold); }
-
-.result-panel { position: sticky; top: 70px; }
-
-.rec-card {
-  background: var(--ink); color: white;
-  border-radius: var(--r); padding: 1.5rem;
-  margin-bottom: 1rem;
-}
-.rec-card h3 {
-  font-family: var(--font-head); font-size: 14px; font-weight: 700;
-  color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-}
-
-.rec-item {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.rec-item:last-child { border-bottom: none; }
-.rec-cat { font-size: 12px; color: rgba(255,255,255,0.5); }
-.rec-card-name { font-size: 14px; font-weight: 600; color: white; }
-.rec-reward {
-  font-family: var(--font-head); font-size: 15px; font-weight: 800;
-  color: var(--gold);
-}
-
-.total-box {
-  background: var(--gold); border-radius: var(--r); padding: 1.25rem;
-  margin-bottom: 1rem; text-align: center;
-}
-.total-box .lbl { font-size: 12px; color: rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
-.total-box .num {
-  font-family: var(--font-head); font-size: 32px; font-weight: 800;
-  color: var(--ink); letter-spacing: -1px;
-}
-.total-box .sub { font-size: 12px; color: rgba(0,0,0,0.55); margin-top: 4px; }
-
-.warn-box {
-  background: var(--red-lt); border: 1px solid rgba(184,50,50,0.25);
-  border-radius: var(--r); padding: 1rem; margin-top: 1rem;
-}
-.warn-box h4 { font-size: 13px; font-weight: 600; color: var(--red); margin-bottom: 6px; }
-.warn-item { font-size: 12px; color: #7a1a1a; padding: 3px 0; display: flex; gap: 6px; }
-.warn-item::before { content: "⚠"; flex-shrink: 0; }
-
-/* MCC TABLE */
-.mcc-search-bar {
-  display: flex; gap: 10px; margin-bottom: 1.5rem;
-}
-.mcc-search-bar input {
-  flex: 1; padding: 10px 14px;
-  border: 1px solid var(--border-strong); border-radius: var(--r);
-  background: var(--card-bg); font-family: var(--font-body); font-size: 14px;
-  outline: none;
-}
-.mcc-search-bar input:focus { border-color: var(--gold); }
-
-.filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
-.filter-btn {
-  padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
-  border: 1px solid var(--border-strong); background: var(--card-bg);
-  cursor: pointer; transition: all 0.2s; color: var(--muted);
-}
-.filter-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
-
-table.mcc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-table.mcc-table th {
-  text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px;
-  text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);
-  border-bottom: 2px solid var(--border-strong); background: var(--cream);
-  position: sticky; top: 60px;
-}
-table.mcc-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-table.mcc-table tr:hover td { background: var(--cream); }
-.mcc-code { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--teal); }
-
-.reward-dot {
-  display: inline-block; width: 8px; height: 8px;
-  border-radius: 50%; margin-right: 4px;
-}
-.dot-green { background: #1a9e6a; }
-.dot-red { background: var(--red); }
-.dot-amber { background: var(--amber); }
-
-/* MILESTONES */
-.milestone-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.25rem;
-}
-
-.ms-card {
-  background: var(--card-bg); border: 1px solid var(--border);
-  border-radius: var(--r); overflow: hidden;
-}
-.ms-header {
-  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.ms-bank {
-  font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.06em; color: var(--muted);
-}
-.ms-body { padding: 1.25rem; }
-
-.progress-row { margin-bottom: 1rem; }
-.progress-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
-.progress-track {
-  height: 6px; background: var(--cream);
-  border-radius: 99px; overflow: hidden;
-}
-.progress-fill {
-  height: 100%; border-radius: 99px;
-  background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 100%);
-  transition: width 0.4s ease;
-}
-.progress-fill.danger { background: linear-gradient(90deg, var(--red) 0%, var(--amber) 100%); }
-.progress-fill.done { background: var(--teal); }
-
-.ms-input-row {
-  display: flex; gap: 8px; align-items: center; margin-top: 10px;
-}
-.ms-input-row label { font-size: 12px; color: var(--muted); flex-shrink: 0; }
-.ms-input {
-  flex: 1; padding: 6px 10px; border: 1px solid var(--border-strong);
-  border-radius: 7px; background: var(--paper); font-family: var(--font-body); font-size: 13px;
-  outline: none;
-}
-.ms-input:focus { border-color: var(--gold); }
-
-.benefit-list { list-style: none; padding: 0; margin-top: 8px; }
-.benefit-list li {
-  font-size: 12px; color: var(--muted); padding: 3px 0;
-  display: flex; gap: 6px; align-items: flex-start;
-}
-.benefit-list li::before { content: "→"; color: var(--gold); flex-shrink: 0; font-weight: 700; }
-
-/* CARD DATABASE */
-.db-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem; }
-
-.db-card {
-  background: var(--card-bg); border: 1px solid var(--border);
-  border-radius: var(--r); overflow: hidden;
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.db-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-
-.db-card-header {
-  padding: 1.25rem; border-bottom: 1px solid var(--border);
-  background: var(--cream);
-  display: flex; justify-content: space-between; align-items: flex-start;
-}
-.db-card-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-.db-card-bank { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.db-card-body { padding: 1.25rem; }
-
-.fee-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px;
-}
-.fee-row:last-child { border-bottom: none; }
-.fee-key { color: var(--muted); }
-.fee-val { font-weight: 600; color: var(--ink); }
-
-.reward-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-.reward-chip {
-  font-size: 11px; padding: 3px 9px; border-radius: 20px;
-  background: var(--gold-lt); color: #7a4c0a; font-weight: 500;
-}
-
-.expand-btn {
-  width: 100%; background: none; border: none; border-top: 1px solid var(--border);
-  padding: 10px; font-family: var(--font-body); font-size: 12px; font-weight: 600;
-  color: var(--muted); cursor: pointer; text-align: center;
-  transition: background 0.15s;
-}
-.expand-btn:hover { background: var(--cream); color: var(--ink); }
-
-.mitc-detail {
-  padding: 0 1.25rem; max-height: 0; overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s;
-}
-.mitc-detail.open { max-height: 500px; padding: 1rem 1.25rem; }
-.mitc-item {
-  font-size: 12px; color: var(--muted); padding: 4px 0;
-  border-bottom: 1px dashed var(--border); display: flex; gap: 8px;
-}
-.mitc-key { min-width: 140px; font-weight: 500; color: var(--ink); flex-shrink: 0; }
-
-/* SEARCH */
-.db-search-bar {
-  display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;
-}
-.db-search-bar input {
-  flex: 1; min-width: 200px; padding: 10px 14px;
-  border: 1px solid var(--border-strong); border-radius: var(--r);
-  background: var(--card-bg); font-family: var(--font-body); font-size: 14px; outline: none;
-}
-.db-search-bar input:focus { border-color: var(--gold); }
-
-.section-head {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
-}
-.section-head h2 {
-  font-family: var(--font-head); font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
-}
-.section-head p { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-.btn-primary {
-  padding: 10px 20px; background: var(--ink); color: white; border: none;
-  border-radius: 8px; font-family: var(--font-body); font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: opacity 0.2s;
-}
-.btn-primary:hover { opacity: 0.8; }
-.btn-gold {
-  padding: 10px 20px; background: var(--gold); color: var(--ink); border: none;
-  border-radius: 8px; font-family: var(--font-body); font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: opacity 0.2s;
-}
-.btn-gold:hover { opacity: 0.85; }
-
-.my-cards-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
-.my-card-chip {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--ink); color: white; border-radius: 20px;
-  padding: 5px 12px; font-size: 13px; font-weight: 500; cursor: pointer;
-}
-.my-card-chip .rm { color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1; }
-.my-card-chip:hover .rm { color: white; }
-
-.add-card-select {
-  padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px;
-  background: var(--card-bg); font-family: var(--font-body); font-size: 13px; outline: none;
-}
-
-/* ANIMATIONS */
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.fade-in { animation: fadeIn 0.3s ease forwards; }
-
-.tag-no-reward {
-  font-size: 11px; padding: 2px 7px; border-radius: 4px;
-  background: var(--red-lt); color: var(--red); font-weight: 600;
-}
-.tag-capped {
-  font-size: 11px; padding: 2px 7px; border-radius: 4px;
-  background: var(--amber-lt); color: var(--amber); font-weight: 600;
-}
-
-/* ADMIN PANEL */
-.admin-lock {
-  max-width: 400px; margin: 4rem auto; background: var(--card-bg);
-  border: 1px solid var(--border); border-radius: var(--r); padding: 2rem; text-align: center;
-}
-.admin-lock h2 { font-family: var(--font-head); font-size: 20px; font-weight: 800; margin-bottom: 0.5rem; }
-.admin-lock p { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
-.admin-lock input {
-  width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: 8px;
-  font-family: var(--font-body); font-size: 14px; outline: none; margin-bottom: 1rem; text-align: center;
-}
-.admin-lock input:focus { border-color: var(--gold); }
-
-.admin-layout { display: grid; grid-template-columns: 200px 1fr; gap: 1.5rem; align-items: start; }
-.admin-sidebar { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; position: sticky; top: 70px; }
-.admin-nav-item {
-  display: block; width: 100%; text-align: left; padding: 12px 16px;
-  font-family: var(--font-body); font-size: 13px; font-weight: 500;
-  border: none; background: none; cursor: pointer; color: var(--muted);
-  border-left: 3px solid transparent; transition: all 0.15s;
-}
-.admin-nav-item:hover { background: var(--cream); color: var(--ink); }
-.admin-nav-item.active { color: var(--ink); border-left-color: var(--gold); background: var(--gold-lt); }
-.admin-nav-sep { height: 1px; background: var(--border); margin: 4px 0; }
-
-.admin-panel { display: none; }
-.admin-panel.active { display: block; }
-
-.form-row { margin-bottom: 1rem; }
-.form-row label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
-.form-row input, .form-row select, .form-row textarea {
-  width: 100%; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px;
-  font-family: var(--font-body); font-size: 13px; outline: none; background: var(--card-bg);
-}
-.form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--gold); }
-.form-row textarea { min-height: 80px; resize: vertical; }
-.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.admin-table th {
-  text-align: left; padding: 9px 12px; font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border-strong);
-  background: var(--cream); font-weight: 600;
-}
-.admin-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-.admin-table tr:hover td { background: var(--cream); }
-.admin-table .act-btn {
-  padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;
-  border: 1px solid var(--border-strong); background: none; margin-left: 4px;
-}
-.act-edit { color: var(--teal); border-color: var(--teal) !important; }
-.act-del { color: var(--red); border-color: var(--red) !important; }
-.act-edit:hover { background: var(--teal-lt); }
-.act-del:hover { background: var(--red-lt); }
-
-.admin-toast {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
-  background: var(--ink); color: white; padding: 10px 18px; border-radius: 8px;
-  font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.3s;
-  pointer-events: none;
-}
-.admin-toast.show { opacity: 1; }
-
-.reward-rate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
-.rate-cell {
-  background: var(--cream); border-radius: 7px; padding: 8px 10px;
-}
-.rate-cell label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
-.rate-cell input { width: 100%; padding: 5px 8px; border: 1px solid var(--border-strong); border-radius: 5px; font-size: 13px; font-family: var(--font-body); outline: none; background: white; }
-
-.import-area {
-  border: 2px dashed var(--border-strong); border-radius: var(--r); padding: 1.5rem;
-  text-align: center; cursor: pointer; color: var(--muted); font-size: 13px;
-  transition: border-color 0.2s;
-}
-.import-area:hover { border-color: var(--gold); color: var(--ink); }
-
-/* TOOLTIP */
-.tip { position: relative; cursor: help; }
-.tip::after {
-  content: attr(data-tip);
-  position: absolute; bottom: calc(100% + 6px); left: 50%;
-  transform: translateX(-50%); white-space: nowrap;
-  background: var(--ink); color: white; font-size: 11px;
-  padding: 4px 8px; border-radius: 5px; pointer-events: none;
-  opacity: 0; transition: opacity 0.15s; z-index: 99;
-}
-.tip:hover::after { opacity: 1; }
+  * { font-family: 'Inter', system-ui, sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 22px; }
+  .fill-icon { font-variation-settings: 'FILL' 1; }
+  body { background-color: #f9f9ff; color: #111c2c; }
+  .section-panel { display: none; }
+  .section-panel.active { display: block; }
+  .nav-link.active { color: #005245; font-weight: 700; background: #f0f3ff; border-right: 3px solid #005245; }
+  .nav-link.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+  .mobile-nav-link.active { color: #005245; }
+  .mobile-nav-link.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+  .progress-bar { height: 8px; background: #e7eeff; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #1a6b5c, #c8912a); transition: width 0.5s ease; }
+  .progress-fill.done { background: #1a6b5c; }
+  .card-hover { transition: box-shadow 0.2s, transform 0.2s; }
+  .card-hover:hover { box-shadow: 0 8px 32px rgba(0,82,69,0.10); transform: translateY(-2px); }
+  .mitc-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
+  .mitc-detail.open { max-height: 400px; padding-top: 0.75rem; }
+  .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.02em; text-transform: uppercase; }
+  .badge-green { background: #d4ede8; color: #0f4a3c; }
+  .badge-red { background: #ffdad6; color: #93000a; }
+  .badge-amber { background: #ffdead; color: #604100; }
+  .badge-gray { background: #e7eeff; color: #3f4946; }
+  .toast { position: fixed; bottom: 80px; right: 20px; background: #005245; color: white; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (min-width: 768px) { .toast { bottom: 20px; } }
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 </style>
 </head>
-<body>
-<div class="grain"></div>
+<body class="overflow-x-hidden">
 
-<nav>
-  <a class="nav-logo" href="#"><span>Card</span>Saathi</a>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('home')">Home</button>
-    <button class="nav-tab" onclick="showTab('planner')">Expense Planner</button>
-    <button class="nav-tab" onclick="showTab('mcc')">MCC Guide</button>
-    <button class="nav-tab" onclick="showTab('milestones')">Milestones</button>
-    <button class="nav-tab" onclick="showTab('cards')">Card Database</button>
-    <button class="nav-tab" onclick="showTab('admin')" style="margin-left:auto;color:var(--muted)">⚙ Admin</button>
+<!-- SIDEBAR NAV (Desktop) -->
+<aside class="hidden md:flex flex-col h-full w-[260px] fixed left-0 top-0 bg-white border-r border-outline-variant/30 z-50">
+  <div class="px-6 py-6 border-b border-outline-variant/20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-white fill-icon">account_balance_wallet</span>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-primary leading-tight">CardSaathi</h1>
+        <p class="text-[10px] uppercase tracking-widest text-outline">Credit Optimizer</p>
+      </div>
+    </div>
   </div>
+  <nav class="flex-1 mt-3 px-3">
+    <button onclick="showSection('home')" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors mb-1" data-section="home">
+      <span class="material-symbols-outlined">home</span><span class="text-sm">Home</span>
+    </button>
+    <button onclick="showSection('planner')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors mb-1" data-section="planner">
+      <span class="material-symbols-outlined">calculate</span><span class="text-sm">Expense Planner</span>
+    </button>
+    <button onclick="showSection('mcc')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors mb-1" data-section="mcc">
+      <span class="material-symbols-outlined">category</span><span class="text-sm">MCC Guide</span>
+    </button>
+    <button onclick="showSection('milestones')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors mb-1" data-section="milestones">
+      <span class="material-symbols-outlined">flag</span><span class="text-sm">Milestone Tracker</span>
+    </button>
+    <button onclick="showSection('cards')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors mb-1" data-section="cards">
+      <span class="material-symbols-outlined">credit_card</span><span class="text-sm">Card Database</span>
+    </button>
+    <div class="border-t border-outline-variant/20 mt-3 pt-3">
+      <button onclick="showSection('admin')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors" data-section="admin">
+        <span class="material-symbols-outlined">settings</span><span class="text-sm">Admin</span>
+      </button>
+    </div>
+  </nav>
+  <div class="px-4 py-4 border-t border-outline-variant/20">
+    <div class="bg-surface-container-low rounded-2xl p-4">
+      <p class="text-xs text-on-surface-variant mb-1">Total Cards in DB</p>
+      <p class="text-2xl font-bold text-primary" id="sidebar-card-count">48</p>
+      <p class="text-xs text-on-surface-variant mt-1">MCC codes tracked: 40+</p>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="md:ml-[260px] min-h-screen flex flex-col pb-20 md:pb-0">
+  <!-- TOP BAR -->
+  <header class="h-14 flex justify-between items-center px-5 md:px-8 bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-outline-variant/20">
+    <h2 class="font-semibold text-on-surface text-base" id="page-title">Home</h2>
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center bg-surface-container rounded-full px-4 py-1.5 border border-outline-variant/30">
+        <span class="material-symbols-outlined text-outline" style="font-size:18px">search</span>
+        <input id="global-search" class="bg-transparent border-none focus:ring-0 text-sm w-40 ml-1 outline-none" placeholder="Search cards or MCC..." type="text" oninput="handleGlobalSearch(this.value)"/>
+      </div>
+      <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-sm">U</div>
+    </div>
+  </header>
+
+  <!-- ===== HOME ===== -->
+  <div id="section-home" class="section-panel active px-5 md:px-8 py-6">
+    <!-- Hero -->
+    <div class="relative overflow-hidden rounded-3xl bg-primary p-7 md:p-10 mb-6 text-white shadow-xl">
+      <div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+        <svg class="w-full h-full" fill="none" viewBox="0 0 400 400"><path d="M400 0L200 400H400V0Z" fill="white"></path><circle cx="350" cy="50" r="100" stroke="white" stroke-width="2"></circle></svg>
+      </div>
+      <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-on-primary-container/80 mb-2">Maximise Every Rupee</p>
+          <h3 class="text-4xl md:text-5xl font-bold leading-none mb-2">CardSaathi</h3>
+          <p class="text-on-primary-container/80 text-sm md:text-base">India's smartest credit card optimizer</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[130px] border border-white/10">
+            <p class="text-xs text-white/60 mb-1">Cards in Database</p>
+            <p class="text-3xl font-bold" id="home-card-count">48</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[130px] border border-white/10">
+            <p class="text-xs text-white/60 mb-1">MCC Codes</p>
+            <p class="text-3xl font-bold">40+</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-surface-container-low rounded-2xl p-5 mb-6 border border-outline-variant/20">
+      <h4 class="font-semibold text-on-surface mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-primary" style="font-size:20px">bolt</span> Quick Start</h4>
+      <ol class="space-y-2 text-sm text-on-surface-variant pl-1">
+        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>Go to <strong class="text-primary cursor-pointer" onclick="showSection('cards')">Card Database</strong> → click "+ Add Card" on cards you own</li>
+        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>Head to <strong class="text-primary cursor-pointer" onclick="showSection('planner')">Expense Planner</strong> → enter your monthly spend</li>
+        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>See which card to use for maximum rewards per category</li>
+        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>Track <strong class="text-primary cursor-pointer" onclick="showSection('milestones')">Milestones</strong> to hit annual fee waivers</li>
+      </ol>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('planner')">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">calculate</span></div>
+        <div class="font-semibold text-sm text-on-surface mb-1">Expense Planner</div>
+        <div class="text-xs text-on-surface-variant">Best card per category</div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('mcc')">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">category</span></div>
+        <div class="font-semibold text-sm text-on-surface mb-1">MCC Guide</div>
+        <div class="text-xs text-on-surface-variant">Avoid reward traps</div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('milestones')">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">flag</span></div>
+        <div class="font-semibold text-sm text-on-surface mb-1">Milestones</div>
+        <div class="text-xs text-on-surface-variant">Track fee waivers</div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('cards')">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">credit_card</span></div>
+        <div class="font-semibold text-sm text-on-surface mb-1">48 Cards</div>
+        <div class="text-xs text-on-surface-variant">Full MITC database</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EXPENSE PLANNER ===== -->
+  <div id="section-planner" class="section-panel px-5 md:px-8 py-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-xl font-bold text-on-surface">Expense Planner</h2>
+        <p class="text-sm text-on-surface-variant mt-0.5">Enter monthly spend → get best card per category</p>
+      </div>
+      <button onclick="calcRewards()" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span> Calculate
+      </button>
+    </div>
+
+    <!-- My Cards strip -->
+    <div class="bg-surface-container-low rounded-2xl p-4 mb-5 border border-outline-variant/20">
+      <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Your Cards</p>
+      <div id="planner-my-cards" class="flex flex-wrap gap-2">
+        <span class="text-sm text-on-surface-variant">No cards selected — go to Card Database tab first.</span>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5 items-start">
+      <!-- Inputs -->
+      <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden">
+        <div class="p-4 border-b border-outline-variant/20 bg-surface-container-low">
+          <p class="text-sm font-semibold text-on-surface">Monthly Spend by Category</p>
+        </div>
+        <div id="expense-inputs" class="divide-y divide-outline-variant/10"></div>
+      </div>
+
+      <!-- Results -->
+      <div class="sticky top-16">
+        <div class="bg-primary rounded-2xl p-5 mb-4 text-white">
+          <p class="text-xs uppercase tracking-widest text-on-primary-container/70 mb-1">Estimated Monthly Rewards</p>
+          <p class="text-4xl font-bold" id="total-reward-num">₹0</p>
+          <p class="text-sm text-on-primary-container/70 mt-1" id="total-reward-sub">Enter expenses and click Calculate</p>
+        </div>
+        <div class="bg-on-surface rounded-2xl p-5 text-white" id="rec-list">
+          <p class="text-xs uppercase tracking-widest text-white/40 mb-4">Best Card Per Category</p>
+          <p class="text-sm text-white/40 text-center py-4">Enter expenses above and click Calculate →</p>
+        </div>
+        <div id="warn-panel" class="mt-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MCC GUIDE ===== -->
+  <div id="section-mcc" class="section-panel px-5 md:px-8 py-6">
+    <div class="mb-5">
+      <h2 class="text-xl font-bold text-on-surface">MCC & Category Guide</h2>
+      <p class="text-sm text-on-surface-variant mt-0.5">Know which merchants earn rewards and which drain your milestones</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" style="font-size:18px">search</span>
+        <input id="mcc-search" type="text" placeholder="Search MCC code, merchant, or category..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" oninput="renderMCC()"/>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-4" id="mcc-filters">
+      <button class="filter-btn active px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-on-surface text-white" onclick="setMCCFilter('all',this)">All</button>
+      <button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setMCCFilter('earns',this)">✅ Earns Rewards</button>
+      <button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setMCCFilter('no-reward',this)">❌ No Reward</button>
+      <button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setMCCFilter('capped',this)">⚠️ Capped</button>
+      <button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setMCCFilter('excluded',this)">🚫 Milestone Excluded</button>
+    </div>
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-surface-container-low border-b border-outline-variant/20">
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant uppercase tracking-wider w-20">MCC</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Merchant</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Category</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="mcc-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== MILESTONES ===== -->
+  <div id="section-milestones" class="section-panel px-5 md:px-8 py-6">
+    <div class="mb-5">
+      <h2 class="text-xl font-bold text-on-surface">Milestone Tracker</h2>
+      <p class="text-sm text-on-surface-variant mt-0.5">Track annual fee waivers and reward boosts</p>
+    </div>
+    <div class="flex flex-wrap gap-3 mb-5 items-center">
+      <select id="ms-card-select" class="px-3 py-2 bg-white border border-outline-variant rounded-xl text-sm outline-none focus:border-primary">
+        <option value="">+ Add card to track</option>
+      </select>
+      <button onclick="addMilestoneCard()" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90">Add</button>
+      <div class="flex items-center gap-2 ml-auto">
+        <span class="text-sm text-on-surface-variant">Month:</span>
+        <select id="ms-month-select" class="px-3 py-2 bg-white border border-outline-variant rounded-xl text-sm outline-none" onchange="renderMilestones()">
+          <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
+          <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
+          <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
+          <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="milestone-grid">
+      <div class="text-on-surface-variant text-sm text-center py-10 col-span-full">Add cards above to start tracking milestones.</div>
+    </div>
+  </div>
+
+  <!-- ===== CARD DATABASE ===== -->
+  <div id="section-cards" class="section-panel px-5 md:px-8 py-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-xl font-bold text-on-surface">Card Database</h2>
+        <p class="text-sm text-on-surface-variant mt-0.5">48 Indian credit cards with full MITC details</p>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" style="font-size:18px">search</span>
+        <input id="db-search" type="text" placeholder="Search by name, bank, or type..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" oninput="renderCards()"/>
+      </div>
+      <button id="my-cards-filter-btn" onclick="toggleMyCards()" class="px-4 py-2.5 bg-white border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant hover:border-primary whitespace-nowrap">My Cards Only</button>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-4" id="bank-filters"></div>
+    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4" id="db-grid"></div>
+  </div>
+
+  <!-- ===== ADMIN ===== -->
+  <div id="section-admin" class="section-panel px-5 md:px-8 py-6">
+    <div id="admin-lock" class="max-w-sm mx-auto mt-10 bg-white rounded-2xl border border-outline-variant/20 p-8 text-center">
+      <div class="text-4xl mb-4">🔐</div>
+      <h2 class="text-xl font-bold mb-2">Admin Access</h2>
+      <p class="text-sm text-on-surface-variant mb-5">Enter the admin password to manage cards, MCC codes, and reward rates.</p>
+      <input type="password" id="admin-pw-input" placeholder="Enter password" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-center text-sm outline-none focus:border-primary mb-3" onkeydown="if(event.key==='Enter')checkAdminPw()"/>
+      <button onclick="checkAdminPw()" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:opacity-90">Unlock</button>
+      <p class="text-xs text-on-surface-variant mt-4">Default: <strong>admin123</strong></p>
+    </div>
+    <div id="admin-content" style="display:none">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-xl font-bold">Admin Panel</h2>
+        <div class="flex gap-2">
+          <button onclick="exportData()" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold">Export JSON</button>
+          <button onclick="lockAdmin()" class="bg-surface-container text-on-surface-variant px-4 py-2 rounded-xl text-sm font-semibold">Lock</button>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-4 gap-4 mb-5">
+        <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+          <div class="text-2xl font-bold text-primary" id="info-cards-count">48</div>
+          <div class="text-xs text-on-surface-variant mt-1">Cards</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+          <div class="text-2xl font-bold text-primary" id="info-mcc-count">40</div>
+          <div class="text-xs text-on-surface-variant mt-1">MCC Entries</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+          <div class="text-2xl font-bold text-primary" id="info-ecat-count">18</div>
+          <div class="text-xs text-on-surface-variant mt-1">Expense Categories</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+          <div class="text-2xl font-bold text-primary">v1.2</div>
+          <div class="text-xs text-on-surface-variant mt-1">Version</div>
+        </div>
+      </div>
+      <!-- Add Card Form -->
+      <div class="bg-white rounded-2xl border border-outline-variant/20 p-5 mb-4">
+        <h3 class="font-semibold mb-4" id="card-form-title">Add New Card</h3>
+        <input type="hidden" id="edit-card-id"/>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Card Name</label><input id="f-name" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="HDFC Regalia Gold"/></div>
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Bank</label><input id="f-bank" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="HDFC Bank"/></div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Joining Fee ₹</label><input id="f-joining" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="999"/></div>
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Annual Fee ₹</label><input id="f-annual" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="999"/></div>
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Waiver Spend ₹</label><input id="f-waiver" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="200000"/></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Card Type</label><select id="f-type" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"><option>Cashback</option><option>Points</option><option>Miles</option><option>Cashback+Voucher</option></select></div>
+          <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Card ID (lowercase-hyphen)</label><input id="f-id" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="hdfc-regalia-gold"/></div>
+        </div>
+        <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Reward Tiers (Category | Rate% | Cap₹ | unit)</label><textarea id="f-rewards" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-20" placeholder="Online Shopping | 5 | 5000 | cashback&#10;Others | 1 |  | cashback"></textarea></div>
+        <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Excluded Categories (comma separated)</label><input id="f-excluded" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="Fuel, Rent, EMI, Wallet"/></div>
+        <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Key Benefits (one per line)</label><textarea id="f-benefits" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-20" placeholder="5% cashback on online spends&#10;No annual fee on ₹2L spend"></textarea></div>
+        <div class="mb-4"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">MITC Details (Field | Value, one per line)</label><textarea id="f-mitc" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-20" placeholder="Interest Rate | 3.5% per month&#10;Foreign Markup | 3.5%"></textarea></div>
+        <div class="flex gap-3">
+          <button onclick="saveCard()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90">Save Card</button>
+          <button onclick="clearCardForm()" class="bg-surface-container text-on-surface-variant px-5 py-2.5 rounded-xl text-sm font-semibold">Clear</button>
+        </div>
+      </div>
+      <!-- Cards List -->
+      <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-x-auto mb-4">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-container-low border-b border-outline-variant/20">
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Card</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Bank</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Annual</th>
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Actions</th>
+          </tr></thead>
+          <tbody id="admin-cards-tbody"></tbody>
+        </table>
+      </div>
+      <!-- Password Change -->
+      <div class="bg-white rounded-2xl border border-outline-variant/20 p-5">
+        <h3 class="font-semibold mb-3">Change Password</h3>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <input type="password" id="new-pw-1" placeholder="New password" class="px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+          <input type="password" id="new-pw-2" placeholder="Confirm password" class="px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+        </div>
+        <button onclick="changePassword()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90">Update Password</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-outline-variant/20 flex justify-around items-center h-16 z-50 px-2">
+  <button onclick="showSection('home')" class="mobile-nav-link active flex flex-col items-center gap-0.5 p-2" data-section="home">
+    <span class="material-symbols-outlined">home</span><span class="text-[10px] font-semibold">Home</span>
+  </button>
+  <button onclick="showSection('planner')" class="mobile-nav-link flex flex-col items-center gap-0.5 p-2 text-on-surface-variant" data-section="planner">
+    <span class="material-symbols-outlined">calculate</span><span class="text-[10px]">Planner</span>
+  </button>
+  <button onclick="showSection('mcc')" class="mobile-nav-link flex flex-col items-center gap-0.5 p-2 text-on-surface-variant" data-section="mcc">
+    <span class="material-symbols-outlined">category</span><span class="text-[10px]">MCC</span>
+  </button>
+  <button onclick="showSection('milestones')" class="mobile-nav-link flex flex-col items-center gap-0.5 p-2 text-on-surface-variant" data-section="milestones">
+    <span class="material-symbols-outlined">flag</span><span class="text-[10px]">Track</span>
+  </button>
+  <button onclick="showSection('cards')" class="mobile-nav-link flex flex-col items-center gap-0.5 p-2 text-on-surface-variant" data-section="cards">
+    <span class="material-symbols-outlined">credit_card</span><span class="text-[10px]">Cards</span>
+  </button>
 </nav>
 
-<!-- HOME -->
-<div id="tab-home" class="section active">
-  <div class="hero">
-    <h1>Maximise every rupee<br>with <em>smarter</em> card use</h1>
-    <p>India's most comprehensive credit card optimizer. Enter your expenses, get the best card for each category, track milestones, and avoid reward-draining MCC traps.</p>
-  </div>
-  <div class="stat-strip">
-    <div class="stat-item"><span class="stat-num" id="total-cards-count">25</span><span class="stat-lbl">Cards in DB</span></div>
-    <div class="stat-item"><span class="stat-num" id="total-mcc-count">60+</span><span class="stat-lbl">MCC Codes</span></div>
-    <div class="stat-item"><span class="stat-num">₹0</span><span class="stat-lbl">Your savings tracked</span></div>
-    <div class="stat-item"><span class="stat-num">Live</span><span class="stat-lbl">Free to use</span></div>
-  </div>
-
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; max-width: 900px; margin: 0 auto;">
-    <div class="card" style="cursor:pointer" onclick="showTab('planner')">
-      <div style="font-size: 28px; margin-bottom: 10px;">💳</div>
-      <div class="card-title">Expense Planner</div>
-      <div class="card-subtitle" style="margin-top: 6px; margin-bottom: 12px;">Enter your monthly spend. Get the best card for every category with estimated rewards.</div>
-      <div class="badge badge-gold">Most popular</div>
-    </div>
-    <div class="card" style="cursor:pointer" onclick="showTab('mcc')">
-      <div style="font-size: 28px; margin-bottom: 10px;">🗂️</div>
-      <div class="card-title">MCC Guide</div>
-      <div class="card-subtitle" style="margin-top: 6px; margin-bottom: 12px;">Know which merchant categories earn rewards and which ones silently drain your milestone count.</div>
-      <div class="badge badge-red">Avoid traps</div>
-    </div>
-    <div class="card" style="cursor:pointer" onclick="showTab('milestones')">
-      <div style="font-size: 28px; margin-bottom: 10px;">🎯</div>
-      <div class="card-title">Milestone Tracker</div>
-      <div class="card-subtitle" style="margin-top: 6px; margin-bottom: 12px;">Track progress toward annual fee waivers, reward boosts, and bonus vouchers per card.</div>
-      <div class="badge badge-teal">Stay on track</div>
-    </div>
-    <div class="card" style="cursor:pointer" onclick="showTab('cards')">
-      <div style="font-size: 28px; margin-bottom: 10px;">📋</div>
-      <div class="card-title">Card Database</div>
-      <div class="card-subtitle" style="margin-top: 6px; margin-bottom: 12px;">Full MITC details, reward structures, and fee info for 25+ major Indian credit cards.</div>
-      <div class="badge badge-gray">Reference</div>
-    </div>
-  </div>
-
-  <div style="max-width: 600px; margin: 2rem auto 0; background: var(--teal-lt); border: 1px solid rgba(26,107,92,0.2); border-radius: var(--r); padding: 1.25rem;">
-    <div style="font-weight: 600; font-size: 14px; color: var(--teal); margin-bottom: 6px;">⚡ Quick Start</div>
-    <ol style="padding-left: 1.2rem; font-size: 14px; color: #0f4a3c; line-height: 2;">
-      <li>Go to <strong>Card Database</strong> → select the cards you own</li>
-      <li>Head to <strong>Expense Planner</strong> → enter your monthly spend</li>
-      <li>See exactly which card to use for each category</li>
-      <li>Check <strong>Milestones</strong> to track your progress monthly</li>
-    </ol>
-  </div>
-</div>
-
-<!-- EXPENSE PLANNER -->
-<div id="tab-planner" class="section">
-  <div class="section-head">
-    <div>
-      <h2>Expense Planner</h2>
-      <p>Enter your monthly spend below. We'll tell you which card to use for maximum rewards.</p>
-    </div>
-    <button class="btn-gold" onclick="calcRewards()">Calculate →</button>
-  </div>
-
-  <div style="margin-bottom: 1rem;">
-    <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--muted);">YOUR CARDS (select in Card Database)</div>
-    <div class="my-cards-row" id="my-cards-chips">
-      <span style="font-size: 13px; color: var(--muted);">No cards selected yet — go to Card Database tab first.</span>
-    </div>
-  </div>
-
-  <div class="planner-layout">
-    <div>
-      <div class="card">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem;" id="expense-inputs">
-        </div>
-      </div>
-    </div>
-    <div class="result-panel">
-      <div class="total-box" id="total-reward-box">
-        <div class="lbl">Estimated Monthly Rewards</div>
-        <div class="num" id="total-reward-num">₹0</div>
-        <div class="sub" id="total-reward-sub">Enter expenses and click Calculate</div>
-      </div>
-      <div class="rec-card" id="rec-list">
-        <h3>Best Card Per Category</h3>
-        <div style="font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; padding: 1rem 0;">
-          Enter your expenses and click Calculate →
-        </div>
-      </div>
-      <div id="warn-panel"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MCC GUIDE -->
-<div id="tab-mcc" class="section">
-  <div class="section-head">
-    <div>
-      <h2>MCC & Category Guide</h2>
-      <p>Merchant Category Codes determine your rewards. Know which ones help and which ones hurt.</p>
-    </div>
-  </div>
-  <div class="mcc-search-bar">
-    <input type="text" id="mcc-search" placeholder="Search merchant, MCC code, or category..." oninput="filterMCC()">
-  </div>
-  <div class="filter-row" id="mcc-filters">
-    <button class="filter-btn active" onclick="setMCCFilter('all', this)">All</button>
-    <button class="filter-btn" onclick="setMCCFilter('earns', this)">✅ Earns Rewards</button>
-    <button class="filter-btn" onclick="setMCCFilter('no-reward', this)">❌ No Reward</button>
-    <button class="filter-btn" onclick="setMCCFilter('capped', this)">⚠️ Capped</button>
-    <button class="filter-btn" onclick="setMCCFilter('excluded', this)">🚫 Milestone Excluded</button>
-  </div>
-  <div class="card" style="padding: 0; overflow-x: auto;">
-    <table class="mcc-table" id="mcc-table">
-      <thead>
-        <tr>
-          <th style="width: 80px;">MCC</th>
-          <th>Merchant Type</th>
-          <th>Category</th>
-          <th>Reward Status</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="mcc-tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- MILESTONES -->
-<div id="tab-milestones" class="section">
-  <div class="section-head">
-    <div>
-      <h2>Milestone Tracker</h2>
-      <p>Track your annual fee waiver progress, reward boosts, and bonus benefits.</p>
-    </div>
-  </div>
-  <div style="display: flex; gap: 10px; margin-bottom: 1.5rem; align-items: center; flex-wrap: wrap;">
-    <select class="add-card-select" id="ms-card-select">
-      <option value="">+ Add card to track</option>
-    </select>
-    <button class="btn-primary" onclick="addMilestoneCard()">Add</button>
-    <span style="font-size: 13px; color: var(--muted);">Month:</span>
-    <select class="add-card-select" id="ms-month-select" onchange="renderMilestones()">
-      <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
-      <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
-      <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
-      <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
-    </select>
-  </div>
-  <div class="milestone-grid" id="milestone-grid">
-    <div style="color: var(--muted); font-size: 14px; padding: 2rem; text-align: center; grid-column: 1/-1;">
-      Add cards above to start tracking milestones.
-    </div>
-  </div>
-</div>
-
-<!-- CARD DATABASE -->
-<div id="tab-cards" class="section">
-  <div class="section-head">
-    <div>
-      <h2>Card Database</h2>
-      <p>25 major Indian credit cards with full MITC, rewards, and fee details.</p>
-    </div>
-  </div>
-  <div class="db-search-bar">
-    <input type="text" id="db-search" placeholder="Search by card name, bank, or feature..." oninput="filterCards()">
-    <button class="filter-btn" id="filter-my-btn" onclick="toggleMyCards()">Show My Cards Only</button>
-  </div>
-  <div class="filter-row" id="bank-filters"></div>
-  <div class="db-grid" id="db-grid"></div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="tab-admin" class="section">
-  <!-- Lock screen -->
-  <div id="admin-lock-screen" class="admin-lock">
-    <div style="font-size:36px;margin-bottom:0.75rem">🔐</div>
-    <h2>Admin Access</h2>
-    <p>Enter the admin password to manage cards, MCC codes, and reward rates.</p>
-    <input type="password" id="admin-pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdminPw()">
-    <button class="btn-gold" style="width:100%" onclick="checkAdminPw()">Unlock Admin Panel</button>
-    <p style="font-size:11px;color:var(--muted);margin-top:1rem">Default password: <strong>admin123</strong> — change it in Settings</p>
-  </div>
-
-  <!-- Admin content (hidden until unlocked) -->
-  <div id="admin-content" style="display:none">
-    <div class="section-head">
-      <div>
-        <h2>Admin Panel</h2>
-        <p>Manage cards, MCC codes, reward rates, and export data — no code editing required.</p>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-primary" onclick="exportData()">Export JSON</button>
-        <button class="btn-primary" onclick="lockAdmin()" style="background:var(--muted)">Lock</button>
-      </div>
-    </div>
-
-    <div class="admin-layout">
-      <div class="admin-sidebar">
-        <button class="admin-nav-item active" onclick="showAdminPanel('cards-list', this)">📋 Cards List</button>
-        <button class="admin-nav-item" onclick="showAdminPanel('add-card', this)">➕ Add / Edit Card</button>
-        <div class="admin-nav-sep"></div>
-        <button class="admin-nav-item" onclick="showAdminPanel('reward-rates', this)">⚡ Reward Rates</button>
-        <button class="admin-nav-item" onclick="showAdminPanel('mcc-admin', this)">🗂 MCC Codes</button>
-        <div class="admin-nav-sep"></div>
-        <button class="admin-nav-item" onclick="showAdminPanel('expense-cats', this)">🗒 Expense Categories</button>
-        <button class="admin-nav-item" onclick="showAdminPanel('import-export', this)">💾 Import / Export</button>
-        <div class="admin-nav-sep"></div>
-        <button class="admin-nav-item" onclick="showAdminPanel('settings', this)">⚙ Settings</button>
-      </div>
-
-      <div style="min-width:0">
-        <!-- CARDS LIST -->
-        <div class="admin-panel active" id="apanel-cards-list">
-          <div class="card" style="padding:0;overflow-x:auto">
-            <table class="admin-table" id="admin-cards-table">
-              <thead>
-                <tr>
-                  <th>Card Name</th><th>Bank</th><th>Joining</th><th>Annual</th><th>Waiver</th><th>Type</th><th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="admin-cards-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ADD/EDIT CARD -->
-        <div class="admin-panel" id="apanel-add-card">
-          <div class="card">
-            <div style="font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:1.25rem" id="card-form-title">Add New Card</div>
-            <input type="hidden" id="edit-card-id">
-            <div class="form-grid-2">
-              <div class="form-row"><label>Card Name</label><input id="f-name" placeholder="e.g. HDFC Regalia Gold"></div>
-              <div class="form-row"><label>Bank</label><input id="f-bank" placeholder="e.g. HDFC Bank"></div>
-            </div>
-            <div class="form-grid-3">
-              <div class="form-row"><label>Joining Fee (₹)</label><input id="f-joining" type="number" placeholder="999"></div>
-              <div class="form-row"><label>Annual Fee (₹)</label><input id="f-annual" type="number" placeholder="999"></div>
-              <div class="form-row"><label>Waiver Spend (₹, blank=none)</label><input id="f-waiver" type="number" placeholder="200000"></div>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-row">
-                <label>Card Type</label>
-                <select id="f-type">
-                  <option>Cashback</option><option>Points</option><option>Cashback+Voucher</option><option>Travel</option><option>Premium</option>
-                </select>
-              </div>
-              <div class="form-row">
-                <label>Card ID (lowercase-hyphen)</label>
-                <input id="f-id" placeholder="hdfc-regalia-gold">
-              </div>
-            </div>
-
-            <div style="font-size:13px;font-weight:600;margin:1rem 0 0.5rem;color:var(--muted)">REWARD TIERS (one per line: Category | Rate% | Cap₹ or blank | cashback/Points)</div>
-            <div class="form-row">
-              <textarea id="f-rewards" placeholder="Online Shopping | 5 | 5000 | cashback&#10;Offline Spends | 1 |  | cashback"></textarea>
-            </div>
-
-            <div style="font-size:13px;font-weight:600;margin:0.5rem 0;color:var(--muted)">EXCLUDED CATEGORIES (comma-separated)</div>
-            <div class="form-row"><input id="f-excluded" placeholder="Fuel, Rent, EMI, Wallet Load, Govt"></div>
-
-            <div style="font-size:13px;font-weight:600;margin:0.5rem 0;color:var(--muted)">KEY BENEFITS (one per line)</div>
-            <div class="form-row"><textarea id="f-benefits" placeholder="5% cashback on online spends&#10;No annual fee on ₹2L spend"></textarea></div>
-
-            <div style="font-size:13px;font-weight:600;margin:0.5rem 0;color:var(--muted)">MITC DETAILS (one per line: Field | Value)</div>
-            <div class="form-row"><textarea id="f-mitc" placeholder="Interest Rate | 3.5% per month&#10;Grace Period | 20-50 days&#10;Foreign Markup | 3.5%"></textarea></div>
-
-            <div style="display:flex;gap:10px;margin-top:1rem">
-              <button class="btn-gold" onclick="saveCard()">Save Card</button>
-              <button class="btn-primary" onclick="clearCardForm()" style="background:var(--muted)">Clear</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- REWARD RATES -->
-        <div class="admin-panel" id="apanel-reward-rates">
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:0.25rem">Reward Rate Map</div>
-            <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Set which card earns what % on each expense category. This powers the Expense Planner recommendations.</div>
-            <div class="form-row" style="margin-bottom:0.75rem">
-              <label>Select Expense Category</label>
-              <select id="rate-cat-sel" onchange="renderRateGrid()"></select>
-            </div>
-            <div class="form-row">
-              <label>Select Card</label>
-              <select id="rate-card-sel"></select>
-            </div>
-            <div class="form-grid-3">
-              <div class="form-row"><label>Reward Rate (%)</label><input id="rate-val" type="number" step="0.5" placeholder="5"></div>
-              <div class="form-row"><label>Cap per month (₹, 0=none)</label><input id="rate-cap" type="number" placeholder="0"></div>
-              <div></div>
-            </div>
-            <button class="btn-gold" onclick="saveRate()">Save Rate</button>
-          </div>
-          <div class="card" style="padding:0;overflow-x:auto">
-            <div style="padding:1rem 1.25rem;font-size:13px;font-weight:600;border-bottom:1px solid var(--border)">Current Rates for selected category</div>
-            <table class="admin-table" id="rates-preview-table">
-              <thead><tr><th>Card</th><th>Rate %</th><th>Actions</th></tr></thead>
-              <tbody id="rates-preview-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- MCC ADMIN -->
-        <div class="admin-panel" id="apanel-mcc-admin">
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:1rem" id="mcc-form-title">Add MCC Entry</div>
-            <input type="hidden" id="edit-mcc-idx">
-            <div class="form-grid-2">
-              <div class="form-row"><label>MCC Code</label><input id="mf-code" placeholder="5411"></div>
-              <div class="form-row"><label>Merchant Type</label><input id="mf-merchant" placeholder="Grocery Stores"></div>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-row"><label>Category</label><input id="mf-cat" placeholder="Groceries"></div>
-              <div class="form-row">
-                <label>Status</label>
-                <select id="mf-status">
-                  <option value="earns">Earns Rewards</option>
-                  <option value="no-reward">No Reward</option>
-                  <option value="capped">Capped / Limited</option>
-                  <option value="excluded">Excluded (Milestone too)</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row"><label>Notes</label><textarea id="mf-notes" style="min-height:60px" placeholder="Details about which cards earn what..."></textarea></div>
-            <div style="display:flex;gap:10px">
-              <button class="btn-gold" onclick="saveMCC()">Save MCC</button>
-              <button class="btn-primary" onclick="clearMCCForm()" style="background:var(--muted)">Clear</button>
-            </div>
-          </div>
-          <div class="card" style="padding:0;overflow-x:auto">
-            <table class="admin-table">
-              <thead><tr><th>Code</th><th>Merchant</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
-              <tbody id="admin-mcc-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- EXPENSE CATEGORIES ADMIN -->
-        <div class="admin-panel" id="apanel-expense-cats">
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:1rem" id="ecat-form-title">Add Expense Category</div>
-            <input type="hidden" id="edit-ecat-idx">
-            <div class="form-grid-2">
-              <div class="form-row"><label>Category ID (no spaces)</label><input id="ef-id" placeholder="streaming_ott"></div>
-              <div class="form-row"><label>Label</label><input id="ef-label" placeholder="Streaming / OTT"></div>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-row"><label>Icon (emoji)</label><input id="ef-icon" placeholder="📺" maxlength="4"></div>
-              <div class="form-row"><label>MCC Codes</label><input id="ef-mcc" placeholder="5735,7941"></div>
-            </div>
-            <div class="form-row"><label>Sub-label</label><input id="ef-sub" placeholder="Netflix, Disney+, Hotstar"></div>
-            <div style="display:flex;gap:10px">
-              <button class="btn-gold" onclick="saveECat()">Save Category</button>
-              <button class="btn-primary" onclick="clearECatForm()" style="background:var(--muted)">Clear</button>
-            </div>
-          </div>
-          <div class="card" style="padding:0;overflow-x:auto">
-            <table class="admin-table">
-              <thead><tr><th>Icon</th><th>Label</th><th>ID</th><th>MCC</th><th>Actions</th></tr></thead>
-              <tbody id="admin-ecat-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- IMPORT / EXPORT -->
-        <div class="admin-panel" id="apanel-import-export">
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:0.5rem">Export All Data</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Download the complete card database, MCC list, reward rates, and expense categories as JSON. Use this as a backup or to transfer data.</p>
-            <div style="display:flex;gap:8px">
-              <button class="btn-gold" onclick="exportData()">Download JSON</button>
-              <button class="btn-primary" onclick="copyExportData()">Copy to Clipboard</button>
-            </div>
-          </div>
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:0.5rem">Import Data</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Paste a previously exported JSON to restore or merge data. This will replace all current data.</p>
-            <div class="form-row"><textarea id="import-json" style="min-height:120px;font-family:monospace;font-size:12px" placeholder='Paste JSON here...'></textarea></div>
-            <div style="display:flex;gap:8px">
-              <button class="btn-gold" onclick="importData()">Import & Apply</button>
-              <button class="btn-primary" onclick="resetToDefaults()" style="background:var(--red)">Reset to Defaults</button>
-            </div>
-          </div>
-          <div class="card">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:0.5rem">Quick JSON Patch</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Paste a partial update — only keys present will be merged. Useful for adding a few new cards without replacing everything.</p>
-            <div class="form-row"><textarea id="patch-json" style="min-height:100px;font-family:monospace;font-size:12px" placeholder='{"cards": [...new cards to add...], "mccData": [...new MCCs...]}'></textarea></div>
-            <button class="btn-gold" onclick="patchData()">Apply Patch</button>
-          </div>
-        </div>
-
-        <!-- SETTINGS -->
-        <div class="admin-panel" id="apanel-settings">
-          <div class="card" style="margin-bottom:1rem">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:1rem">Change Admin Password</div>
-            <div class="form-grid-2">
-              <div class="form-row"><label>New Password</label><input type="password" id="new-pw-1" placeholder="New password"></div>
-              <div class="form-row"><label>Confirm Password</label><input type="password" id="new-pw-2" placeholder="Confirm password"></div>
-            </div>
-            <button class="btn-gold" onclick="changePassword()">Update Password</button>
-          </div>
-          <div class="card">
-            <div style="font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:0.5rem">App Info</div>
-            <div style="font-size:13px;color:var(--muted);line-height:2">
-              <div>Cards in database: <strong id="info-cards-count">—</strong></div>
-              <div>MCC entries: <strong id="info-mcc-count">—</strong></div>
-              <div>Expense categories: <strong id="info-ecat-count">—</strong></div>
-              <div>Storage used: <strong id="info-storage">—</strong></div>
-              <div>Version: <strong>CardSaathi v1.1</strong></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="admin-toast" id="admin-toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
+// ===================== DATA =====================
 const CARDS = [
-  {
-    id: "sbi-cashback", bank: "SBI Card", name: "SBI Cashback Card",
-    joining: 999, annual: 999, waiver: 200000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Online Shopping", rate: 5, cap: 5000, unit: "cashback" },
-      { cat: "Offline Spends", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "Rent", "EMI", "Wallet Load", "Govt"],
-    benefits: ["5% cashback on all online spends", "₹500 monthly cap on 5% cashback", "Auto-credit of cashback", "No annual fee on ₹2L annual spend"],
-    mitc: {
-      "Interest Rate": "3.5% per month (42% p.a.)",
-      "Grace Period": "20–50 days",
-      "Cash Advance": "2.5% or ₹500 min",
-      "Late Payment": "₹100–₹1300 (slab-based)",
-      "Foreign Markup": "3.5%",
-      "Reward Validity": "Cashback credited monthly",
-      "Fuel Surcharge": "1% surcharge waived at HPCL pumps"
-    }
-  },
-  {
-    id: "hdfc-millennia", bank: "HDFC Bank", name: "HDFC Millennia",
-    joining: 1000, annual: 1000, waiver: 100000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Amazon, Flipkart, Myntra", rate: 5, cap: 1000, unit: "cashback" },
-      { cat: "Other Online", rate: 2.5, cap: null, unit: "cashback" },
-      { cat: "Offline / Contactless", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "Rent", "EMI", "Wallet Load", "Govt", "Jewellery"],
-    benefits: ["8 complimentary lounge visits/year", "Cashback credited as statement credit", "₹1000 gift voucher on quarterly spend ≥₹30k"],
-    mitc: {
-      "Interest Rate": "3.6% per month (43.2% p.a.)",
-      "Cash Advance": "2.5% or ₹500 min",
-      "Late Payment": "₹100–₹1300",
-      "Foreign Markup": "3.5%",
-      "Cashback Cap": "₹1000/month on partner sites",
-      "Lounge Access": "8 visits/year (DreamFolks)"
-    }
-  },
-  {
-    id: "hdfc-swiggy", bank: "HDFC Bank", name: "HDFC Swiggy",
-    joining: 500, annual: 500, waiver: 200000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Swiggy (all)", rate: 10, cap: 1500, unit: "cashback" },
-      { cat: "Online Shopping", rate: 5, cap: 1500, unit: "cashback" },
-      { cat: "Others", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "EMI", "Wallet", "Govt"],
-    benefits: ["10% cashback on Swiggy (food + Instamart)", "₹1500 monthly cap on 5%+10% cashback", "Swiggy One membership (1 year)"],
-    mitc: {
-      "Interest Rate": "3.6% per month",
-      "Cashback Credit": "Monthly statement credit",
-      "Partner Benefit": "Swiggy One membership on activation",
-      "Foreign Markup": "3.5%"
-    }
-  },
-  {
-    id: "hdfc-tata-neu-infinity", bank: "HDFC Bank", name: "Tata Neu Infinity HDFC",
-    joining: 1499, annual: 1499, waiver: 300000,
-    type: "Points",
-    rewards: [
-      { cat: "Tata Brands (NeuCoins)", rate: 5, cap: null, unit: "NeuCoins" },
-      { cat: "Grocery & Utilities", rate: 2, cap: null, unit: "NeuCoins" },
-      { cat: "Others", rate: 1.5, cap: null, unit: "NeuCoins" },
-    ],
-    excluded: ["Fuel", "EMI", "Govt", "Wallet"],
-    benefits: ["1 NeuCoin = ₹1 on Tata apps", "Lounge access (8 visits)", "Tata Neu Plus membership", "Insurance benefits"],
-    mitc: {
-      "NeuCoin Value": "1 NeuCoin = ₹1 on Tata Neu, BigBasket, 1mg, Westside",
-      "Expiry": "NeuCoins expire in 365 days",
-      "Foreign Markup": "2%",
-      "Lounge": "8 visits/year"
-    }
-  },
-  {
-    id: "airtel-axis", bank: "Axis Bank", name: "Airtel Axis Bank",
-    joining: 500, annual: 500, waiver: 200000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Airtel Services", rate: 25, cap: 250, unit: "cashback" },
-      { cat: "Zomato, BigBasket, Swiggy", rate: 10, cap: 500, unit: "cashback" },
-      { cat: "Utility Bills", rate: 10, cap: 250, unit: "cashback" },
-      { cat: "Others", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["EMI", "Fuel", "Wallet", "Govt"],
-    benefits: ["25% cashback on Airtel bill", "Annual fee reversed on ₹2L spend", "4 lounge visits/year"],
-    mitc: {
-      "Cashback Credit": "Monthly (next statement)",
-      "Airtel Cap": "₹250/month",
-      "Partner Cap": "₹500/month on Zomato/Swiggy",
-      "Utility Cap": "₹250/month",
-      "Foreign Markup": "3.5%"
-    }
-  },
-  {
-    id: "axis-privilege", bank: "Axis Bank", name: "Axis Privilege",
-    joining: 1500, annual: 1500, waiver: 300000,
-    type: "Points",
-    rewards: [
-      { cat: "Travel & Hotels", rate: 15, cap: null, unit: "Edge Points" },
-      { cat: "Dining", rate: 10, cap: null, unit: "Edge Points" },
-      { cat: "Others", rate: 2, cap: null, unit: "Edge Points" },
-    ],
-    excluded: ["Fuel", "Wallet", "EMI", "Govt"],
-    benefits: ["1 Edge Point = ₹0.20", "Unlimited lounge access", "Priority Pass membership", "Golf privileges"],
-    mitc: {
-      "Point Value": "1 Edge Point = ₹0.20",
-      "Travel Redemption": "1 Edge = ₹0.35 on Axis Travel Edge",
-      "Lounge": "Unlimited (Priority Pass)",
-      "Foreign Markup": "3.5%",
-      "Point Expiry": "3 years"
-    }
-  },
-  {
-    id: "amex-rewards", bank: "American Express", name: "Amex Rewards Card",
-    joining: 1000, annual: 4500, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "All Spends (base)", rate: 1, cap: null, unit: "MR Points" },
-      { cat: "Every ₹50 spent", rate: 1, cap: null, unit: "MR Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Insurance", "Utilities (partial)"],
-    benefits: ["1 MR = ₹0.50 on Amazon/Flipkart", "1 MR = ₹1 on Air India via transfer", "Membership Rewards transfers to airlines", "Amex Offers (periodic cashback)"],
-    mitc: {
-      "MR Point Value": "₹0.35–₹1 depending on redemption",
-      "Milestone Bonus": "4000 MR on spending ₹1.5L in 6 months",
-      "Foreign Markup": "3.5%",
-      "Lounge": "Not included (base card)",
-      "Point Expiry": "No expiry while card active"
-    }
-  },
-  {
-    id: "amex-gold", bank: "American Express", name: "Amex Gold Charge",
-    joining: 1000, annual: 4500, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "Travel (Amex Travel)", rate: 5, cap: null, unit: "MR Points" },
-      { cat: "Dining", rate: 5, cap: null, unit: "MR Points" },
-      { cat: "Others", rate: 1, cap: null, unit: "MR Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Insurance"],
-    benefits: ["Quarterly ₹1000 Taj/Marriott/Oberoi voucher on ₹1.5L spend", "MR transfers to Jet/Air India", "Amex concierge"],
-    mitc: {
-      "MR Value": "₹0.50–₹1 on redemption",
-      "Charge Card": "Full payment required monthly",
-      "Quarterly Voucher": "₹1000 on ₹1.5L quarterly spend",
-      "Foreign Markup": "3.5%"
-    }
-  },
-  {
-    id: "idfc-select", bank: "IDFC FIRST Bank", name: "IDFC FIRST Select",
-    joining: 0, annual: 0, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "Weekend Dining", rate: 10, cap: null, unit: "Points" },
-      { cat: "Online Spends", rate: 3, cap: null, unit: "Points" },
-      { cat: "Others", rate: 1.5, cap: null, unit: "Points" },
-    ],
-    excluded: ["Fuel", "EMI", "Wallet", "Govt"],
-    benefits: ["Lifetime free — no joining/annual fee", "4 complimentary lounge visits/year", "Personal accident cover ₹2L", "10x on weekend dining"],
-    mitc: {
-      "Point Value": "1 point = ₹0.25 (approx)",
-      "Weekend Dining": "Sat-Sun, 10X points",
-      "Lounge": "4 visits/year (DreamFolks)",
-      "Foreign Markup": "1.99% (lowest in class)",
-      "Point Expiry": "3 years"
-    }
-  },
-  {
-    id: "rbl-iocl", bank: "RBL Bank", name: "RBL IOCL Fuel",
-    joining: 500, annual: 500, waiver: 100000,
-    type: "Cashback",
-    rewards: [
-      { cat: "IOCL Fuel", rate: 4, cap: null, unit: "cashback" },
-      { cat: "Groceries", rate: 2, cap: null, unit: "cashback" },
-      { cat: "Others", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["EMI", "Wallet", "Govt"],
-    benefits: ["4% value back on IOCL fuel", "1% fuel surcharge waiver", "Fuel surcharge waiver up to ₹100/month"],
-    mitc: {
-      "Fuel Value-back": "4% via RBL Rewards",
-      "Surcharge Waiver": "1% at IOCL (up to ₹100/month)",
-      "Foreign Markup": "3.5%",
-      "Reward Point Expiry": "2 years"
-    }
-  },
-  {
-    id: "rbl-bms", bank: "RBL Bank", name: "RBL BookMyShow Play",
-    joining: 499, annual: 499, waiver: 150000,
-    type: "Cashback+Voucher",
-    rewards: [
-      { cat: "BookMyShow", rate: 10, cap: 200, unit: "cashback" },
-      { cat: "Entertainment", rate: 5, cap: 300, unit: "cashback" },
-      { cat: "Others", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["EMI", "Fuel", "Wallet", "Govt"],
-    benefits: ["1 free movie ticket/month (BookMyShow)", "10% cashback on BMS bookings", "Swiggy discount vouchers"],
-    mitc: {
-      "Free Movie Ticket": "Up to ₹200 on BMS, 1 per month",
-      "Cashback Cap": "₹200/month on BMS",
-      "Foreign Markup": "3.5%",
-      "Annual Fee Waiver": "Spend ₹1.5L/year"
-    }
-  },
-  {
-    id: "bob-eterna", bank: "Bank of Baroda", name: "BoB Eterna",
-    joining: 2499, annual: 2499, waiver: 200000,
-    type: "Points",
-    rewards: [
-      { cat: "Online Shopping", rate: 15, cap: null, unit: "Reward Points" },
-      { cat: "Dining & Entertainment", rate: 10, cap: null, unit: "Reward Points" },
-      { cat: "Others", rate: 3, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "EMI", "Govt", "Wallet"],
-    benefits: ["1 RP = ₹0.25", "Unlimited lounge access (Domestic)", "Golf privileges", "Concierge service"],
-    mitc: {
-      "Reward Point Value": "1 RP = ₹0.25",
-      "Lounge": "Unlimited domestic lounge",
-      "Golf": "4 complimentary rounds/year",
-      "Foreign Markup": "3.5%",
-      "Point Expiry": "3 years"
-    }
-  },
-  {
-    id: "federal-imperio", bank: "Federal Bank", name: "Federal Imperio",
-    joining: 3000, annual: 3000, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "Travel & Hotels", rate: 10, cap: null, unit: "Imperio Points" },
-      { cat: "International Spends", rate: 5, cap: null, unit: "Imperio Points" },
-      { cat: "Others", rate: 2, cap: null, unit: "Imperio Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Wallet", "EMI"],
-    benefits: ["Unlimited lounge access", "Priority Pass", "Concierge service", "Golf privileges", "Airport transfers"],
-    mitc: {
-      "Point Value": "Flexible (travel redemption ~₹0.50)",
-      "Foreign Markup": "2%",
-      "Lounge": "Unlimited Priority Pass",
-      "Annual Fee": "No waiver — premium card"
-    }
-  },
-  {
-    id: "hdfc-regalia", bank: "HDFC Bank", name: "HDFC Regalia",
-    joining: 2500, annual: 2500, waiver: 300000,
-    type: "Points",
-    rewards: [
-      { cat: "All Spends", rate: 4, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "Wallet", "EMI", "Govt"],
-    benefits: ["1 RP = ₹0.50 on Smartbuy", "12 lounge visits/year", "Priority Pass (6 int'l visits)", "Milestone bonus: 10,000 RP at ₹5L"],
-    mitc: {
-      "Point Value": "1 RP = ₹0.50 (Smartbuy)",
-      "Milestone": "10,000 RP on ₹5L annual spend",
-      "Foreign Markup": "2%",
-      "Lounge": "12 visits/year"
-    }
-  },
-  {
-    id: "axis-ace", bank: "Axis Bank", name: "Axis ACE",
-    joining: 499, annual: 499, waiver: 200000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Bill Pay via Google Pay", rate: 5, cap: null, unit: "cashback" },
-      { cat: "Zomato, Swiggy, Ola", rate: 4, cap: null, unit: "cashback" },
-      { cat: "Others", rate: 2, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "EMI", "Govt", "Wallet"],
-    benefits: ["5% on bill payment via GPay", "Highest flat 2% on all spends", "4 lounge visits/year"],
-    mitc: {
-      "Cashback Credit": "Statement credit",
-      "Utility via GPay": "5% cashback",
-      "Foreign Markup": "3.5%",
-      "Annual Fee Waiver": "₹2L annual spend"
-    }
-  },
-  {
-    id: "hdfc-diners-black", bank: "HDFC Bank", name: "HDFC Diners Black",
-    joining: 10000, annual: 10000, waiver: 500000,
-    type: "Points",
-    rewards: [
-      { cat: "All Spends", rate: 5, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "Govt", "EMI", "Wallet"],
-    benefits: ["1 RP = ₹1 on Smartbuy", "Unlimited lounge access", "10x RP on SmartBuy", "Golf privileges", "Annual milestone benefits"],
-    mitc: {
-      "Point Value": "1 RP = ₹0.75–₹1 on Smartbuy",
-      "Lounge": "Unlimited (Diners Club)",
-      "Milestone": "5000 RP quarterly at ₹80k spend",
-      "Foreign Markup": "2%"
-    }
-  },
-  {
-    id: "icici-amazon-pay", bank: "ICICI Bank", name: "Amazon Pay ICICI",
-    joining: 0, annual: 0, waiver: null,
-    type: "Cashback",
-    rewards: [
-      { cat: "Amazon (Prime)", rate: 5, cap: null, unit: "cashback" },
-      { cat: "Amazon (non-Prime)", rate: 3, cap: null, unit: "cashback" },
-      { cat: "Online Others", rate: 2, cap: null, unit: "cashback" },
-      { cat: "Offline", rate: 1, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "Wallet", "Govt", "EMI"],
-    benefits: ["Lifetime free card", "Cashback as Amazon Pay balance", "No upper limit on rewards", "Welcome benefit: ₹500 voucher"],
-    mitc: {
-      "Cashback Type": "Amazon Pay balance (instant)",
-      "Prime Requirement": "5% only for Amazon Prime members",
-      "Foreign Markup": "3.5%",
-      "No Expiry": "Amazon Pay balance has no expiry"
-    }
-  },
-  {
-    id: "flipkart-axis", bank: "Axis Bank", name: "Flipkart Axis Bank",
-    joining: 500, annual: 500, waiver: 200000,
-    type: "Cashback",
-    rewards: [
-      { cat: "Flipkart & Myntra", rate: 5, cap: null, unit: "cashback" },
-      { cat: "Preferred Partners", rate: 4, cap: null, unit: "cashback" },
-      { cat: "Others", rate: 1.5, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "EMI", "Wallet", "Govt"],
-    benefits: ["5% on all Flipkart/Myntra purchases", "4% on Swiggy, Uber, PVR, Cleartrip", "Free Swiggy membership"],
-    mitc: {
-      "Cashback Credit": "Statement credit monthly",
-      "Annual Fee Waiver": "₹2L annual spend",
-      "Foreign Markup": "3.5%"
-    }
-  },
-  {
-    id: "citi-cashback", bank: "Citibank", name: "Citi Cashback Card",
-    joining: 500, annual: 500, waiver: null,
-    type: "Cashback",
-    rewards: [
-      { cat: "Utility Bills", rate: 5, cap: null, unit: "cashback" },
-      { cat: "Telephone Bills", rate: 5, cap: null, unit: "cashback" },
-      { cat: "Others", rate: 0.5, cap: null, unit: "cashback" },
-    ],
-    excluded: ["Fuel", "Govt", "Wallet", "EMI"],
-    benefits: ["5% on utility/phone bills (auto pay)", "Cashback as statement credit", "No annual fee waiver milestone"],
-    mitc: {
-      "Cashback Credit": "Statement credit quarterly",
-      "Utility 5%": "Only via auto-pay link",
-      "Foreign Markup": "3.5%"
-    }
-  },
-  {
-    id: "sc-simply-save", bank: "Standard Chartered", name: "SC Simply Save",
-    joining: 499, annual: 499, waiver: 100000,
-    type: "Points",
-    rewards: [
-      { cat: "Dining, Movies, Grocery", rate: 10, cap: null, unit: "Reward Points" },
-      { cat: "Others", rate: 1, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Wallet", "EMI"],
-    benefits: ["10X points on key lifestyle categories", "Annual fee waived on ₹1L spend", "Movie discounts on BookMyShow"],
-    mitc: {
-      "Point Value": "1 RP = ₹0.25",
-      "Annual Fee Waiver": "₹1L annual spend",
-      "Foreign Markup": "3.5%",
-      "Point Expiry": "3 years"
-    }
-  },
-  {
-    id: "kotak-zen", bank: "Kotak Bank", name: "Kotak Zen Signature",
-    joining: 1500, annual: 1500, waiver: 200000,
-    type: "Points",
-    rewards: [
-      { cat: "International Spends", rate: 10, cap: null, unit: "Reward Points" },
-      { cat: "Dining", rate: 6, cap: null, unit: "Reward Points" },
-      { cat: "Others", rate: 2, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "Govt", "EMI", "Wallet"],
-    benefits: ["No forex markup on international spends", "8 lounge visits/year", "10X on international spends"],
-    mitc: {
-      "Foreign Markup": "0% on international transactions",
-      "Lounge": "8 visits/year",
-      "Reward Expiry": "2 years",
-      "Annual Fee Waiver": "₹2L annual spend"
-    }
-  },
-  {
-    id: "yes-first-exclusive", bank: "Yes Bank", name: "Yes First Exclusive",
-    joining: 9999, annual: 9999, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "Travel", rate: 12, cap: null, unit: "Yes Points" },
-      { cat: "Dining", rate: 8, cap: null, unit: "Yes Points" },
-      { cat: "Others", rate: 3, cap: null, unit: "Yes Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Wallet"],
-    benefits: ["Unlimited lounge access", "Priority Pass", "Golf + concierge", "High reward rate on travel"],
-    mitc: {
-      "Point Value": "1 Yes Point = ₹0.25–₹0.50",
-      "Foreign Markup": "1.75%",
-      "Lounge": "Unlimited Priority Pass",
-      "Annual Fee": "No waiver"
-    }
-  },
-  {
-    id: "hdfc-infinia", bank: "HDFC Bank", name: "HDFC Infinia",
-    joining: 12500, annual: 12500, waiver: 1000000,
-    type: "Points",
-    rewards: [
-      { cat: "All Spends", rate: 5, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Govt", "Wallet"],
-    benefits: ["1 RP = ₹1 on SmartBuy", "Unlimited lounge (Priority Pass)", "Golf (worldwide)", "Annual milestone: 12,500 RP at ₹10L"],
-    mitc: {
-      "Point Value": "1 RP = ₹1 (Smartbuy/Travel)",
-      "Lounge": "Unlimited Priority Pass + unlimited domestic",
-      "Golf": "Unlimited at 25+ courses",
-      "Milestone": "12,500 RP at ₹10L annual spend",
-      "Foreign Markup": "2%"
-    }
-  },
-  {
-    id: "sbi-elite", bank: "SBI Card", name: "SBI ELITE",
-    joining: 4999, annual: 4999, waiver: 1000000,
-    type: "Points",
-    rewards: [
-      { cat: "Dining, Groceries, Department", rate: 5, cap: null, unit: "Reward Points" },
-      { cat: "Others", rate: 2, cap: null, unit: "Reward Points" },
-    ],
-    excluded: ["Fuel", "Govt", "Wallet", "EMI"],
-    benefits: ["1 RP = ₹0.25", "Welcome voucher ₹5000", "Complimentary flights (milestone)", "Unlimited lounge (6 int'l Priority Pass)", "Movie vouchers monthly"],
-    mitc: {
-      "Reward Value": "1 RP = ₹0.25",
-      "Welcome Gift": "₹5000 e-gift vouchers on activation",
-      "Foreign Markup": "1.99%",
-      "Lounge": "6 Priority Pass + unlimited domestic"
-    }
-  },
-  {
-    id: "icici-emerald", bank: "ICICI Bank", name: "ICICI Emerald Private Metal",
-    joining: 12499, annual: 12499, waiver: null,
-    type: "Points",
-    rewards: [
-      { cat: "All Spends", rate: 6, cap: null, unit: "PAYBACK Points" },
-    ],
-    excluded: ["Govt", "Wallet"],
-    benefits: ["Unlimited lounge worldwide", "Golf privileges", "Concierge 24/7", "Metal card"],
-    mitc: {
-      "Point Value": "1 PAYBACK = ₹0.25",
-      "Foreign Markup": "1.5%",
-      "Lounge": "Unlimited Priority Pass + unlimited domestic",
-      "Annual Fee": "No waiver"
-    }
-  }
+  { id:"sbi-cashback", bank:"SBI Card", name:"SBI Cashback Card", joining:999, annual:999, waiver:200000, type:"Cashback", rewards:[{cat:"Online Shopping",rate:5,cap:5000,unit:"cashback"},{cat:"Offline Spends",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Rent","EMI","Wallet Load","Govt"], benefits:["5% cashback on all online spends","₹500 monthly cap on 5% cashback","Auto-credit of cashback","No annual fee on ₹2L annual spend"], mitc:{"Interest Rate":"3.5% per month (42% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300","Foreign Markup":"3.5%","Fuel Surcharge":"1% waived at HPCL"}},
+  { id:"hdfc-millennia", bank:"HDFC Bank", name:"HDFC Millennia", joining:1000, annual:1000, waiver:100000, type:"Cashback", rewards:[{cat:"Amazon, Flipkart, Myntra",rate:5,cap:1000,unit:"cashback"},{cat:"Other Online",rate:2.5,cap:null,unit:"cashback"},{cat:"Offline/Contactless",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Rent","EMI","Wallet","Govt","Jewellery"], benefits:["5% on partner sites","8 lounge visits/year","₹1000 gift voucher on ₹30k quarterly"], mitc:{"Interest Rate":"3.6% per month","Cash Advance":"2.5% or ₹500","Foreign Markup":"3.5%","Cashback Cap":"₹1000/month on partner sites"}},
+  { id:"hdfc-swiggy", bank:"HDFC Bank", name:"HDFC Swiggy", joining:500, annual:500, waiver:200000, type:"Cashback", rewards:[{cat:"Swiggy (all)",rate:10,cap:1500,unit:"cashback"},{cat:"Online Shopping",rate:5,cap:1500,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","EMI","Wallet","Govt"], benefits:["10% on Swiggy food+Instamart","Swiggy One membership","₹1500 monthly cap on boosted categories"], mitc:{"Cashback Credit":"Monthly statement","Foreign Markup":"3.5%","Partner Benefit":"Swiggy One on activation"}},
+  { id:"hdfc-tata-neu-infinity", bank:"HDFC Bank", name:"Tata Neu Infinity HDFC", joining:1499, annual:1499, waiver:300000, type:"Points", rewards:[{cat:"Tata Brands",rate:5,cap:null,unit:"NeuCoins"},{cat:"Grocery & Utilities",rate:2,cap:null,unit:"NeuCoins"},{cat:"Others",rate:1.5,cap:null,unit:"NeuCoins"}], excluded:["Fuel","EMI","Govt","Wallet"], benefits:["1 NeuCoin = ₹1 on Tata apps","8 lounge visits","Tata Neu Plus membership"], mitc:{"NeuCoin Value":"1 = ₹1 on Tata Neu/BigBasket/1mg","Foreign Markup":"2%","Lounge":"8 visits/year"}},
+  { id:"airtel-axis", bank:"Axis Bank", name:"Airtel Axis Bank", joining:500, annual:500, waiver:200000, type:"Cashback", rewards:[{cat:"Airtel Services",rate:25,cap:250,unit:"cashback"},{cat:"Zomato, BigBasket, Swiggy",rate:10,cap:500,unit:"cashback"},{cat:"Utility Bills",rate:10,cap:250,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Fuel","Wallet","Govt"], benefits:["25% on Airtel bill","4 lounge visits/year","Annual fee reversed on ₹2L spend"], mitc:{"Cashback Credit":"Monthly","Airtel Cap":"₹250/month","Partner Cap":"₹500/month","Foreign Markup":"3.5%"}},
+  { id:"axis-privilege", bank:"Axis Bank", name:"Axis Privilege", joining:1500, annual:1500, waiver:300000, type:"Points", rewards:[{cat:"Travel & Hotels",rate:15,cap:null,unit:"Edge Points"},{cat:"Dining",rate:10,cap:null,unit:"Edge Points"},{cat:"Others",rate:2,cap:null,unit:"Edge Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 Edge Point = ₹0.20","Unlimited lounge","Priority Pass"], mitc:{"Point Value":"1 ERP = ₹0.20 (₹0.35 travel)","Lounge":"Unlimited Priority Pass","Foreign Markup":"3.5%"}},
+  { id:"amex-rewards", bank:"American Express", name:"Amex Rewards Card", joining:1000, annual:4500, waiver:null, type:"Points", rewards:[{cat:"All Spends",rate:1,cap:null,unit:"MR Points"}], excluded:["Fuel","Govt","Insurance"], benefits:["1 MR = ₹0.50 on Amazon","Transfer to Air India","Amex Offers"], mitc:{"MR Value":"₹0.35–₹1 depending on redemption","Milestone":"4000 MR on ₹1.5L in 6mo","Foreign Markup":"3.5%"}},
+  { id:"amex-gold", bank:"American Express", name:"Amex Gold Charge", joining:1000, annual:4500, waiver:null, type:"Points", rewards:[{cat:"Travel (Amex Travel)",rate:5,cap:null,unit:"MR Points"},{cat:"Dining",rate:5,cap:null,unit:"MR Points"},{cat:"Others",rate:1,cap:null,unit:"MR Points"}], excluded:["Fuel","Govt","Insurance"], benefits:["Quarterly ₹1000 Taj/Marriott voucher","MR transfers to airlines","Amex concierge"], mitc:{"MR Value":"₹0.50–₹1","Charge Card":"Full payment required monthly","Foreign Markup":"3.5%"}},
+  { id:"idfc-select", bank:"IDFC FIRST Bank", name:"IDFC FIRST Select", joining:0, annual:0, waiver:null, type:"Points", rewards:[{cat:"Weekend Dining",rate:10,cap:null,unit:"Points"},{cat:"Online Spends",rate:3,cap:null,unit:"Points"},{cat:"Others",rate:1.5,cap:null,unit:"Points"}], excluded:["Fuel","EMI","Wallet","Govt"], benefits:["Lifetime free","4 lounge visits/year","10x weekend dining","₹2L personal accident cover"], mitc:{"Point Value":"1 = ₹0.25","Foreign Markup":"1.99%","Lounge":"4 visits/year"}},
+  { id:"rbl-iocl", bank:"RBL Bank", name:"RBL IOCL Fuel", joining:500, annual:500, waiver:100000, type:"Cashback", rewards:[{cat:"IOCL Fuel",rate:4,cap:null,unit:"cashback"},{cat:"Groceries",rate:2,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Wallet","Govt"], benefits:["4% value back on IOCL fuel","1% surcharge waiver","Up to ₹100/month surcharge waiver"], mitc:{"Fuel Value-back":"4% via RBL Rewards","Surcharge Waiver":"1% at IOCL","Foreign Markup":"3.5%"}},
+  { id:"rbl-bms", bank:"RBL Bank", name:"RBL BookMyShow Play", joining:499, annual:499, waiver:150000, type:"Cashback+Voucher", rewards:[{cat:"BookMyShow",rate:10,cap:200,unit:"cashback"},{cat:"Entertainment",rate:5,cap:300,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Fuel","Wallet","Govt"], benefits:["1 free movie ticket/month","10% on BMS","Swiggy discount vouchers"], mitc:{"Free Movie":"Up to ₹200 on BMS, 1/month","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1.5L/year"}},
+  { id:"bob-eterna", bank:"Bank of Baroda", name:"BoB Eterna", joining:2499, annual:2499, waiver:200000, type:"Points", rewards:[{cat:"Online Shopping",rate:15,cap:null,unit:"Reward Points"},{cat:"Dining & Entertainment",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:3,cap:null,unit:"Reward Points"}], excluded:["Fuel","EMI","Govt","Wallet"], benefits:["1 RP = ₹0.25","Unlimited domestic lounge","Golf privileges"], mitc:{"Reward Value":"1 RP = ₹0.25","Lounge":"Unlimited domestic","Foreign Markup":"3.5%"}},
+  { id:"hdfc-regalia", bank:"HDFC Bank", name:"HDFC Regalia", joining:2500, annual:2500, waiver:300000, type:"Points", rewards:[{cat:"All Spends",rate:4,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 RP = ₹0.50 on Smartbuy","12 lounge visits/year","Priority Pass (6 int'l)","10,000 RP at ₹5L milestone"], mitc:{"Point Value":"1 RP = ₹0.50","Milestone":"10,000 RP on ₹5L annual","Foreign Markup":"2%","Lounge":"12 visits/year"}},
+  { id:"axis-ace", bank:"Axis Bank", name:"Axis ACE", joining:499, annual:499, waiver:200000, type:"Cashback", rewards:[{cat:"Bill Pay via Google Pay",rate:5,cap:null,unit:"cashback"},{cat:"Zomato, Swiggy, Ola",rate:4,cap:null,unit:"cashback"},{cat:"Others",rate:2,cap:null,unit:"cashback"}], excluded:["Fuel","EMI","Govt","Wallet"], benefits:["5% on bill payment via GPay","Highest flat 2% on all spends","4 lounge visits/year"], mitc:{"Cashback Credit":"Statement credit","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2L annual spend"}},
+  { id:"hdfc-diners-black", bank:"HDFC Bank", name:"HDFC Diners Black", joining:10000, annual:10000, waiver:500000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","EMI","Wallet"], benefits:["1 RP = ₹1 on Smartbuy","Unlimited lounge","10x on SmartBuy","Golf privileges"], mitc:{"Point Value":"1 RP = ₹0.75–₹1","Lounge":"Unlimited Diners Club","Foreign Markup":"2%"}},
+  { id:"icici-amazon-pay", bank:"ICICI Bank", name:"Amazon Pay ICICI", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Amazon (Prime)",rate:5,cap:null,unit:"cashback"},{cat:"Amazon (non-Prime)",rate:3,cap:null,unit:"cashback"},{cat:"Online Others",rate:2,cap:null,unit:"cashback"},{cat:"Offline",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["Lifetime free","Cashback as Amazon Pay balance","No upper limit on rewards"], mitc:{"Cashback":"Amazon Pay balance (instant)","Prime Req":"5% only for Prime members","Foreign Markup":"3.5%"}},
+  { id:"flipkart-axis", bank:"Axis Bank", name:"Flipkart Axis Bank", joining:500, annual:500, waiver:200000, type:"Cashback", rewards:[{cat:"Flipkart & Myntra",rate:5,cap:null,unit:"cashback"},{cat:"Preferred Partners",rate:4,cap:null,unit:"cashback"},{cat:"Others",rate:1.5,cap:null,unit:"cashback"}], excluded:["Fuel","EMI","Wallet","Govt"], benefits:["5% on Flipkart/Myntra","4% on Swiggy, Uber, PVR","Free Swiggy membership"], mitc:{"Cashback Credit":"Monthly statement","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2L spend"}},
+  { id:"citi-cashback", bank:"Citibank", name:"Citi Cashback Card", joining:500, annual:500, waiver:null, type:"Cashback", rewards:[{cat:"Utility Bills",rate:5,cap:null,unit:"cashback"},{cat:"Telephone Bills",rate:5,cap:null,unit:"cashback"},{cat:"Others",rate:0.5,cap:null,unit:"cashback"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["5% on utility/phone bills via autopay","Cashback as statement credit"], mitc:{"Cashback Credit":"Statement credit quarterly","Utility 5%":"Only via auto-pay","Foreign Markup":"3.5%"}},
+  { id:"sc-simply-save", bank:"Standard Chartered", name:"SC Simply Save", joining:499, annual:499, waiver:100000, type:"Points", rewards:[{cat:"Dining, Movies, Grocery",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:1,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["10X on lifestyle categories","Annual fee waived on ₹1L spend","Movie discounts on BookMyShow"], mitc:{"Point Value":"1 RP = ₹0.25","Annual Fee Waiver":"₹1L annual spend","Foreign Markup":"3.5%"}},
+  { id:"kotak-zen", bank:"Kotak Bank", name:"Kotak Zen Signature", joining:1500, annual:1500, waiver:200000, type:"Points", rewards:[{cat:"International Spends",rate:10,cap:null,unit:"Reward Points"},{cat:"Dining",rate:6,cap:null,unit:"Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","EMI","Wallet"], benefits:["No forex markup","8 lounge visits/year","10X on international spends"], mitc:{"Foreign Markup":"0%","Lounge":"8 visits/year","Annual Fee Waiver":"₹2L spend"}},
+  { id:"yes-first-exclusive", bank:"Yes Bank", name:"Yes First Exclusive", joining:9999, annual:9999, waiver:null, type:"Points", rewards:[{cat:"Travel",rate:12,cap:null,unit:"Yes Points"},{cat:"Dining",rate:8,cap:null,unit:"Yes Points"},{cat:"Others",rate:3,cap:null,unit:"Yes Points"}], excluded:["Fuel","Govt","Wallet"], benefits:["Unlimited lounge","Priority Pass","Golf + concierge"], mitc:{"Point Value":"1 = ₹0.25–₹0.50","Foreign Markup":"1.75%","Lounge":"Unlimited Priority Pass"}},
+  { id:"hdfc-infinia", bank:"HDFC Bank", name:"HDFC Infinia", joining:12500, annual:12500, waiver:1000000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"}], excluded:["Govt","Wallet"], benefits:["1 RP = ₹1 on SmartBuy","Unlimited lounge Priority Pass","Golf worldwide","12,500 RP at ₹10L milestone"], mitc:{"Point Value":"1 RP = ₹1 (Smartbuy/Travel)","Lounge":"Unlimited Priority Pass","Golf":"Unlimited 25+ courses","Foreign Markup":"2%"}},
+  { id:"sbi-elite", bank:"SBI Card", name:"SBI ELITE", joining:4999, annual:4999, waiver:1000000, type:"Points", rewards:[{cat:"Dining, Groceries, Department",rate:5,cap:null,unit:"Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["₹5000 welcome vouchers","Complimentary flights (milestone)","Unlimited lounge","Monthly movie vouchers"], mitc:{"Reward Value":"1 RP = ₹0.25","Welcome Gift":"₹5000 e-gift on activation","Foreign Markup":"1.99%","Lounge":"6 Priority Pass + unlimited domestic"}},
+  { id:"icici-emerald", bank:"ICICI Bank", name:"ICICI Emerald Private Metal", joining:12499, annual:12499, waiver:null, type:"Points", rewards:[{cat:"All Spends",rate:6,cap:null,unit:"PAYBACK Points"}], excluded:["Govt","Wallet"], benefits:["Unlimited lounge worldwide","Golf privileges","Concierge 24/7","Metal card"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Foreign Markup":"1.5%","Lounge":"Unlimited Priority Pass"}},
+  { id:"axis-magnus", bank:"Axis Bank", name:"Axis Magnus", joining:12500, annual:12500, waiver:1500000, type:"Points", rewards:[{cat:"Travel Edge",rate:35,cap:null,unit:"Edge Reward Points"},{cat:"All Other Spends",rate:12,cap:null,unit:"Edge Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 ERP = ₹0.20–₹0.40 on travel","Unlimited lounge Priority Pass","₹10,000 travel voucher on activation"], mitc:{"Point Value":"1 ERP = ₹0.20 base","Lounge":"Unlimited Priority Pass","Foreign Markup":"2%"}},
+  { id:"axis-reserve", bank:"Axis Bank", name:"Axis Reserve", joining:50000, annual:50000, waiver:null, type:"Points", rewards:[{cat:"Travel Edge",rate:45,cap:null,unit:"Edge Reward Points"},{cat:"All Spends",rate:15,cap:null,unit:"Edge Reward Points"}], excluded:["Fuel","Wallet","Govt"], benefits:["Ultra-premium metal card","Unlimited lounge + guest passes","Dedicated relationship manager"], mitc:{"Point Value":"1 ERP = ₹0.20–₹0.50","Lounge":"Unlimited + unlimited guests","Foreign Markup":"1.5%"}},
+  { id:"axis-vistara-infinite", bank:"Axis Bank", name:"Axis Vistara Infinite", joining:10000, annual:10000, waiver:null, type:"Miles", rewards:[{cat:"All Spends",rate:6,cap:null,unit:"Club Vistara Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 CV Point = ~₹0.50 on Vistara","Complimentary Business Class ticket","4 lounge visits/year","Vistara Gold membership"], mitc:{"CV Point Value":"~₹0.50 on Vistara","Welcome Gift":"1 Business Class ticket","Lounge":"4 visits/year","Foreign Markup":"3.5%"}},
+  { id:"hdfc-moneyback-plus", bank:"HDFC Bank", name:"HDFC MoneyBack+", joining:500, annual:500, waiver:50000, type:"Cashback", rewards:[{cat:"Amazon, Flipkart, Swiggy, Uber",rate:10,cap:500,unit:"CashPoints"},{cat:"Other Online",rate:5,cap:null,unit:"CashPoints"},{cat:"Offline",rate:1,cap:null,unit:"CashPoints"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["10X on top online merchants","Annual fee waiver on ₹50k spend","1 CashPoint = ₹0.25"], mitc:{"CashPoint Value":"1 CP = ₹0.25","Monthly Cap":"₹500 on 10X categories","Annual Fee Waiver":"₹50k spend","Foreign Markup":"3.5%"}},
+  { id:"hdfc-pixel-play", bank:"HDFC Bank", name:"HDFC Pixel Play", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Chosen category (1 of 6)",rate:5,cap:1000,unit:"cashback"},{cat:"Other Spends",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Lifetime free","Choose reward category monthly","6 categories to pick from"], mitc:{"Category":"Choose 1 per month via app","5% Cap":"₹1000/month","Foreign Markup":"3.5%"}},
+  { id:"icici-sapphiro", bank:"ICICI Bank", name:"ICICI Sapphiro", joining:6500, annual:3500, waiver:600000, type:"Points", rewards:[{cat:"International Spends",rate:4,cap:null,unit:"PAYBACK Points"},{cat:"Dining & Entertainment",rate:2,cap:null,unit:"PAYBACK Points"},{cat:"Others",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","4 lounge visits","Golf privileges","Concierge service"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"4 visits/year domestic","Foreign Markup":"3.5%"}},
+  { id:"icici-coral", bank:"ICICI Bank", name:"ICICI Coral", joining:500, annual:500, waiver:150000, type:"Points", rewards:[{cat:"All Spends",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","2 lounge visits/quarter","1 free movie ticket/month"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"2 visits/quarter","Movie Benefit":"1 free ticket/month","Annual Fee Waiver":"₹1.5L"}},
+  { id:"sbi-simply-click", bank:"SBI Card", name:"SBI SimplyCLICK", joining:499, annual:499, waiver:100000, type:"Points", rewards:[{cat:"Amazon, BookMyShow, Cleartrip",rate:10,cap:null,unit:"Reward Points"},{cat:"Other Online",rate:5,cap:null,unit:"Reward Points"},{cat:"Offline",rate:1,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["10X on partner sites","₹500 voucher at ₹1L spend","Annual fee waiver on ₹1L"], mitc:{"Reward Value":"1 RP = ₹0.25","Annual Fee Waiver":"₹1L annual spend","Foreign Markup":"3.5%"}},
+  { id:"sbi-simply-save", bank:"SBI Card", name:"SBI SimplySAVE", joining:499, annual:499, waiver:90000, type:"Points", rewards:[{cat:"Dining, Movies, Grocery",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:1,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["10X on lifestyle categories","2000 bonus RP on first ₹2000 spend","Annual fee waiver on ₹90k"], mitc:{"Reward Value":"1 RP = ₹0.25","Annual Fee Waiver":"₹90k spend","Foreign Markup":"3.5%"}},
+  { id:"indusind-iconia", bank:"IndusInd Bank", name:"IndusInd Iconia", joining:3000, annual:3000, waiver:300000, type:"Points", rewards:[{cat:"Weekday Spends",rate:1.5,cap:null,unit:"Reward Points"},{cat:"Weekend Spends",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 RP = ₹0.75 on travel","Unlimited lounge","Golf privileges"], mitc:{"Point Value":"1 RP = ₹0.75 on redemption","Lounge":"Unlimited domestic + 4 int'l","Foreign Markup":"3.5%"}},
+  { id:"indusind-legend", bank:"IndusInd Bank", name:"IndusInd Legend", joining:9999, annual:9999, waiver:null, type:"Points", rewards:[{cat:"Travel & Entertainment",rate:3,cap:null,unit:"Reward Points"},{cat:"All Spends",rate:1.5,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","Govt"], benefits:["1 RP = ₹1 on travel","Unlimited Priority Pass","Unlimited golf","Air accident insurance ₹2.5Cr"], mitc:{"Point Value":"1 RP = ₹1 on travel","Lounge":"Unlimited Priority Pass","Foreign Markup":"2%"}},
+  { id:"onecard", bank:"OneCard (FPL)", name:"OneCard", joining:0, annual:0, waiver:null, type:"Points", rewards:[{cat:"Top 2 spend categories",rate:5,cap:null,unit:"1Card Points"},{cat:"Others",rate:1,cap:null,unit:"1Card Points"}], excluded:["Fuel","Wallet","EMI","Govt","Insurance"], benefits:["Lifetime free metal card","5X on top 2 categories auto-detected","1 point = ₹0.10","No foreign transaction fee"], mitc:{"Point Value":"1 point = ₹0.10","Auto 5X":"Top 2 categories monthly","Foreign Markup":"0% on metal variant","Annual Fee":"Lifetime free"}},
+  { id:"scapia", bank:"Federal Bank", name:"Scapia (Federal Bank)", joining:0, annual:0, waiver:null, type:"Miles", rewards:[{cat:"Travel Bookings via Scapia",rate:10,cap:null,unit:"Scapia Coins"},{cat:"All Other Spends",rate:2,cap:null,unit:"Scapia Coins"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["Lifetime free","Zero forex markup","Unlimited lounge","10X on Scapia travel"], mitc:{"Coin Value":"1 Scapia Coin = ₹0.50 on travel","Foreign Markup":"0%","Lounge":"Unlimited domestic","Annual Fee":"Lifetime free"}},
+  { id:"bobcard-primea", bank:"Bank of Baroda", name:"BOBCARD Primea", joining:2500, annual:2500, waiver:200000, type:"Points", rewards:[{cat:"Dining & Entertainment",rate:10,cap:null,unit:"Reward Points"},{cat:"Online Shopping",rate:5,cap:null,unit:"Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 RP = ₹0.25","Complimentary lounge","Golf privileges","Milestone benefits at ₹2L"], mitc:{"Reward Value":"1 RP = ₹0.25","Lounge":"8 visits/year","Annual Fee Waiver":"₹2L spend","Foreign Markup":"3.5%"}},
+  { id:"kotak-811", bank:"Kotak Bank", name:"Kotak 811 #DreamDifferent", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Online Spends",rate:2,cap:null,unit:"cashback"},{cat:"Offline Spends",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Lifetime free","Entry-level card","Good for building credit history"], mitc:{"Cashback Credit":"Monthly statement","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
+  { id:"hdfc-biz-moneyback", bank:"HDFC Bank", name:"HDFC Business MoneyBack", joining:500, annual:500, waiver:50000, type:"Cashback", rewards:[{cat:"Fuel, Telecom, Office",rate:5,cap:500,unit:"CashPoints"},{cat:"Other Spends",rate:1,cap:null,unit:"CashPoints"}], excluded:["Wallet","EMI","Govt"], benefits:["Designed for small business owners","5X on fuel + telecom","Annual fee waiver on ₹50k"], mitc:{"CashPoint Value":"1 CP = ₹0.25","Annual Fee Waiver":"₹50k spend","Foreign Markup":"3.5%"}},
+  { id:"au-altura-plus", bank:"AU Small Finance Bank", name:"AU Altura Plus", joining:499, annual:499, waiver:40000, type:"Cashback", rewards:[{cat:"Online Spends",rate:2,cap:null,unit:"cashback"},{cat:"Offline Spends",rate:1.5,cap:null,unit:"cashback"},{cat:"Utility & Rent",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","EMI"], benefits:["Flat cashback on all spends","2 lounge visits/quarter","Annual fee waiver on ₹40k"], mitc:{"Cashback Credit":"Monthly statement","Lounge":"2 visits/quarter","Annual Fee Waiver":"₹40k spend","Foreign Markup":"3.5%"}},
+  { id:"au-lit", bank:"AU Small Finance Bank", name:"AU LIT Card", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Chosen feature (rotating)",rate:5,cap:500,unit:"cashback"},{cat:"Base Spends",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["Lifetime free","Choose features every 90 days","India's first customisable card"], mitc:{"Feature Activation":"Every 90 days via AU 0101 app","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
+  { id:"idfc-wealth", bank:"IDFC FIRST Bank", name:"IDFC FIRST Wealth", joining:0, annual:0, waiver:null, type:"Points", rewards:[{cat:"Online Spends",rate:6,cap:null,unit:"Reward Points"},{cat:"Offline Spends",rate:3,cap:null,unit:"Reward Points"},{cat:"Weekend Dining",rate:10,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Lifetime free premium card","Unlimited domestic lounge","Zero forex markup","₹1Cr personal accident cover"], mitc:{"Point Value":"1 RP = ₹0.25","Foreign Markup":"0%","Lounge":"Unlimited domestic + 4 int'l","Annual Fee":"Lifetime free"}},
+  { id:"hsbc-live-plus", bank:"HSBC India", name:"HSBC Live+ Card", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Dining, Food Delivery, Grocery",rate:10,cap:1000,unit:"cashback"},{cat:"Others",rate:1.5,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Lifetime free","10% on food & grocery","1.5% flat on all other spends"], mitc:{"Cashback Cap":"₹1000/month on 10% categories","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
+  { id:"yes-ace", bank:"Yes Bank", name:"Yes Ace Credit Card", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"All Spends",rate:1.5,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["Lifetime free","Flat 1.5% cashback on everything","Good backup card"], mitc:{"Cashback":"Flat 1.5% on all eligible spends","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
+  { id:"standard-chartered-ultimate", bank:"Standard Chartered", name:"SC Ultimate Card", joining:5000, annual:5000, waiver:null, type:"Cashback", rewards:[{cat:"All Spends",rate:3.3,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["3.3% flat cashback — highest flat rate in India","2 Priority Pass visits/month","No category restrictions"], mitc:{"Cashback Rate":"3.3% on all eligible spends","Lounge":"2 Priority Pass visits/month","Foreign Markup":"3.5%","Note":"Best flat-rate cashback card in India"}},
+  { id:"rbl-world-safari", bank:"RBL Bank", name:"RBL World Safari", joining:3000, annual:3000, waiver:300000, type:"Miles", rewards:[{cat:"Travel Spends",rate:5,cap:null,unit:"Travel Points"},{cat:"All Others",rate:2,cap:null,unit:"Travel Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Zero forex markup","Unlimited domestic lounge","4 int'l lounge visits/year","Travel insurance"], mitc:{"Point Value":"1 Travel Point = ₹0.50 on travel","Foreign Markup":"0%","Lounge":"Unlimited domestic + 4 int'l","Annual Fee Waiver":"₹3L spend"}},
+  { id:"federal-imperio", bank:"Federal Bank", name:"Federal Imperio", joining:3000, annual:3000, waiver:null, type:"Points", rewards:[{cat:"Travel & Hotels",rate:10,cap:null,unit:"Imperio Points"},{cat:"International Spends",rate:5,cap:null,unit:"Imperio Points"},{cat:"Others",rate:2,cap:null,unit:"Imperio Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["Unlimited lounge","Priority Pass","Concierge service","Golf privileges"], mitc:{"Point Value":"~₹0.50 on travel","Foreign Markup":"2%","Lounge":"Unlimited Priority Pass"}}
 ];
 
 const EXPENSE_CATS = [
-  { id: "amazon_flipkart", label: "Amazon / Flipkart", icon: "📦", mcc: "5999,5945", sub: "Online retail" },
-  { id: "swiggy_zomato", label: "Swiggy / Zomato", icon: "🍔", mcc: "5812", sub: "Food delivery" },
-  { id: "groceries", label: "Groceries", icon: "🛒", mcc: "5411,5422", sub: "BigBasket, Zepto, Blinkit" },
-  { id: "fuel", label: "Fuel", icon: "⛽", mcc: "5541,5542", sub: "Petrol pumps" },
-  { id: "dining", label: "Dining / Restaurants", icon: "🍽️", mcc: "5812,5813", sub: "Hotels & restaurants" },
-  { id: "movies", label: "Movies / OTT", icon: "🎬", mcc: "7832,5735", sub: "PVR, BookMyShow, Netflix" },
-  { id: "travel_flight", label: "Flights / Hotels", icon: "✈️", mcc: "3000-3299,7011", sub: "Airlines, booking.com" },
-  { id: "utility", label: "Utility Bills", icon: "💡", mcc: "4900,4911", sub: "Electricity, water, gas" },
-  { id: "telecom", label: "Telecom / DTH", icon: "📱", mcc: "4812,4813", sub: "Airtel, Jio, Vi recharge" },
-  { id: "rent", label: "Rent (NoBrokerHood etc)", icon: "🏠", mcc: "6513", sub: "Usually excluded!" },
-  { id: "insurance", label: "Insurance Premiums", icon: "🛡️", mcc: "6300,6411", sub: "LIC, general insurance" },
-  { id: "wallet", label: "Wallet Load", icon: "💳", mcc: "6540", sub: "Paytm, PhonePe wallets" },
-  { id: "govt", label: "Govt / Tax Payments", icon: "🏛️", mcc: "9311,9222", sub: "GSTIN, income tax, challan" },
-  { id: "apparel", label: "Apparel / Fashion", icon: "👗", mcc: "5621,5651", sub: "Myntra, Westside, Zudio" },
-  { id: "electronics", label: "Electronics", icon: "💻", mcc: "5732,5065", sub: "Croma, Reliance Digital" },
-  { id: "health", label: "Health / Pharmacy", icon: "💊", mcc: "5912,8099", sub: "1mg, Netmeds, Apollo" },
-  { id: "education", label: "Education / EdTech", icon: "📚", mcc: "8299,8200", sub: "Udemy, BYJU's, schools" },
-  { id: "emi", label: "EMI Payments", icon: "📅", mcc: "6012", sub: "Usually excluded from rewards" },
+  {id:"amazon_flipkart",label:"Amazon / Flipkart",icon:"📦",mcc:"5999,5945",sub:"Online retail"},
+  {id:"swiggy_zomato",label:"Swiggy / Zomato",icon:"🍔",mcc:"5812",sub:"Food delivery"},
+  {id:"groceries",label:"Groceries",icon:"🛒",mcc:"5411,5422",sub:"BigBasket, Zepto, Blinkit"},
+  {id:"fuel",label:"Fuel",icon:"⛽",mcc:"5541,5542",sub:"Petrol pumps"},
+  {id:"dining",label:"Dining / Restaurants",icon:"🍽️",mcc:"5812,5813",sub:"Hotels & restaurants"},
+  {id:"movies",label:"Movies / OTT",icon:"🎬",mcc:"7832,5735",sub:"PVR, BookMyShow, Netflix"},
+  {id:"travel_flight",label:"Flights / Hotels",icon:"✈️",mcc:"3000-3299,7011",sub:"Airlines, booking.com"},
+  {id:"utility",label:"Utility Bills",icon:"💡",mcc:"4900,4911",sub:"Electricity, water, gas"},
+  {id:"telecom",label:"Telecom / DTH",icon:"📱",mcc:"4812,4813",sub:"Airtel, Jio, Vi recharge"},
+  {id:"rent",label:"Rent",icon:"🏠",mcc:"6513",sub:"Usually excluded!"},
+  {id:"insurance",label:"Insurance",icon:"🛡️",mcc:"6300,6411",sub:"LIC, general insurance"},
+  {id:"wallet",label:"Wallet Load",icon:"💳",mcc:"6540",sub:"Paytm, PhonePe — No rewards!"},
+  {id:"govt",label:"Govt / Tax Payments",icon:"🏛️",mcc:"9311,9222",sub:"GST, income tax — No rewards!"},
+  {id:"apparel",label:"Apparel / Fashion",icon:"👗",mcc:"5621,5651",sub:"Myntra, Westside, Zudio"},
+  {id:"electronics",label:"Electronics",icon:"💻",mcc:"5732,5065",sub:"Croma, Reliance Digital"},
+  {id:"health",label:"Health / Pharmacy",icon:"💊",mcc:"5912,8099",sub:"1mg, Netmeds, Apollo"},
+  {id:"education",label:"Education / EdTech",icon:"📚",mcc:"8299,8200",sub:"Udemy, BYJU's, schools"},
+  {id:"emi",label:"EMI Payments",icon:"📅",mcc:"6012",sub:"Usually excluded — No rewards!"},
 ];
 
 const REWARD_MAP = {
-  amazon_flipkart:  { "hdfc-millennia": 5, "icici-amazon-pay": 5, "flipkart-axis": 5, "sbi-cashback": 5, "axis-ace": 2, "hdfc-regalia": 2, "hdfc-infinia": 2.5 },
-  swiggy_zomato:    { "hdfc-swiggy": 10, "airtel-axis": 10, "flipkart-axis": 4, "axis-ace": 4, "sbi-cashback": 5, "hdfc-millennia": 2.5, "hdfc-regalia": 2 },
-  groceries:        { "hdfc-swiggy": 5, "rbl-iocl": 2, "hdfc-millennia": 2.5, "sbi-cashback": 5, "sc-simply-save": 2.5, "hdfc-regalia": 2 },
-  fuel:             { "rbl-iocl": 4, "hdfc-regalia": 1, "hdfc-millennia": 0, "sbi-cashback": 0 },
-  dining:           { "idfc-select": 10, "sc-simply-save": 2.5, "axis-privilege": 10, "kotak-zen": 6, "bob-eterna": 10, "hdfc-regalia": 2, "amex-gold": 5 },
-  movies:           { "rbl-bms": 10, "sc-simply-save": 2.5, "hdfc-millennia": 2.5, "sbi-cashback": 5 },
-  travel_flight:    { "axis-privilege": 15, "federal-imperio": 10, "hdfc-infinia": 5, "hdfc-diners-black": 5, "yes-first-exclusive": 12, "amex-gold": 5, "amex-rewards": 2 },
-  utility:          { "airtel-axis": 10, "citi-cashback": 5, "axis-ace": 5, "sbi-cashback": 1, "hdfc-millennia": 2.5 },
-  telecom:          { "airtel-axis": 25, "citi-cashback": 5, "axis-ace": 5, "sbi-cashback": 5, "hdfc-millennia": 2.5 },
-  rent:             { "axis-ace": 0, "hdfc-millennia": 0, "sbi-cashback": 0 },
-  insurance:        { "hdfc-regalia": 2, "sbi-cashback": 0, "hdfc-millennia": 0 },
-  wallet:           {},
-  govt:             {},
-  apparel:          { "flipkart-axis": 5, "hdfc-millennia": 5, "sbi-cashback": 5, "axis-ace": 2, "hdfc-regalia": 2 },
-  electronics:      { "sbi-cashback": 5, "hdfc-millennia": 5, "icici-amazon-pay": 5, "axis-ace": 2, "hdfc-regalia": 2 },
-  health:           { "sbi-cashback": 5, "icici-amazon-pay": 2, "axis-ace": 2, "hdfc-millennia": 2.5 },
-  education:        { "sbi-cashback": 5, "axis-ace": 2, "hdfc-regalia": 2 },
-  emi:              {},
+  amazon_flipkart: {"hdfc-millennia":5,"icici-amazon-pay":5,"flipkart-axis":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-infinia":2.5,"hdfc-moneyback-plus":10,"sbi-simply-click":10,"onecard":5,"hsbc-live-plus":1.5,"standard-chartered-ultimate":3.3},
+  swiggy_zomato: {"hdfc-swiggy":10,"airtel-axis":10,"flipkart-axis":4,"axis-ace":4,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-regalia":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"onecard":5},
+  groceries: {"hdfc-swiggy":5,"rbl-iocl":2,"hdfc-millennia":2.5,"sbi-cashback":5,"sc-simply-save":2.5,"hdfc-regalia":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"idfc-wealth":3,"au-altura-plus":1.5},
+  fuel: {"rbl-iocl":4,"hdfc-regalia":1,"hdfc-biz-moneyback":5},
+  dining: {"idfc-select":10,"idfc-wealth":10,"sc-simply-save":2.5,"axis-privilege":10,"axis-magnus":12,"kotak-zen":6,"bob-eterna":10,"hdfc-regalia":2,"amex-gold":5,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"sbi-simply-save":10},
+  movies: {"rbl-bms":10,"sc-simply-save":2.5,"hdfc-millennia":2.5,"sbi-cashback":5,"icici-coral":2,"sbi-simply-click":10},
+  travel_flight: {"axis-privilege":15,"axis-magnus":35,"axis-reserve":45,"axis-vistara-infinite":6,"federal-imperio":10,"hdfc-infinia":5,"hdfc-diners-black":5,"yes-first-exclusive":12,"amex-gold":5,"scapia":10,"rbl-world-safari":5,"indusind-legend":3,"idfc-wealth":3},
+  utility: {"airtel-axis":10,"citi-cashback":5,"axis-ace":5,"sbi-cashback":1,"hdfc-millennia":2.5,"hdfc-pixel-play":5,"au-altura-plus":1,"standard-chartered-ultimate":3.3},
+  telecom: {"airtel-axis":25,"citi-cashback":5,"axis-ace":5,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-biz-moneyback":5,"standard-chartered-ultimate":3.3},
+  rent: {"au-altura-plus":1},
+  insurance: {"hdfc-regalia":2,"standard-chartered-ultimate":3.3},
+  wallet: {}, govt: {}, emi: {},
+  apparel: {"flipkart-axis":5,"hdfc-millennia":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"sbi-simply-click":5,"standard-chartered-ultimate":3.3,"onecard":5},
+  electronics: {"sbi-cashback":5,"hdfc-millennia":5,"icici-amazon-pay":5,"axis-ace":2,"hdfc-regalia":2,"sbi-simply-click":10,"standard-chartered-ultimate":3.3},
+  health: {"sbi-cashback":5,"icici-amazon-pay":2,"axis-ace":2,"hdfc-millennia":2.5,"standard-chartered-ultimate":3.3},
+  education: {"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"standard-chartered-ultimate":3.3},
 };
 
 const MCC_DATA = [
-  { code: "5411", merchant: "Grocery Stores / Supermarkets", category: "Groceries", status: "earns", notes: "Earns on most cards. Some cards exclude Kirana/local stores." },
-  { code: "5812", merchant: "Eating Places & Restaurants", category: "Dining", status: "earns", notes: "Earns on all premium cards. IDFC Select gives 10X on weekends." },
-  { code: "5541", merchant: "Service Stations (Fuel)", category: "Fuel", status: "no-reward", notes: "Excluded from rewards on almost all cards. 1% surcharge waiver only." },
-  { code: "5542", merchant: "Automated Fuel Dispensers", category: "Fuel", status: "no-reward", notes: "Same as 5541 — no rewards, only surcharge waiver." },
-  { code: "6540", merchant: "POI (Wallet Loading)", category: "Wallet", status: "excluded", notes: "All wallets excluded. Paytm, PhonePe, GPay top-ups get 0 rewards and excluded from milestone." },
-  { code: "6513", merchant: "Real Estate / Rent Agents", category: "Rent", status: "no-reward", notes: "Most cards exclude rent. Rent-pay via apps often coded as 6513 — check your statement." },
-  { code: "9311", merchant: "Tax Payments", category: "Govt", status: "excluded", notes: "Income tax, GST, challan — universally excluded from rewards and milestones." },
-  { code: "9222", merchant: "Fines / Govt Fees", category: "Govt", status: "excluded", notes: "Court fees, traffic fines, municipal charges — no rewards." },
-  { code: "4900", merchant: "Utilities (Electricity, Gas, Water)", category: "Utilities", status: "earns", notes: "Earns on Axis ACE (5% via GPay), Airtel Axis (10%), Citi Cashback (5% via autopay)." },
-  { code: "4812", merchant: "Telephone & Telecom", category: "Telecom", status: "earns", notes: "Airtel Axis gives 25% cashback on Airtel recharges. Most cards give base reward." },
-  { code: "5999", merchant: "Miscellaneous Online Retail", category: "Online Shopping", status: "earns", notes: "Includes Amazon, most e-commerce. SBI Cashback, HDFC Millennia give 5%." },
-  { code: "5732", merchant: "Electronics Shops", category: "Electronics", status: "earns", notes: "Croma, Reliance Digital. Earns normal rewards. HDFC Millennia, SBI Cashback give 5%." },
-  { code: "7832", merchant: "Motion Picture Theatres", category: "Entertainment", status: "earns", notes: "PVR, INOX. RBL BMS gives 10%. SC Simply Save gives 10X points." },
-  { code: "8011", merchant: "Doctors & Hospitals", category: "Health", status: "earns", notes: "Generally earns standard rewards. Not boosted on most cards." },
-  { code: "5912", merchant: "Drug Stores & Pharmacies", category: "Health", status: "earns", notes: "1mg, Netmeds, Apollo Pharmacy. Earns on most cards." },
-  { code: "5621", merchant: "Women's Ready-to-Wear", category: "Apparel", status: "earns", notes: "Myntra, Westside. 5% on SBI Cashback, HDFC Millennia, Flipkart Axis." },
-  { code: "6300", merchant: "Insurance", category: "Insurance", status: "capped", notes: "LIC, health insurance — earns on some cards but excluded on SBI Cashback, HDFC Millennia." },
-  { code: "6012", merchant: "Financial Institutions — EMI", category: "EMI", status: "excluded", notes: "Credit card EMIs, loan repayments — excluded from rewards on all major cards. Critical milestone trap." },
-  { code: "3000-3299", merchant: "Airlines", category: "Travel", status: "earns", notes: "Best on Axis Privilege (15X), Federal Imperio (10X), HDFC Infinia (5X), Amex Gold (5X)." },
-  { code: "7011", merchant: "Hotels & Lodging", category: "Travel", status: "earns", notes: "Earns on travel cards. Amex Gold gives quarterly vouchers for Taj/Marriott." },
-  { code: "5813", merchant: "Bars / Taverns / Liquor", category: "Dining", status: "earns", notes: "Usually treated as dining — earns normal rewards." },
-  { code: "8299", merchant: "Schools / Educational", category: "Education", status: "capped", notes: "Some schools accept cards. Generally earns base reward. Not boosted." },
-  { code: "5045", merchant: "Computers & Peripherals", category: "Electronics", status: "earns", notes: "Enterprise electronics. Earns normally." },
-  { code: "5200", merchant: "Home Supply Stores", category: "Home", status: "earns", notes: "IKEA, Home Centre. Standard rewards on most cards." },
-  { code: "5945", merchant: "Hobby, Toy & Game Shops", category: "Retail", status: "earns", notes: "Earns normally on most cards." },
-  { code: "4111", merchant: "Local Commuter Transport / Metro", category: "Transport", status: "capped", notes: "Metro, buses. Usually earns base. Check if public transport is excluded." },
-  { code: "4121", merchant: "Taxi / Rideshare (Ola, Uber)", category: "Transport", status: "earns", notes: "Axis ACE gives 4% on Ola. Flipkart Axis gives 4% on partner apps." },
-  { code: "5411", merchant: "Supermarkets (BigBasket)", category: "Grocery Online", status: "earns", notes: "Online grocery via apps codes as 5411. Earns on most cashback cards." },
-  { code: "7523", merchant: "Automobile Parking Lots", category: "Parking", status: "earns", notes: "FASTag, parking. Earns base rewards. Not boosted." },
-  { code: "5047", merchant: "Medical & Dental Equipment", category: "Medical", status: "earns", notes: "Hospital equipment purchases. Earns base." },
-  { code: "4814", merchant: "Telecommunication Services", category: "Telecom", status: "earns", notes: "Airtel, Jio, Vi. Airtel Axis gives up to 25% on Airtel services." },
-  { code: "5661", merchant: "Shoe Stores", category: "Apparel", status: "earns", notes: "Bata, Woodland. Earns base rewards on most cards." },
-  { code: "5944", merchant: "Jewelry Stores", category: "Jewellery", status: "capped", notes: "Jewellery usually excluded from accelerated rewards. HDFC Millennia explicitly excludes jewellery." },
-  { code: "5511", merchant: "Car Dealers (New)", category: "Automotive", status: "capped", notes: "High-ticket exclusions apply. Most banks cap rewards on auto purchases." },
-  { code: "6011", merchant: "ATM Cash Withdrawals", category: "Cash", status: "excluded", notes: "No rewards on cash advances. High cash advance fees apply (2.5% or ₹500 min)." },
-  { code: "8062", merchant: "Hospitals", category: "Healthcare", status: "earns", notes: "Apollo, Fortis, Manipal. Earns base rewards. Health booster on few cards." },
-  { code: "5411", merchant: "Convenience Stores / D-Mart", category: "Retail", status: "earns", notes: "D-Mart, More, Spencer's. Earns normal grocery rate on most cards." },
-  { code: "7922", merchant: "Theatrical Producers / Ticketing", category: "Entertainment", status: "earns", notes: "Event tickets, BookMyShow non-movie. RBL BMS gives 10%." },
-  { code: "5172", merchant: "Petroleum Products", category: "Fuel", status: "no-reward", notes: "Commercial fuel buyers — treated same as regular fuel. No rewards." },
+  {code:"5411",merchant:"Grocery Stores / Supermarkets",category:"Groceries",status:"earns",notes:"Earns on most cards. HSBC Live+ gives 10%."},
+  {code:"5812",merchant:"Eating Places & Restaurants",category:"Dining",status:"earns",notes:"IDFC Select 10X on weekends. Axis Magnus 12X."},
+  {code:"5541",merchant:"Service Stations (Fuel)",category:"Fuel",status:"no-reward",notes:"Excluded from rewards on almost all cards. 1% surcharge waiver only."},
+  {code:"5542",merchant:"Automated Fuel Dispensers",category:"Fuel",status:"no-reward",notes:"Same as 5541 — no rewards, only surcharge waiver."},
+  {code:"6540",merchant:"POI (Wallet Loading)",category:"Wallet",status:"excluded",notes:"All wallets excluded. Paytm, PhonePe, GPay top-ups get 0 rewards and excluded from milestone."},
+  {code:"6513",merchant:"Real Estate / Rent Agents",category:"Rent",status:"no-reward",notes:"Most cards exclude rent. Check your statement."},
+  {code:"9311",merchant:"Tax Payments",category:"Govt",status:"excluded",notes:"Income tax, GST, challan — universally excluded."},
+  {code:"9222",merchant:"Fines / Govt Fees",category:"Govt",status:"excluded",notes:"Court fees, traffic fines — no rewards."},
+  {code:"4900",merchant:"Utilities (Electricity, Gas, Water)",category:"Utilities",status:"earns",notes:"Axis ACE 5% via GPay. Airtel Axis 10%. Citi 5% via autopay."},
+  {code:"4812",merchant:"Telephone & Telecom",category:"Telecom",status:"earns",notes:"Airtel Axis gives 25% on Airtel recharges."},
+  {code:"5999",merchant:"Miscellaneous Online Retail",category:"Online Shopping",status:"earns",notes:"Amazon, most e-commerce. SBI Cashback, HDFC Millennia give 5%."},
+  {code:"5732",merchant:"Electronics Shops",category:"Electronics",status:"earns",notes:"Croma, Reliance Digital. SBI SimplyCLICK 10X."},
+  {code:"7832",merchant:"Motion Picture Theatres",category:"Entertainment",status:"earns",notes:"PVR, INOX. RBL BMS 10%. SC Simply Save 10X."},
+  {code:"5912",merchant:"Drug Stores & Pharmacies",category:"Health",status:"earns",notes:"1mg, Netmeds, Apollo Pharmacy. SBI Cashback 5%."},
+  {code:"5621",merchant:"Women's Ready-to-Wear / Apparel",category:"Apparel",status:"earns",notes:"Myntra, Westside. 5% on SBI Cashback, Flipkart Axis."},
+  {code:"6300",merchant:"Insurance",category:"Insurance",status:"capped",notes:"LIC, health insurance — excluded on SBI Cashback, HDFC Millennia."},
+  {code:"6012",merchant:"Financial Institutions — EMI",category:"EMI",status:"excluded",notes:"Credit card EMIs, loan repayments — excluded from ALL cards. Critical milestone trap."},
+  {code:"3000-3299",merchant:"Airlines",category:"Travel",status:"earns",notes:"Best on Axis Magnus (35X), Axis Reserve (45X), Axis Privilege (15X), HDFC Infinia (5X)."},
+  {code:"7011",merchant:"Hotels & Lodging",category:"Travel",status:"earns",notes:"Amex Gold gives quarterly vouchers for Taj/Marriott."},
+  {code:"5813",merchant:"Bars / Taverns / Liquor",category:"Dining",status:"earns",notes:"Usually treated as dining — earns normal rewards."},
+  {code:"8299",merchant:"Schools / Educational",category:"Education",status:"capped",notes:"Earns base reward generally. Not boosted on most cards."},
+  {code:"4121",merchant:"Taxi / Rideshare (Ola, Uber)",category:"Transport",status:"earns",notes:"Axis ACE 4% on Ola. Flipkart Axis 4% on partner apps."},
+  {code:"5944",merchant:"Jewelry Stores",category:"Jewellery",status:"capped",notes:"Jewellery excluded from accelerated rewards on HDFC Millennia."},
+  {code:"6011",merchant:"ATM Cash Withdrawals",category:"Cash",status:"excluded",notes:"No rewards on cash advances. High fees apply."},
+  {code:"8062",merchant:"Hospitals",category:"Healthcare",status:"earns",notes:"Apollo, Fortis. Earns base rewards."},
+  {code:"7922",merchant:"Theatrical Producers / Ticketing",category:"Entertainment",status:"earns",notes:"Event tickets, BookMyShow. RBL BMS 10%."},
+  {code:"5200",merchant:"Home Supply Stores",category:"Home",status:"earns",notes:"IKEA, Home Centre. Standard rewards on most cards."},
+  {code:"4814",merchant:"Telecommunication Services",category:"Telecom",status:"earns",notes:"Airtel, Jio, Vi. Airtel Axis up to 25% on Airtel services."},
+  {code:"5511",merchant:"Car Dealers (New)",category:"Automotive",status:"capped",notes:"Most banks cap rewards on auto purchases."},
+  {code:"5172",merchant:"Petroleum Products",category:"Fuel",status:"no-reward",notes:"Commercial fuel — treated same as regular fuel. No rewards."},
+  {code:"7523",merchant:"Automobile Parking Lots",category:"Parking",status:"earns",notes:"FASTag, parking. Earns base rewards. Not boosted."},
+  {code:"5661",merchant:"Shoe Stores",category:"Apparel",status:"earns",notes:"Bata, Woodland. Earns base rewards."},
+  {code:"8011",merchant:"Doctors",category:"Health",status:"earns",notes:"Generally earns standard rewards."},
+  {code:"4111",merchant:"Local Commuter Transport / Metro",category:"Transport",status:"capped",notes:"Metro, buses. Usually earns base. Check if excluded."},
+  {code:"5045",merchant:"Computers & Peripherals",category:"Electronics",status:"earns",notes:"Enterprise electronics. Earns normally."},
 ];
 
+// ===================== STATE =====================
 let myCards = JSON.parse(localStorage.getItem('cs_my_cards') || '[]');
 let milestoneCards = JSON.parse(localStorage.getItem('cs_ms_cards') || '[]');
 let milestoneSpend = JSON.parse(localStorage.getItem('cs_ms_spend') || '{}');
 let mccFilter = 'all';
 let dbFilterBank = 'all';
 let showMyOnly = false;
+let customCards = [], customMCC = [], customRewardMap = {}, customECats = [];
 
-function showTab(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  event && event.target && event.target.classList.add('active');
-  const tabs = document.querySelectorAll('.nav-tab');
-  const names = ['home','planner','mcc','milestones','cards','admin'];
-  tabs[names.indexOf(name)] && tabs[names.indexOf(name)].classList.add('active');
-
+// ===================== NAV =====================
+function showSection(name) {
+  document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll(`[data-section="${name}"]`).forEach(b => b.classList.add('active'));
+  const titles = {home:'Home',planner:'Expense Planner',mcc:'MCC Guide',milestones:'Milestone Tracker',cards:'Card Database',admin:'Admin'};
+  document.getElementById('page-title').textContent = titles[name] || name;
   if (name === 'planner') renderExpenseInputs();
   if (name === 'mcc') renderMCC();
   if (name === 'milestones') renderMilestones();
   if (name === 'cards') renderCards();
+  if (name === 'admin') renderAdminCards();
 }
 
+// ===================== UTILS =====================
 function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+function toast(msg, dur=2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
 
-// MY CARDS
+// ===================== MY CARDS =====================
 function toggleMyCard(id) {
   if (myCards.includes(id)) myCards = myCards.filter(x => x !== id);
   else myCards.push(id);
   localStorage.setItem('cs_my_cards', JSON.stringify(myCards));
   renderCards();
-  renderMyChips();
+  renderPlannerMyCards();
   updateMilestoneSelect();
+  toast(myCards.includes(id) ? 'Card added to your wallet' : 'Card removed');
 }
 
-function renderMyChips() {
-  const el = document.getElementById('my-cards-chips');
+function renderPlannerMyCards() {
+  const el = document.getElementById('planner-my-cards');
   if (!el) return;
   if (myCards.length === 0) {
-    el.innerHTML = '<span style="font-size:13px;color:var(--muted)">No cards selected — go to Card Database tab to add yours.</span>';
+    el.innerHTML = '<span class="text-sm text-on-surface-variant">No cards selected — go to Card Database tab first.</span>';
     return;
   }
   el.innerHTML = myCards.map(id => {
     const c = CARDS.find(x => x.id === id);
-    return `<div class="my-card-chip" onclick="toggleMyCard('${id}')"><span>${c.name}</span><span class="rm">×</span></div>`;
+    return `<span class="flex items-center gap-1.5 bg-on-surface text-white rounded-full px-3 py-1 text-xs font-semibold cursor-pointer" onclick="toggleMyCard('${id}')">${c.name} <span class="opacity-50">×</span></span>`;
   }).join('');
 }
 
-// EXPENSE PLANNER
+// ===================== EXPENSE PLANNER =====================
 function renderExpenseInputs() {
   const el = document.getElementById('expense-inputs');
   if (!el) return;
   el.innerHTML = EXPENSE_CATS.map(cat => `
-    <div class="exp-row">
-      <div class="exp-icon">${cat.icon}</div>
-      <div style="flex:1">
-        <div class="exp-label">${cat.label}</div>
-        <div class="exp-sub">${cat.sub}</div>
+    <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container-low/50 transition-colors">
+      <span class="text-2xl w-8 text-center flex-shrink-0">${cat.icon}</span>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-on-surface truncate">${cat.label}</div>
+        <div class="text-xs text-on-surface-variant truncate">${cat.sub}</div>
       </div>
-      <input class="exp-input" type="number" id="exp-${cat.id}" placeholder="₹0" min="0">
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-on-surface-variant">₹</span>
+        <input type="number" id="exp-${cat.id}" placeholder="0" min="0" class="w-28 pl-6 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-sm text-right outline-none focus:border-primary"/>
+      </div>
     </div>
   `).join('');
-  renderMyChips();
+  renderPlannerMyCards();
 }
 
 function calcRewards() {
   const results = [];
   let totalReward = 0;
   const warnings = [];
+  const cardsToCheck = myCards.length > 0 ? myCards : CARDS.map(c => c.id);
 
   EXPENSE_CATS.forEach(cat => {
     const el = document.getElementById('exp-' + cat.id);
     const amt = parseFloat(el?.value || 0);
     if (!amt) return;
-
     const catRates = REWARD_MAP[cat.id] || {};
     let bestCard = null, bestRate = 0;
-
-    const cardsToCheck = myCards.length > 0 ? myCards : CARDS.map(c => c.id);
-
     cardsToCheck.forEach(cid => {
       const rate = catRates[cid] || 0;
       if (rate > bestRate) { bestRate = rate; bestCard = cid; }
     });
-
-    if (['wallet', 'govt', 'emi'].includes(cat.id) || bestRate === 0) {
-      warnings.push(`${cat.icon} ${cat.label} — earns NO rewards (excluded category)`);
+    if (['wallet','govt','emi'].includes(cat.id) || bestRate === 0) {
+      warnings.push(`${cat.icon} <strong>${cat.label}</strong> — earns NO rewards (excluded category)`);
       return;
     }
-
-    if (cat.id === 'rent') {
-      warnings.push(`🏠 Rent payments — most cards excluded. Check your card's MITC before paying.`);
-      return;
-    }
-
+    if (cat.id === 'rent') { warnings.push('🏠 <strong>Rent</strong> — most cards excluded. Check your card MITC before paying.'); return; }
     const card = CARDS.find(c => c.id === bestCard);
     const reward = amt * bestRate / 100;
     totalReward += reward;
-
-    results.push({ cat: cat.label, icon: cat.icon, card: card?.name || bestCard, rate: bestRate, reward, amt });
+    results.push({cat:cat.label, icon:cat.icon, card:card?.name || bestCard, rate:bestRate, reward, amt});
   });
 
-  // Update UI
   document.getElementById('total-reward-num').textContent = fmt(totalReward);
   document.getElementById('total-reward-sub').textContent = `Estimated monthly rewards across ${results.length} categories`;
 
   const recEl = document.getElementById('rec-list');
-  if (results.length === 0) {
-    recEl.innerHTML = '<h3>Best Card Per Category</h3><div style="color:rgba(255,255,255,0.4);font-size:13px;text-align:center;padding:1rem">Enter spend amounts above</div>';
+  if (!results.length) {
+    recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Best Card Per Category</p><p class="text-sm text-white/40 text-center py-4">Enter spend amounts above</p>';
   } else {
-    recEl.innerHTML = '<h3>Best Card Per Category</h3>' + results.map(r => `
-      <div class="rec-item">
-        <div>
-          <div class="rec-cat">${r.icon} ${r.cat}</div>
-          <div class="rec-card-name">${r.card}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4)">Use for ${fmt(r.amt)} spend</div>
+    recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Best Card Per Category</p>' +
+      results.map(r => `
+        <div class="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
+          <div>
+            <div class="text-xs text-white/50">${r.icon} ${r.cat}</div>
+            <div class="text-sm font-semibold text-white">${r.card}</div>
+            <div class="text-xs text-white/40">on ${fmt(r.amt)} spend</div>
+          </div>
+          <div class="text-right">
+            <div class="text-lg font-bold text-secondary-container">${fmt(r.reward)}</div>
+            <div class="text-xs text-white/40">${r.rate}% back</div>
+          </div>
         </div>
-        <div style="text-align:right">
-          <div class="rec-reward">${fmt(r.reward)}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4)">${r.rate}% back</div>
-        </div>
-      </div>
-    `).join('');
+      `).join('');
   }
 
   const warnEl = document.getElementById('warn-panel');
   if (warnings.length) {
-    warnEl.innerHTML = `<div class="warn-box"><h4>⚠️ Watch Out — No Rewards Here</h4>${warnings.map(w => `<div class="warn-item">${w}</div>`).join('')}</div>`;
-  } else {
-    warnEl.innerHTML = '';
-  }
+    warnEl.innerHTML = `<div class="bg-error-container rounded-2xl p-4 border border-error/20"><p class="text-sm font-semibold text-error mb-2">⚠️ No Rewards on These</p>${warnings.map(w => `<p class="text-xs text-on-error-container py-1">${w}</p>`).join('')}</div>`;
+  } else { warnEl.innerHTML = ''; }
 }
 
-// MCC
+// ===================== MCC =====================
 function renderMCC() {
   const tbody = document.getElementById('mcc-tbody');
   const search = document.getElementById('mcc-search')?.value.toLowerCase() || '';
   let data = MCC_DATA;
   if (mccFilter !== 'all') data = data.filter(m => m.status === mccFilter);
   if (search) data = data.filter(m => m.code.includes(search) || m.merchant.toLowerCase().includes(search) || m.category.toLowerCase().includes(search));
-
-  const statusMap = {
-    'earns': '<span class="reward-dot dot-green"></span>Earns Rewards',
-    'no-reward': '<span class="reward-dot dot-red"></span>No Reward',
-    'capped': '<span class="reward-dot dot-amber"></span>Capped / Limited',
-    'excluded': '<span class="badge badge-red">Excluded</span>',
-  };
-
+  const sMap = { earns:'<span class="badge badge-green">✅ Earns</span>', 'no-reward':'<span class="badge badge-red">❌ None</span>', capped:'<span class="badge badge-amber">⚠️ Capped</span>', excluded:'<span class="badge badge-red">🚫 Excluded</span>' };
   tbody.innerHTML = data.map(m => `
-    <tr>
-      <td><span class="mcc-code">${m.code}</span></td>
-      <td style="font-weight:500;font-size:13px">${m.merchant}</td>
-      <td><span class="badge badge-gray">${m.category}</span></td>
-      <td style="font-size:13px">${statusMap[m.status] || m.status}</td>
-      <td style="font-size:12px;color:var(--muted);max-width:280px">${m.notes}</td>
+    <tr class="hover:bg-surface-container-low/50 transition-colors">
+      <td class="p-3 font-mono text-sm font-semibold text-primary-container">${m.code}</td>
+      <td class="p-3 text-sm font-medium text-on-surface">${m.merchant}</td>
+      <td class="p-3"><span class="badge badge-gray">${m.category}</span></td>
+      <td class="p-3">${sMap[m.status] || m.status}</td>
+      <td class="p-3 text-xs text-on-surface-variant hidden md:table-cell max-w-xs">${m.notes}</td>
     </tr>
   `).join('');
 }
 
 function setMCCFilter(f, btn) {
   mccFilter = f;
-  document.querySelectorAll('#mcc-filters .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('bg-on-surface','text-white');
+    b.classList.add('bg-white','text-on-surface-variant');
+  });
+  btn.classList.add('bg-on-surface','text-white');
+  btn.classList.remove('bg-white','text-on-surface-variant');
   renderMCC();
 }
 
-function filterMCC() { renderMCC(); }
-
-// MILESTONES
+// ===================== MILESTONES =====================
 function updateMilestoneSelect() {
   const sel = document.getElementById('ms-card-select');
   if (!sel) return;
-  sel.innerHTML = '<option value="">+ Add card to track</option>' +
-    CARDS.map(c => `<option value="${c.id}">${c.name} (${c.bank})</option>`).join('');
+  sel.innerHTML = '<option value="">+ Add card to track</option>' + CARDS.map(c => `<option value="${c.id}">${c.name} (${c.bank})</option>`).join('');
 }
 
 function addMilestoneCard() {
@@ -1665,94 +730,59 @@ function addMilestoneCard() {
 function renderMilestones() {
   const grid = document.getElementById('milestone-grid');
   if (!grid) return;
-  const monthSel = document.getElementById('ms-month-select');
-  const month = parseInt(monthSel?.value || new Date().getMonth());
+  const month = parseInt(document.getElementById('ms-month-select')?.value || new Date().getMonth());
   const monthsLeft = 12 - month;
-
-  if (milestoneCards.length === 0) {
-    grid.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:2rem;text-align:center;grid-column:1/-1">Add cards above to start tracking milestones.</div>';
+  if (!milestoneCards.length) {
+    grid.innerHTML = '<div class="text-on-surface-variant text-sm text-center py-10 col-span-full">Add cards above to start tracking milestones.</div>';
     return;
   }
-
   grid.innerHTML = milestoneCards.map(id => {
     const c = CARDS.find(x => x.id === id);
     if (!c) return '';
-    const key = id;
-    const currentSpend = parseFloat(milestoneSpend[key] || 0);
-    const waiverTarget = c.waiver;
-    const pct = waiverTarget ? Math.min(100, (currentSpend / waiverTarget) * 100) : null;
-    const remaining = waiverTarget ? Math.max(0, waiverTarget - currentSpend) : null;
+    const spend = parseFloat(milestoneSpend[id] || 0);
+    const pct = c.waiver ? Math.min(100, (spend / c.waiver) * 100) : null;
+    const remaining = c.waiver ? Math.max(0, c.waiver - spend) : null;
     const monthly = remaining && monthsLeft > 0 ? remaining / monthsLeft : 0;
-
-    let progressClass = '';
-    if (pct !== null) {
-      if (pct >= 100) progressClass = 'done';
-      else if (monthly > 50000) progressClass = 'danger';
-    }
-
     return `
-      <div class="ms-card fade-in">
-        <div class="ms-header">
+      <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden card-hover">
+        <div class="p-4 bg-surface-container-low border-b border-outline-variant/20 flex justify-between items-center">
           <div>
-            <div class="ms-bank">${c.bank}</div>
-            <div style="font-family:var(--font-head);font-size:14px;font-weight:700;margin-top:2px">${c.name}</div>
+            <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">${c.bank}</div>
+            <div class="font-semibold text-on-surface mt-0.5">${c.name}</div>
           </div>
-          <div>
-            <span class="badge ${c.annual === 0 ? 'badge-teal' : 'badge-amber'}">
-              ${c.annual === 0 ? 'Lifetime Free' : 'Annual ₹' + c.annual.toLocaleString('en-IN')}
-            </span>
-          </div>
+          <span class="badge ${c.annual === 0 ? 'badge-green' : 'badge-amber'}">${c.annual === 0 ? 'Free' : '₹'+c.annual.toLocaleString('en-IN')+'/yr'}</span>
         </div>
-        <div class="ms-body">
-          <div class="ms-input-row">
-            <label>Spend so far ₹</label>
-            <input class="ms-input" type="number" id="ms-spend-${id}"
-              value="${milestoneSpend[key] || ''}" placeholder="0"
-              oninput="updateMilestoneSpend('${id}', this.value)">
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs text-on-surface-variant">Spend so far ₹</span>
+            <input class="flex-1 px-3 py-1.5 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary text-right" type="number" value="${milestoneSpend[id]||''}" placeholder="0" oninput="updateMilestoneSpend('${id}', this.value)"/>
           </div>
-
-          ${waiverTarget ? `
-          <div class="progress-row" style="margin-top:1rem">
-            <div class="progress-label">
-              <span style="font-size:13px;font-weight:500">Fee Waiver Progress</span>
-              <span style="font-size:13px;color:var(--muted)">${fmt(currentSpend)} / ${fmt(waiverTarget)}</span>
+          ${pct !== null ? `
+          <div class="mb-3">
+            <div class="flex justify-between text-xs text-on-surface-variant mb-1.5">
+              <span>Fee Waiver Progress</span><span>${fmt(spend)} / ${fmt(c.waiver)}</span>
             </div>
-            <div class="progress-track">
-              <div class="progress-fill ${progressClass}" style="width:${pct}%"></div>
+            <div class="progress-bar"><div class="progress-fill ${pct>=100?'done':''}" style="width:${pct}%"></div></div>
+            <div class="text-xs mt-1.5 ${pct>=100?'text-primary font-semibold':'text-on-surface-variant'}">
+              ${pct>=100 ? '✅ Fee waiver achieved!' : `Need ${fmt(remaining)} more (${fmt(monthly)}/month for ${monthsLeft} months)`}
             </div>
-            <div style="font-size:12px;color:var(--muted);margin-top:5px">
-              ${pct >= 100 ? '✅ Fee waiver achieved! Annual fee will be reversed.' :
-                `Need ${fmt(remaining)} more (${fmt(monthly)}/month for ${monthsLeft} months left)`}
-            </div>
+          </div>` : '<div class="text-xs text-on-surface-variant mb-3">No annual fee waiver on this card.</div>'}
+          <div class="border-t border-outline-variant/20 pt-3 mt-1">
+            <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Key Benefits</div>
+            ${c.benefits.slice(0,3).map(b => `<div class="text-xs text-on-surface-variant py-0.5 flex gap-1.5"><span class="text-secondary flex-shrink-0">→</span>${b}</div>`).join('')}
           </div>
-          ` : `<div style="font-size:12px;color:var(--muted);margin-top:0.75rem">No annual fee waiver on this card.</div>`}
-
-          <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:0.75rem">
-            <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Benefits & Milestones</div>
-            <ul class="benefit-list">
-              ${c.benefits.slice(0,3).map(b => `<li>${b}</li>`).join('')}
-            </ul>
-          </div>
-
-          ${c.excluded.length ? `
-          <div style="margin-top:0.75rem;padding:8px 10px;background:var(--red-lt);border-radius:7px">
-            <div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:3px">Excluded from rewards & milestone:</div>
-            <div style="font-size:11px;color:#7a1a1a">${c.excluded.join(' · ')}</div>
-          </div>` : ''}
-
-          <button onclick="removeMilestone('${id}')" style="margin-top:0.75rem;font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0">Remove card ×</button>
+          ${c.excluded.length ? `<div class="mt-3 p-2.5 bg-error-container/30 rounded-xl"><div class="text-xs font-semibold text-error mb-1">Excluded from rewards & milestone:</div><div class="text-xs text-on-error-container">${c.excluded.join(' · ')}</div></div>` : ''}
+          <button onclick="removeMilestone('${id}')" class="mt-3 text-xs text-on-surface-variant hover:text-error transition-colors">Remove ×</button>
         </div>
       </div>
     `;
   }).join('');
-
-  updateMilestoneSelect();
 }
 
 function updateMilestoneSpend(id, val) {
   milestoneSpend[id] = parseFloat(val) || 0;
   localStorage.setItem('cs_ms_spend', JSON.stringify(milestoneSpend));
-  setTimeout(() => renderMilestones(), 100);
+  setTimeout(() => renderMilestones(), 150);
 }
 
 function removeMilestone(id) {
@@ -1761,7 +791,7 @@ function removeMilestone(id) {
   renderMilestones();
 }
 
-// CARD DATABASE
+// ===================== CARD DATABASE =====================
 function renderCards() {
   const grid = document.getElementById('db-grid');
   if (!grid) return;
@@ -1774,49 +804,33 @@ function renderCards() {
   grid.innerHTML = cards.map(c => {
     const owned = myCards.includes(c.id);
     return `
-    <div class="db-card">
-      <div class="db-card-header">
-        <div>
-          <div class="db-card-name">${c.name}</div>
-          <div class="db-card-bank">${c.bank} · ${c.type}</div>
+      <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden card-hover">
+        <div class="p-4 bg-surface-container-low border-b border-outline-variant/20 flex justify-between items-start">
+          <div>
+            <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">${c.bank}</div>
+            <div class="font-semibold text-on-surface mt-0.5">${c.name}</div>
+            <span class="badge badge-gray mt-1.5">${c.type}</span>
+          </div>
+          <button onclick="toggleMyCard('${c.id}')" class="flex-shrink-0 ml-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${owned ? 'bg-primary-container/30 text-primary border-primary' : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary'}">
+            ${owned ? '✓ My Card' : '+ Add'}
+          </button>
         </div>
-        <button onclick="toggleMyCard('${c.id}')" style="
-          padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;
-          border:1px solid ${owned ? 'var(--teal)' : 'var(--border-strong)'};
-          background:${owned ? 'var(--teal-lt)' : 'white'};
-          color:${owned ? 'var(--teal)' : 'var(--muted)'};
-          white-space:nowrap;
-        ">${owned ? '✓ My Card' : '+ Add Card'}</button>
-      </div>
-      <div class="db-card-body">
-        <div class="fee-row"><span class="fee-key">Joining Fee</span><span class="fee-val">${c.joining === 0 ? 'Free' : fmt(c.joining)}</span></div>
-        <div class="fee-row"><span class="fee-key">Annual Fee</span><span class="fee-val">${c.annual === 0 ? 'Lifetime Free' : fmt(c.annual)}</span></div>
-        <div class="fee-row"><span class="fee-key">Fee Waiver</span><span class="fee-val">${c.waiver ? fmt(c.waiver) + ' annual spend' : 'No waiver'}</span></div>
-        <div style="margin-top:10px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Rewards</div>
-          ${c.rewards.map(r => `
-            <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0">
-              <span style="color:var(--muted)">${r.cat}</span>
-              <span style="font-weight:600">${r.rate}% ${r.cap ? '<span class="tag-capped">cap '+fmt(r.cap)+'/mo</span>' : ''}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${c.excluded.length ? `
-        <div style="margin-top:8px">
-          <div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">Excluded</div>
-          <div style="font-size:12px;color:var(--red)">${c.excluded.map(e => `<span class="tag-no-reward" style="margin:2px;">${e}</span>`).join(' ')}</div>
-        </div>` : ''}
-        <div class="reward-chips" style="margin-top:10px">
-          ${c.benefits.slice(0,2).map(b => `<span class="reward-chip">${b.length > 40 ? b.slice(0,38)+'…' : b}</span>`).join('')}
+        <div class="p-4">
+          <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Joining</div><div class="text-sm font-semibold text-on-surface">${c.joining===0?'Free':'₹'+c.joining.toLocaleString('en-IN')}</div></div>
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Annual</div><div class="text-sm font-semibold text-on-surface">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</div></div>
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Waiver</div><div class="text-sm font-semibold text-on-surface">${c.waiver?'₹'+Math.round(c.waiver/1000)+'k':'None'}</div></div>
+          </div>
+          <div class="mb-3">
+            ${c.rewards.map(r => `<div class="flex justify-between text-xs py-1 border-b border-outline-variant/10 last:border-0"><span class="text-on-surface-variant">${r.cat}</span><span class="font-semibold text-primary">${r.rate}% ${r.cap?'<span class="text-error text-xs">(cap ₹'+r.cap.toLocaleString('en-IN')+'/mo)</span>':''}</span></div>`).join('')}
+          </div>
+          ${c.excluded.length ? `<div class="flex flex-wrap gap-1 mb-2">${c.excluded.map(e=>`<span class="badge badge-red">${e}</span>`).join('')}</div>` : ''}
+          <button onclick="toggleMITC('${c.id}')" class="w-full text-xs text-on-surface-variant border-t border-outline-variant/20 pt-3 mt-1 hover:text-primary transition-colors" id="mitc-btn-${c.id}">Show MITC Details ▾</button>
+          <div class="mitc-detail" id="mitc-${c.id}">
+            ${Object.entries(c.mitc).map(([k,v]) => `<div class="flex gap-3 text-xs py-1 border-b border-outline-variant/10 last:border-0"><span class="font-medium text-on-surface min-w-[120px] flex-shrink-0">${k}</span><span class="text-on-surface-variant">${v}</span></div>`).join('')}
+          </div>
         </div>
       </div>
-      <button class="expand-btn" onclick="toggleMITC('${c.id}')">Show MITC Details ▾</button>
-      <div class="mitc-detail" id="mitc-${c.id}">
-        ${Object.entries(c.mitc).map(([k,v]) => `
-          <div class="mitc-item"><span class="mitc-key">${k}</span><span>${v}</span></div>
-        `).join('')}
-      </div>
-    </div>
     `;
   }).join('');
 
@@ -1824,163 +838,94 @@ function renderCards() {
   const banksEl = document.getElementById('bank-filters');
   if (banksEl && !banksEl.children.length) {
     const banks = [...new Set(CARDS.map(c => c.bank))];
-    banksEl.innerHTML = `<button class="filter-btn active" onclick="setDBBank('all',this)">All Banks</button>` +
-      banks.map(b => `<button class="filter-btn" onclick="setDBBank('${b}',this)">${b}</button>`).join('');
+    banksEl.innerHTML = `<button class="filter-btn active px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-on-surface text-white" onclick="setDBBank('all',this)">All Banks</button>` +
+      banks.map(b => `<button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setDBBank('${b}',this)">${b}</button>`).join('');
   }
+  document.getElementById('sidebar-card-count').textContent = CARDS.length;
+  document.getElementById('home-card-count').textContent = CARDS.length;
 }
 
 function toggleMITC(id) {
   const el = document.getElementById('mitc-' + id);
-  const btn = el.previousElementSibling;
+  const btn = document.getElementById('mitc-btn-' + id);
   el.classList.toggle('open');
   btn.textContent = el.classList.contains('open') ? 'Hide MITC Details ▴' : 'Show MITC Details ▾';
 }
 
-function filterCards() { renderCards(); }
-
 function setDBBank(bank, btn) {
   dbFilterBank = bank;
-  document.querySelectorAll('#bank-filters .filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('#bank-filters .filter-btn').forEach(b => {
+    b.classList.remove('bg-on-surface','text-white');
+    b.classList.add('bg-white','text-on-surface-variant');
+  });
+  btn.classList.add('bg-on-surface','text-white');
+  btn.classList.remove('bg-white','text-on-surface-variant');
   renderCards();
 }
 
 function toggleMyCards() {
   showMyOnly = !showMyOnly;
-  const btn = document.getElementById('filter-my-btn');
-  btn.classList.toggle('active', showMyOnly);
-  btn.textContent = showMyOnly ? 'Show All Cards' : 'Show My Cards Only';
+  const btn = document.getElementById('my-cards-filter-btn');
+  btn.textContent = showMyOnly ? 'Show All Cards' : 'My Cards Only';
+  if (showMyOnly) btn.classList.add('border-primary','text-primary'); else btn.classList.remove('border-primary','text-primary');
   renderCards();
 }
 
-// INIT
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('total-cards-count').textContent = CARDS.length;
-  document.getElementById('total-mcc-count').textContent = MCC_DATA.length + '+';
-  const now = new Date();
-  const msSel = document.getElementById('ms-month-select');
-  if (msSel) msSel.value = now.getMonth();
-  updateMilestoneSelect();
-});
+function handleGlobalSearch(val) {
+  const v = val.toLowerCase();
+  if (!v) return;
+  const inCard = CARDS.some(c => c.name.toLowerCase().includes(v) || c.bank.toLowerCase().includes(v));
+  if (inCard) { showSection('cards'); document.getElementById('db-search').value = val; renderCards(); }
+  else { showSection('mcc'); document.getElementById('mcc-search').value = val; renderMCC(); }
+}
 
 // ===================== ADMIN =====================
-
 const ADMIN_PW_KEY = 'cs_admin_pw';
 const ADMIN_DATA_KEY = 'cs_admin_data';
-
 function getAdminPw() { return localStorage.getItem(ADMIN_PW_KEY) || 'admin123'; }
 
 function checkAdminPw() {
   const pw = document.getElementById('admin-pw-input').value;
   if (pw === getAdminPw()) {
-    document.getElementById('admin-lock-screen').style.display = 'none';
+    document.getElementById('admin-lock').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
-    initAdminPanels();
+    renderAdminCards();
+    renderAdminInfo();
     toast('Admin unlocked ✓');
   } else {
-    document.getElementById('admin-pw-input').style.borderColor = 'var(--red)';
     document.getElementById('admin-pw-input').value = '';
     document.getElementById('admin-pw-input').placeholder = 'Wrong password — try again';
-    setTimeout(() => {
-      document.getElementById('admin-pw-input').style.borderColor = '';
-      document.getElementById('admin-pw-input').placeholder = 'Enter password';
-    }, 2000);
+    setTimeout(() => document.getElementById('admin-pw-input').placeholder = 'Enter password', 2000);
   }
 }
 
 function lockAdmin() {
-  document.getElementById('admin-lock-screen').style.display = 'block';
+  document.getElementById('admin-lock').style.display = 'block';
   document.getElementById('admin-content').style.display = 'none';
   document.getElementById('admin-pw-input').value = '';
-  showTab('home');
+  showSection('home');
 }
 
-function showAdminPanel(name, btn) {
-  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('apanel-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'cards-list') renderAdminCards();
-  if (name === 'reward-rates') initRatePanel();
-  if (name === 'mcc-admin') renderAdminMCC();
-  if (name === 'expense-cats') renderAdminECats();
-  if (name === 'settings') renderAdminInfo();
-}
-
-function initAdminPanels() {
-  loadCustomData();
-  renderAdminCards();
-  initRatePanel();
-  renderAdminMCC();
-  renderAdminECats();
-  renderAdminInfo();
-}
-
-function toast(msg, dur = 2500) {
-  const el = document.getElementById('admin-toast');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), dur);
-}
-
-// ---- Custom data overlay (admin edits layer on top of defaults) ----
-let customCards = [], customMCC = [], customRewardMap = {}, customECats = [];
-
-function loadCustomData() {
-  try {
-    const raw = localStorage.getItem(ADMIN_DATA_KEY);
-    if (raw) {
-      const d = JSON.parse(raw);
-      if (d.cards) customCards = d.cards;
-      if (d.mccData) customMCC = d.mccData;
-      if (d.rewardMap) customRewardMap = d.rewardMap;
-      if (d.expenseCats) customECats = d.expenseCats;
-      applyCustomData();
-    }
-  } catch(e) { console.error(e); }
-}
-
-function applyCustomData() {
-  customCards.forEach(nc => {
-    const idx = CARDS.findIndex(c => c.id === nc.id);
-    if (idx >= 0) CARDS[idx] = nc; else CARDS.push(nc);
-  });
-  customMCC.forEach(nm => {
-    const idx = MCC_DATA.findIndex(m => m.code === nm.code && m.merchant === nm.merchant);
-    if (idx >= 0) MCC_DATA[idx] = nm; else MCC_DATA.push(nm);
-  });
-  Object.assign(REWARD_MAP, customRewardMap);
-  customECats.forEach(ne => {
-    const idx = EXPENSE_CATS.findIndex(e => e.id === ne.id);
-    if (idx >= 0) EXPENSE_CATS[idx] = ne; else EXPENSE_CATS.push(ne);
-  });
-}
-
-function saveCustomData() {
-  localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify({
-    cards: customCards, mccData: customMCC, rewardMap: customRewardMap, expenseCats: customECats
-  }));
-  document.getElementById('total-cards-count').textContent = CARDS.length;
-  document.getElementById('total-mcc-count').textContent = MCC_DATA.length + '+';
-}
-
-// ---- CARDS LIST ----
 function renderAdminCards() {
   const tbody = document.getElementById('admin-cards-tbody');
   if (!tbody) return;
-  tbody.innerHTML = CARDS.map((c, i) => `
-    <tr>
-      <td style="font-weight:600">${c.name}</td>
-      <td style="color:var(--muted)">${c.bank}</td>
-      <td>${c.joining === 0 ? 'Free' : '₹' + c.joining.toLocaleString('en-IN')}</td>
-      <td>${c.annual === 0 ? 'Free' : '₹' + c.annual.toLocaleString('en-IN')}</td>
-      <td>${c.waiver ? '₹' + c.waiver.toLocaleString('en-IN') : '—'}</td>
-      <td><span class="badge badge-gray">${c.type}</span></td>
-      <td>
-        <button class="act-btn act-edit" onclick="editCard('${c.id}')">Edit</button>
-        <button class="act-btn act-del" onclick="deleteCard('${c.id}')">Delete</button>
-      </td>
+  tbody.innerHTML = CARDS.map(c => `
+    <tr class="hover:bg-surface-container-low/50 border-b border-outline-variant/10">
+      <td class="p-3 font-medium text-sm">${c.name}</td>
+      <td class="p-3 text-sm text-on-surface-variant">${c.bank}</td>
+      <td class="p-3 text-sm">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</td>
+      <td class="p-3"><button onclick="editCard('${c.id}')" class="text-primary text-xs font-semibold mr-2 hover:underline">Edit</button><button onclick="deleteCard('${c.id}')" class="text-error text-xs font-semibold hover:underline">Delete</button></td>
     </tr>
   `).join('');
+}
+
+function renderAdminInfo() {
+  const ic = document.getElementById('info-cards-count');
+  const im = document.getElementById('info-mcc-count');
+  const ie = document.getElementById('info-ecat-count');
+  if (ic) ic.textContent = CARDS.length;
+  if (im) im.textContent = MCC_DATA.length;
+  if (ie) ie.textContent = EXPENSE_CATS.length;
 }
 
 function editCard(id) {
@@ -1996,341 +941,42 @@ function editCard(id) {
   document.getElementById('f-type').value = c.type;
   document.getElementById('f-excluded').value = c.excluded.join(', ');
   document.getElementById('f-benefits').value = c.benefits.join('\n');
-  document.getElementById('f-rewards').value = c.rewards.map(r =>
-    `${r.cat} | ${r.rate} | ${r.cap || ''} | ${r.unit}`).join('\n');
+  document.getElementById('f-rewards').value = c.rewards.map(r => `${r.cat} | ${r.rate} | ${r.cap||''} | ${r.unit}`).join('\n');
   document.getElementById('f-mitc').value = Object.entries(c.mitc).map(([k,v]) => `${k} | ${v}`).join('\n');
   document.getElementById('card-form-title').textContent = 'Edit Card: ' + c.name;
-  showAdminPanel('add-card', document.querySelector('.admin-nav-item:nth-child(2)'));
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function saveCard() {
-  const id = document.getElementById('f-id').value.trim().toLowerCase().replace(/\s+/g, '-');
+  const id = document.getElementById('f-id').value.trim().toLowerCase().replace(/\s+/g,'-');
   const name = document.getElementById('f-name').value.trim();
   const bank = document.getElementById('f-bank').value.trim();
-  if (!id || !name || !bank) { toast('Fill in ID, Name, and Bank'); return; }
-
+  if (!id||!name||!bank) { toast('Fill in ID, Name, and Bank'); return; }
   const rewardsRaw = document.getElementById('f-rewards').value.trim().split('\n').filter(Boolean);
-  const rewards = rewardsRaw.map(line => {
-    const parts = line.split('|').map(s => s.trim());
-    return { cat: parts[0], rate: parseFloat(parts[1]) || 0, cap: parts[2] ? parseFloat(parts[2]) : null, unit: parts[3] || 'cashback' };
-  });
-
+  const rewards = rewardsRaw.map(line => { const p=line.split('|').map(s=>s.trim()); return {cat:p[0],rate:parseFloat(p[1])||0,cap:p[2]?parseFloat(p[2]):null,unit:p[3]||'cashback'}; });
   const mitcRaw = document.getElementById('f-mitc').value.trim().split('\n').filter(Boolean);
   const mitc = {};
-  mitcRaw.forEach(line => { const p = line.split('|'); if (p.length >= 2) mitc[p[0].trim()] = p.slice(1).join('|').trim(); });
-
-  const card = {
-    id, name, bank, type: document.getElementById('f-type').value,
-    joining: parseInt(document.getElementById('f-joining').value) || 0,
-    annual: parseInt(document.getElementById('f-annual').value) || 0,
-    waiver: document.getElementById('f-waiver').value ? parseInt(document.getElementById('f-waiver').value) : null,
-    rewards, mitc,
-    excluded: document.getElementById('f-excluded').value.split(',').map(s => s.trim()).filter(Boolean),
-    benefits: document.getElementById('f-benefits').value.split('\n').map(s => s.trim()).filter(Boolean),
-  };
-
-  const existIdx = CARDS.findIndex(c => c.id === id);
-  if (existIdx >= 0) CARDS[existIdx] = card; else CARDS.push(card);
-
-  const custIdx = customCards.findIndex(c => c.id === id);
-  if (custIdx >= 0) customCards[custIdx] = card; else customCards.push(card);
-
-  saveCustomData();
-  renderAdminCards();
+  mitcRaw.forEach(line => { const p=line.split('|'); if(p.length>=2) mitc[p[0].trim()]=p.slice(1).join('|').trim(); });
+  const card = { id, name, bank, type:document.getElementById('f-type').value, joining:parseInt(document.getElementById('f-joining').value)||0, annual:parseInt(document.getElementById('f-annual').value)||0, waiver:document.getElementById('f-waiver').value?parseInt(document.getElementById('f-waiver').value):null, rewards, mitc, excluded:document.getElementById('f-excluded').value.split(',').map(s=>s.trim()).filter(Boolean), benefits:document.getElementById('f-benefits').value.split('\n').map(s=>s.trim()).filter(Boolean) };
+  const idx = CARDS.findIndex(c => c.id === id);
+  if (idx >= 0) CARDS[idx] = card; else CARDS.push(card);
+  renderAdminCards(); renderAdminInfo(); clearCardForm();
   toast('Card saved: ' + name);
-  clearCardForm();
 }
 
 function deleteCard(id) {
-  if (!confirm('Delete card: ' + id + '? This cannot be undone.')) return;
+  if (!confirm('Delete card: ' + id + '?')) return;
   const idx = CARDS.findIndex(c => c.id === id);
   if (idx >= 0) CARDS.splice(idx, 1);
-  customCards = customCards.filter(c => c.id !== id);
-  saveCustomData();
-  renderAdminCards();
-  toast('Card deleted');
+  renderAdminCards(); renderAdminInfo(); toast('Card deleted');
 }
 
 function clearCardForm() {
-  ['f-id','f-name','f-bank','f-joining','f-annual','f-waiver','f-excluded','f-benefits','f-rewards','f-mitc'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
+  ['f-id','f-name','f-bank','f-joining','f-annual','f-waiver','f-excluded','f-benefits','f-rewards','f-mitc'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('edit-card-id').value = '';
   document.getElementById('card-form-title').textContent = 'Add New Card';
 }
 
-// ---- REWARD RATES ----
-function initRatePanel() {
-  const catSel = document.getElementById('rate-cat-sel');
-  const cardSel = document.getElementById('rate-card-sel');
-  if (!catSel) return;
-  catSel.innerHTML = EXPENSE_CATS.map(c => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join('');
-  cardSel.innerHTML = CARDS.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  renderRateGrid();
-}
-
-function renderRateGrid() {
-  const cat = document.getElementById('rate-cat-sel')?.value;
-  if (!cat) return;
-  const rates = REWARD_MAP[cat] || {};
-  const tbody = document.getElementById('rates-preview-tbody');
-  if (!tbody) return;
-
-  const entries = Object.entries(rates).sort((a,b) => b[1] - a[1]);
-  if (!entries.length) {
-    tbody.innerHTML = '<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:1rem">No rates set for this category</td></tr>';
-    return;
-  }
-  tbody.innerHTML = entries.map(([cid, rate]) => {
-    const card = CARDS.find(c => c.id === cid);
-    return `
-      <tr>
-        <td style="font-weight:500">${card?.name || cid}</td>
-        <td><strong>${rate}%</strong></td>
-        <td>
-          <button class="act-btn act-edit" onclick="loadRate('${cat}','${cid}',${rate})">Edit</button>
-          <button class="act-btn act-del" onclick="deleteRate('${cat}','${cid}')">Remove</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function loadRate(cat, cardId, rate) {
-  document.getElementById('rate-cat-sel').value = cat;
-  document.getElementById('rate-card-sel').value = cardId;
-  document.getElementById('rate-val').value = rate;
-}
-
-function saveRate() {
-  const cat = document.getElementById('rate-cat-sel').value;
-  const cid = document.getElementById('rate-card-sel').value;
-  const rate = parseFloat(document.getElementById('rate-val').value);
-  if (!cat || !cid || isNaN(rate)) { toast('Fill in all rate fields'); return; }
-
-  if (!REWARD_MAP[cat]) REWARD_MAP[cat] = {};
-  REWARD_MAP[cat][cid] = rate;
-  if (!customRewardMap[cat]) customRewardMap[cat] = {};
-  customRewardMap[cat][cid] = rate;
-  saveCustomData();
-  renderRateGrid();
-  toast('Rate saved: ' + rate + '% for ' + cat);
-}
-
-function deleteRate(cat, cid) {
-  if (REWARD_MAP[cat]) delete REWARD_MAP[cat][cid];
-  if (customRewardMap[cat]) delete customRewardMap[cat][cid];
-  saveCustomData();
-  renderRateGrid();
-  toast('Rate removed');
-}
-
-// ---- MCC ADMIN ----
-function renderAdminMCC() {
-  const tbody = document.getElementById('admin-mcc-tbody');
-  if (!tbody) return;
-  const statusLabel = { earns: '✅ Earns', 'no-reward': '❌ None', capped: '⚠️ Capped', excluded: '🚫 Excluded' };
-  tbody.innerHTML = MCC_DATA.map((m, i) => `
-    <tr>
-      <td><span class="mcc-code">${m.code}</span></td>
-      <td style="font-size:13px">${m.merchant}</td>
-      <td><span class="badge badge-gray">${m.category}</span></td>
-      <td style="font-size:12px">${statusLabel[m.status] || m.status}</td>
-      <td>
-        <button class="act-btn act-edit" onclick="editMCC(${i})">Edit</button>
-        <button class="act-btn act-del" onclick="deleteMCC(${i})">Delete</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function editMCC(idx) {
-  const m = MCC_DATA[idx];
-  document.getElementById('edit-mcc-idx').value = idx;
-  document.getElementById('mf-code').value = m.code;
-  document.getElementById('mf-merchant').value = m.merchant;
-  document.getElementById('mf-cat').value = m.category;
-  document.getElementById('mf-status').value = m.status;
-  document.getElementById('mf-notes').value = m.notes;
-  document.getElementById('mcc-form-title').textContent = 'Edit MCC: ' + m.code;
-}
-
-function saveMCC() {
-  const code = document.getElementById('mf-code').value.trim();
-  const merchant = document.getElementById('mf-merchant').value.trim();
-  if (!code || !merchant) { toast('Code and Merchant are required'); return; }
-  const entry = {
-    code, merchant,
-    category: document.getElementById('mf-cat').value.trim(),
-    status: document.getElementById('mf-status').value,
-    notes: document.getElementById('mf-notes').value.trim(),
-  };
-  const editIdx = parseInt(document.getElementById('edit-mcc-idx').value);
-  if (!isNaN(editIdx) && editIdx >= 0) {
-    MCC_DATA[editIdx] = entry;
-  } else {
-    MCC_DATA.push(entry);
-    customMCC.push(entry);
-  }
-  saveCustomData();
-  renderAdminMCC();
-  clearMCCForm();
-  toast('MCC saved: ' + code);
-}
-
-function deleteMCC(idx) {
-  if (!confirm('Delete MCC entry?')) return;
-  const removed = MCC_DATA.splice(idx, 1)[0];
-  customMCC = customMCC.filter(m => !(m.code === removed.code && m.merchant === removed.merchant));
-  saveCustomData();
-  renderAdminMCC();
-  toast('MCC deleted');
-}
-
-function clearMCCForm() {
-  ['mf-code','mf-merchant','mf-cat','mf-notes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('mf-status').value = 'earns';
-  document.getElementById('edit-mcc-idx').value = '';
-  document.getElementById('mcc-form-title').textContent = 'Add MCC Entry';
-}
-
-// ---- EXPENSE CATS ADMIN ----
-function renderAdminECats() {
-  const tbody = document.getElementById('admin-ecat-tbody');
-  if (!tbody) return;
-  tbody.innerHTML = EXPENSE_CATS.map((e, i) => `
-    <tr>
-      <td style="font-size:20px">${e.icon}</td>
-      <td style="font-weight:600">${e.label}</td>
-      <td><span class="mcc-code">${e.id}</span></td>
-      <td style="font-size:12px;color:var(--muted)">${e.mcc || '—'}</td>
-      <td>
-        <button class="act-btn act-edit" onclick="editECat(${i})">Edit</button>
-        <button class="act-btn act-del" onclick="deleteECat(${i})">Delete</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function editECat(idx) {
-  const e = EXPENSE_CATS[idx];
-  document.getElementById('edit-ecat-idx').value = idx;
-  document.getElementById('ef-id').value = e.id;
-  document.getElementById('ef-label').value = e.label;
-  document.getElementById('ef-icon').value = e.icon;
-  document.getElementById('ef-mcc').value = e.mcc || '';
-  document.getElementById('ef-sub').value = e.sub || '';
-  document.getElementById('ecat-form-title').textContent = 'Edit Category: ' + e.label;
-}
-
-function saveECat() {
-  const id = document.getElementById('ef-id').value.trim().replace(/\s+/g, '_');
-  const label = document.getElementById('ef-label').value.trim();
-  if (!id || !label) { toast('ID and Label required'); return; }
-  const entry = {
-    id, label,
-    icon: document.getElementById('ef-icon').value.trim() || '💳',
-    mcc: document.getElementById('ef-mcc').value.trim(),
-    sub: document.getElementById('ef-sub').value.trim(),
-  };
-  const editIdx = parseInt(document.getElementById('edit-ecat-idx').value);
-  if (!isNaN(editIdx) && editIdx >= 0) {
-    EXPENSE_CATS[editIdx] = entry;
-    const ci = customECats.findIndex(e => e.id === entry.id);
-    if (ci >= 0) customECats[ci] = entry; else customECats.push(entry);
-  } else {
-    EXPENSE_CATS.push(entry);
-    customECats.push(entry);
-    if (!REWARD_MAP[id]) REWARD_MAP[id] = {};
-  }
-  saveCustomData();
-  renderAdminECats();
-  clearECatForm();
-  toast('Category saved: ' + label);
-}
-
-function deleteECat(idx) {
-  if (!confirm('Delete expense category?')) return;
-  const removed = EXPENSE_CATS.splice(idx, 1)[0];
-  customECats = customECats.filter(e => e.id !== removed.id);
-  saveCustomData();
-  renderAdminECats();
-  toast('Category deleted');
-}
-
-function clearECatForm() {
-  ['ef-id','ef-label','ef-icon','ef-mcc','ef-sub'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('edit-ecat-idx').value = '';
-  document.getElementById('ecat-form-title').textContent = 'Add Expense Category';
-}
-
-// ---- IMPORT / EXPORT ----
-function exportData() {
-  const data = {
-    version: '1.1',
-    exportedAt: new Date().toISOString(),
-    cards: CARDS,
-    mccData: MCC_DATA,
-    rewardMap: REWARD_MAP,
-    expenseCats: EXPENSE_CATS,
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'cardsaathi-data.json'; a.click();
-  URL.revokeObjectURL(url);
-  toast('Exported cardsaathi-data.json');
-}
-
-function copyExportData() {
-  const data = { version:'1.1', exportedAt: new Date().toISOString(), cards: CARDS, mccData: MCC_DATA, rewardMap: REWARD_MAP, expenseCats: EXPENSE_CATS };
-  navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => toast('Copied to clipboard!'));
-}
-
-function importData() {
-  try {
-    const raw = document.getElementById('import-json').value.trim();
-    const d = JSON.parse(raw);
-    if (d.cards) { CARDS.length = 0; CARDS.push(...d.cards); customCards = [...d.cards]; }
-    if (d.mccData) { MCC_DATA.length = 0; MCC_DATA.push(...d.mccData); customMCC = [...d.mccData]; }
-    if (d.rewardMap) { Object.keys(REWARD_MAP).forEach(k => delete REWARD_MAP[k]); Object.assign(REWARD_MAP, d.rewardMap); customRewardMap = {...d.rewardMap}; }
-    if (d.expenseCats) { EXPENSE_CATS.length = 0; EXPENSE_CATS.push(...d.expenseCats); customECats = [...d.expenseCats]; }
-    saveCustomData();
-    initAdminPanels();
-    toast('Data imported successfully');
-  } catch(e) { toast('Invalid JSON — import failed'); }
-}
-
-function patchData() {
-  try {
-    const raw = document.getElementById('patch-json').value.trim();
-    const d = JSON.parse(raw);
-    if (d.cards) d.cards.forEach(nc => {
-      const idx = CARDS.findIndex(c => c.id === nc.id);
-      if (idx >= 0) CARDS[idx] = nc; else CARDS.push(nc);
-      const ci = customCards.findIndex(c => c.id === nc.id);
-      if (ci >= 0) customCards[ci] = nc; else customCards.push(nc);
-    });
-    if (d.mccData) d.mccData.forEach(nm => {
-      const idx = MCC_DATA.findIndex(m => m.code === nm.code);
-      if (idx >= 0) MCC_DATA[idx] = nm; else MCC_DATA.push(nm);
-      customMCC.push(nm);
-    });
-    if (d.rewardMap) { Object.assign(REWARD_MAP, d.rewardMap); Object.assign(customRewardMap, d.rewardMap); }
-    saveCustomData();
-    initAdminPanels();
-    toast('Patch applied successfully');
-  } catch(e) { toast('Invalid JSON patch'); }
-}
-
-function resetToDefaults() {
-  if (!confirm('This will delete ALL custom cards, MCC edits, and rate changes. Continue?')) return;
-  localStorage.removeItem(ADMIN_DATA_KEY);
-  location.reload();
-}
-
-// ---- SETTINGS ----
 function changePassword() {
   const p1 = document.getElementById('new-pw-1').value;
   const p2 = document.getElementById('new-pw-2').value;
@@ -2342,20 +988,25 @@ function changePassword() {
   toast('Password updated ✓');
 }
 
-function renderAdminInfo() {
-  const ic = document.getElementById('info-cards-count');
-  const im = document.getElementById('info-mcc-count');
-  const ie = document.getElementById('info-ecat-count');
-  const is = document.getElementById('info-storage');
-  if (ic) ic.textContent = CARDS.length;
-  if (im) im.textContent = MCC_DATA.length;
-  if (ie) ie.textContent = EXPENSE_CATS.length;
-  if (is) {
-    let total = 0;
-    for (let k in localStorage) { if (localStorage.hasOwnProperty(k) && k.startsWith('cs_')) total += (localStorage[k]||'').length; }
-    is.textContent = (total / 1024).toFixed(1) + ' KB';
-  }
+function exportData() {
+  const data = { version:'1.2', exportedAt:new Date().toISOString(), cards:CARDS, mccData:MCC_DATA, rewardMap:REWARD_MAP, expenseCats:EXPENSE_CATS };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='cardsaathi-data.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported cardsaathi-data.json');
 }
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  const now = new Date();
+  const msSel = document.getElementById('ms-month-select');
+  if (msSel) msSel.value = now.getMonth();
+  updateMilestoneSelect();
+  document.getElementById('sidebar-card-count').textContent = CARDS.length;
+  document.getElementById('home-card-count').textContent = CARDS.length;
+});
 </script>
 </body>
 </html>
