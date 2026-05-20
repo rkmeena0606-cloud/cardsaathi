@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CardSaathi | India's Credit Card Optimizer</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -60,10 +61,96 @@ tailwind.config = {
   .toast { position: fixed; bottom: 80px; right: 20px; background: #005245; color: white; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   .toast.show { opacity: 1; }
   @media (min-width: 768px) { .toast { bottom: 20px; } }
-  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  #app-screen { display: none !important; }
+  #app-screen.visible { display: block !important; }
+  #auth-screen.hidden-screen { display: none !important; }
 </style>
 </head>
 <body class="overflow-x-hidden">
+
+<!-- LOGIN SCREEN -->
+<div id="auth-screen" class="min-h-screen flex items-center justify-center bg-surface px-4">
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <span class="material-symbols-outlined text-white fill-icon" style="font-size:32px">account_balance_wallet</span>
+      </div>
+      <h1 class="text-3xl font-bold text-primary">CardSaathi</h1>
+      <p class="text-on-surface-variant mt-1 text-sm">India's Credit Card Optimizer</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-7 shadow-sm">
+      <!-- Tabs -->
+      <div class="flex bg-surface-container-low rounded-2xl p-1 mb-6">
+        <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-white text-primary shadow-sm transition-all">Sign In</button>
+        <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant transition-all">Sign Up</button>
+      </div>
+
+      <!-- Error message -->
+      <div id="auth-error" class="hidden mb-4 p-3 bg-error-container rounded-xl text-sm text-on-error-container font-medium"></div>
+      <!-- Success message -->
+      <div id="auth-success" class="hidden mb-4 p-3 bg-primary-container/20 rounded-xl text-sm text-primary font-medium"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="login-form">
+        <div class="mb-4">
+          <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Email</label>
+          <input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary transition-colors"/>
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Password</label>
+          <input id="login-password" type="password" placeholder="Enter your password" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary transition-colors" onkeydown="if(event.key==='Enter')signIn()"/>
+        </div>
+        <button onclick="signIn()" id="login-btn" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:18px">login</span> Sign In
+        </button>
+        <button onclick="forgotPassword()" class="w-full mt-3 text-sm text-on-surface-variant hover:text-primary transition-colors">Forgot password?</button>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signup-form" class="hidden">
+        <div class="mb-4">
+          <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Full Name</label>
+          <input id="signup-name" type="text" placeholder="Your name" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary transition-colors"/>
+        </div>
+        <div class="mb-4">
+          <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Email</label>
+          <input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary transition-colors"/>
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Password</label>
+          <input id="signup-password" type="password" placeholder="Min 6 characters" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary transition-colors" onkeydown="if(event.key==='Enter')signUp()"/>
+        </div>
+        <button onclick="signUp()" id="signup-btn" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:18px">person_add</span> Create Account
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1 h-px bg-outline-variant/40"></div>
+        <span class="text-xs text-on-surface-variant">or continue with</span>
+        <div class="flex-1 h-px bg-outline-variant/40"></div>
+      </div>
+
+      <!-- Google Login -->
+      <button onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-3 py-3 border border-outline-variant rounded-xl text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <p class="text-xs text-center text-on-surface-variant mt-5">
+        By signing up you agree to our <a href="#" class="text-primary hover:underline">Terms</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+        We are not financial advisors — CardSaathi is an informational tool only.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP (hidden until login) -->
+<div id="app-screen" style="display:none">
 
 <!-- SIDEBAR NAV (Desktop) -->
 <aside class="hidden md:flex flex-col h-full w-[260px] fixed left-0 top-0 bg-white border-r border-outline-variant/30 z-50">
@@ -119,7 +206,17 @@ tailwind.config = {
         <span class="material-symbols-outlined text-outline" style="font-size:18px">search</span>
         <input id="global-search" class="bg-transparent border-none focus:ring-0 text-sm w-40 ml-1 outline-none" placeholder="Search cards or MCC..." type="text" oninput="handleGlobalSearch(this.value)"/>
       </div>
-      <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-sm">U</div>
+      <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-sm cursor-pointer relative group" id="user-avatar">U
+        <div class="absolute right-0 top-10 bg-white border border-outline-variant/20 rounded-2xl shadow-lg p-2 w-48 hidden group-hover:block z-50">
+          <div class="px-3 py-2 border-b border-outline-variant/20 mb-1">
+            <div class="text-xs font-semibold text-on-surface" id="user-name-display">User</div>
+            <div class="text-xs text-on-surface-variant truncate" id="user-email-display"></div>
+          </div>
+          <button onclick="signOut()" class="w-full text-left px-3 py-2 text-sm text-error hover:bg-error-container/20 rounded-xl transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:16px">logout</span> Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -415,6 +512,86 @@ tailwind.config = {
     <span class="material-symbols-outlined">credit_card</span><span class="text-[10px]">Cards</span>
   </button>
 </nav>
+
+</div><!-- end app-screen -->
+
+<!-- SECRET ADMIN SCREEN (only via /admin secret URL hash) -->
+<div id="secret-admin-screen" style="display:none" class="min-h-screen bg-surface px-5 py-8 max-w-5xl mx-auto">
+  <div id="secret-admin-lock" class="max-w-sm mx-auto mt-10 bg-white rounded-2xl border border-outline-variant/20 p-8 text-center">
+    <div class="text-4xl mb-4">🔐</div>
+    <h2 class="text-xl font-bold mb-2">Admin Access</h2>
+    <p class="text-sm text-on-surface-variant mb-5">This area is restricted to the site owner only.</p>
+    <input type="password" id="secret-admin-pw" placeholder="Enter admin password" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-center text-sm outline-none focus:border-primary mb-3" onkeydown="if(event.key==='Enter')checkSecretAdmin()"/>
+    <button onclick="checkSecretAdmin()" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:opacity-90">Unlock</button>
+    <p class="text-xs text-on-surface-variant mt-4">Default: <strong>admin123</strong> — change after first login</p>
+  </div>
+  <div id="secret-admin-panel" style="display:none">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-on-surface">Admin Panel</h1>
+        <p class="text-sm text-on-surface-variant mt-0.5">Manage cards, MCC codes, and reward rates</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="exportData()" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold">Export JSON</button>
+        <button onclick="window.location.hash=''" class="bg-surface-container text-on-surface-variant px-4 py-2 rounded-xl text-sm font-semibold">Exit Admin</button>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-cards-count">48</div><div class="text-xs text-on-surface-variant mt-1">Cards</div></div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-mcc-count">35</div><div class="text-xs text-on-surface-variant mt-1">MCC Entries</div></div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-users-count">—</div><div class="text-xs text-on-surface-variant mt-1">Registered Users</div></div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary">v1.2</div><div class="text-xs text-on-surface-variant mt-1">Version</div></div>
+    </div>
+    <!-- Add/Edit Card Form -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 p-5 mb-4">
+      <h3 class="font-semibold mb-4" id="sa-card-form-title">Add New Card</h3>
+      <input type="hidden" id="sa-edit-card-id"/>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Card Name</label><input id="sa-f-name" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="HDFC Regalia Gold"/></div>
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Bank</label><input id="sa-f-bank" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="HDFC Bank"/></div>
+      </div>
+      <div class="grid grid-cols-3 gap-3 mb-3">
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Joining Fee ₹</label><input id="sa-f-joining" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="999"/></div>
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Annual Fee ₹</label><input id="sa-f-annual" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="999"/></div>
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Waiver Spend ₹</label><input id="sa-f-waiver" type="number" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="200000"/></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Type</label><select id="sa-f-type" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"><option>Cashback</option><option>Points</option><option>Miles</option><option>Cashback+Voucher</option></select></div>
+        <div><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Card ID</label><input id="sa-f-id" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="hdfc-regalia-gold"/></div>
+      </div>
+      <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Reward Tiers (Category | Rate% | Cap₹ | unit)</label><textarea id="sa-f-rewards" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-20" placeholder="Online Shopping | 5 | 5000 | cashback"></textarea></div>
+      <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Excluded (comma separated)</label><input id="sa-f-excluded" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary" placeholder="Fuel, Rent, EMI"/></div>
+      <div class="mb-3"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Benefits (one per line)</label><textarea id="sa-f-benefits" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-16"></textarea></div>
+      <div class="mb-4"><label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">MITC (Field | Value, one per line)</label><textarea id="sa-f-mitc" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary h-16"></textarea></div>
+      <div class="flex gap-3">
+        <button onclick="saSaveCard()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Save Card</button>
+        <button onclick="saClearForm()" class="bg-surface-container text-on-surface-variant px-5 py-2.5 rounded-xl text-sm font-semibold">Clear</button>
+      </div>
+    </div>
+    <!-- Cards List -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-x-auto mb-4">
+      <table class="w-full text-sm">
+        <thead><tr class="bg-surface-container-low border-b border-outline-variant/20">
+          <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Card</th>
+          <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Bank</th>
+          <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Annual</th>
+          <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Actions</th>
+        </tr></thead>
+        <tbody id="sa-cards-tbody"></tbody>
+      </table>
+    </div>
+    <!-- Change Password -->
+    <div class="bg-white rounded-2xl border border-outline-variant/20 p-5">
+      <h3 class="font-semibold mb-3">Change Admin Password</h3>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <input type="password" id="sa-new-pw-1" placeholder="New password" class="px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+        <input type="password" id="sa-new-pw-2" placeholder="Confirm password" class="px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+      </div>
+      <button onclick="saChangePassword()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Update Password</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -998,15 +1175,372 @@ function exportData() {
   toast('Exported cardsaathi-data.json');
 }
 
-// ===================== INIT =====================
-document.addEventListener('DOMContentLoaded', () => {
+// ===================== SUPABASE AUTH =====================
+const SUPABASE_URL = 'https://cwfihdkooygavqalwcdj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_gKeHhiyrWKfayGi6P9yrVQ_tk1Ll7TN';
+
+let sb = null;
+let currentUser = null;
+
+const ADMIN_PW_KEY = 'cs_admin_pw';
+function getAdminPw() { return localStorage.getItem(ADMIN_PW_KEY) || 'admin123'; }
+
+function initSupabase() {
+  try {
+    // Try new supabase global
+    if (window.supabase && window.supabase.createClient) {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return true;
+    }
+  } catch(e) { console.error('Supabase init error:', e); }
+  return false;
+}
+
+async function initAuth() {
+  // Check if secret admin URL
+  if (window.location.hash === '#secret-admin') {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('secret-admin-screen').style.display = 'block';
+    return;
+  }
+
+  // Try to init Supabase
+  const ok = initSupabase();
+  if (!ok) {
+    // Supabase failed to load — show login screen anyway
+    console.error('Supabase failed to load');
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app-screen').style.display = 'none';
+    showAuthError('Connection error. Please refresh the page.');
+    return;
+  }
+
+  // Always show login screen first
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display = 'none';
+
+  // Then check if already logged in
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session && session.user) {
+      currentUser = session.user;
+      showApp(session.user);
+    }
+  } catch(e) {
+    console.error('Session check error:', e);
+  }
+
+  // Listen for auth changes
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      showApp(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+  });
+}
+
+function showApp(user) {
+  document.getElementById('auth-screen').classList.add('hidden-screen');
+  document.getElementById('auth-screen').style.display = 'none';
+  const appEl = document.getElementById('app-screen');
+  appEl.classList.add('visible');
+  appEl.style.display = 'block';
+  document.getElementById('secret-admin-screen').style.display = 'none';
+
+  // Update user display
+  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+  const el = document.getElementById('user-avatar');
+  if (el) el.textContent = name[0].toUpperCase();
+  const nd = document.getElementById('user-name-display');
+  const ed = document.getElementById('user-email-display');
+  if (nd) nd.textContent = name;
+  if (ed) ed.textContent = user.email;
+
+  // Load user data from Supabase
+  loadUserCards();
+
   const now = new Date();
   const msSel = document.getElementById('ms-month-select');
   if (msSel) msSel.value = now.getMonth();
   updateMilestoneSelect();
   document.getElementById('sidebar-card-count').textContent = CARDS.length;
   document.getElementById('home-card-count').textContent = CARDS.length;
+}
+
+// ---- Sign In ----
+async function signIn() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) { showAuthError('Please enter email and password'); return; }
+  if (!sb) { showAuthError('Connection error. Please refresh the page.'); return; }
+  setAuthLoading('login-btn', true);
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  setAuthLoading('login-btn', false);
+  if (error) showAuthError(error.message);
+}
+
+// ---- Sign Up ----
+async function signUp() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  if (!name || !email || !password) { showAuthError('Please fill all fields'); return; }
+  if (password.length < 6) { showAuthError('Password must be at least 6 characters'); return; }
+  setAuthLoading('signup-btn', true);
+  const { error } = await sb.auth.signUp({ email, password, options: { data: { full_name: name } } });
+  setAuthLoading('signup-btn', false);
+  if (error) { showAuthError(error.message); return; }
+  showAuthSuccess('Account created! Please check your email to verify your account, then sign in.');
+  switchAuthTab('login');
+}
+
+// ---- Google Sign In ----
+async function signInWithGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + window.location.pathname }
+  });
+  if (error) showAuthError(error.message);
+}
+
+// ---- Sign Out ----
+async function signOut() {
+  if (!sb) return;
+  await sb.auth.signOut();
+  myCards = [];
+  milestoneCards = [];
+  milestoneSpend = {};
+  const appEl = document.getElementById('app-screen');
+  appEl.classList.remove('visible');
+  appEl.style.display = 'none';
+  document.getElementById('auth-screen').classList.remove('hidden-screen');
+  document.getElementById('auth-screen').style.display = 'flex';
+  toast('Signed out successfully');
+}
+
+// ---- Forgot Password ----
+async function forgotPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { showAuthError('Enter your email above first'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+  if (error) { showAuthError(error.message); return; }
+  showAuthSuccess('Password reset email sent! Check your inbox.');
+}
+
+// ---- Auth UI helpers ----
+function switchAuthTab(tab) {
+  document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
+  document.getElementById('tab-login').className = tab === 'login'
+    ? 'flex-1 py-2.5 rounded-xl text-sm font-semibold bg-white text-primary shadow-sm transition-all'
+    : 'flex-1 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant transition-all';
+  document.getElementById('tab-signup').className = tab === 'signup'
+    ? 'flex-1 py-2.5 rounded-xl text-sm font-semibold bg-white text-primary shadow-sm transition-all'
+    : 'flex-1 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant transition-all';
+  clearAuthMessages();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.classList.remove('hidden');
+  document.getElementById('auth-success').classList.add('hidden');
+}
+
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = msg; el.classList.remove('hidden');
+  document.getElementById('auth-error').classList.add('hidden');
+}
+
+function clearAuthMessages() {
+  document.getElementById('auth-error').classList.add('hidden');
+  document.getElementById('auth-success').classList.add('hidden');
+}
+
+function setAuthLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.style.opacity = loading ? '0.6' : '1';
+  if (loading) btn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-size:18px">progress_activity</span> Please wait...';
+  else if (btnId === 'login-btn') btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">login</span> Sign In';
+  else btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">person_add</span> Create Account';
+}
+
+// ===================== SUPABASE DATA SYNC =====================
+async function loadUserCards() {
+  if (!currentUser) return;
+  const { data } = await sb.from('user_cards').select('card_ids').eq('user_id', currentUser.id).single();
+  if (data?.card_ids) {
+    myCards = data.card_ids;
+    localStorage.setItem('cs_my_cards', JSON.stringify(myCards));
+  }
+  const { data: ms } = await sb.from('user_milestones').select('*').eq('user_id', currentUser.id);
+  if (ms) {
+    milestoneCards = [...new Set(ms.map(m => m.card_id))];
+    ms.forEach(m => { milestoneSpend[m.card_id] = m.spend; });
+  }
+}
+
+async function saveUserCards() {
+  if (!currentUser) return;
+  await sb.from('user_cards').upsert({ user_id: currentUser.id, card_ids: myCards, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+}
+
+async function saveUserMilestone(cardId, spend) {
+  if (!currentUser) return;
+  const now = new Date();
+  await sb.from('user_milestones').upsert({ user_id: currentUser.id, card_id: cardId, spend, month: now.getMonth(), year: now.getFullYear(), updated_at: new Date().toISOString() }, { onConflict: 'user_id,card_id' });
+}
+
+// Override toggleMyCard to also save to Supabase
+const _origToggleMyCard = toggleMyCard;
+function toggleMyCard(id) {
+  if (myCards.includes(id)) myCards = myCards.filter(x => x !== id);
+  else myCards.push(id);
+  localStorage.setItem('cs_my_cards', JSON.stringify(myCards));
+  saveUserCards();
+  renderCards();
+  renderPlannerMyCards();
+  updateMilestoneSelect();
+  toast(myCards.includes(id) ? 'Card saved to your account ✓' : 'Card removed');
+}
+
+// Override updateMilestoneSpend to also save to Supabase
+function updateMilestoneSpend(id, val) {
+  milestoneSpend[id] = parseFloat(val) || 0;
+  localStorage.setItem('cs_ms_spend', JSON.stringify(milestoneSpend));
+  saveUserMilestone(id, milestoneSpend[id]);
+  setTimeout(() => renderMilestones(), 150);
+}
+
+// ===================== SECRET ADMIN =====================
+function checkSecretAdmin() {
+  const pw = document.getElementById('secret-admin-pw').value;
+  if (pw === getAdminPw()) {
+    document.getElementById('secret-admin-lock').style.display = 'none';
+    document.getElementById('secret-admin-panel').style.display = 'block';
+    saRenderCards();
+    document.getElementById('sa-cards-count').textContent = CARDS.length;
+    document.getElementById('sa-mcc-count').textContent = MCC_DATA.length;
+    loadAdminUserCount();
+    toast('Admin unlocked ✓');
+  } else {
+    document.getElementById('secret-admin-pw').value = '';
+    document.getElementById('secret-admin-pw').placeholder = 'Wrong password — try again';
+    setTimeout(() => document.getElementById('secret-admin-pw').placeholder = 'Enter admin password', 2000);
+  }
+}
+
+async function loadAdminUserCount() {
+  try {
+    const { count } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+    document.getElementById('sa-users-count').textContent = count || 0;
+  } catch(e) {}
+}
+
+function saRenderCards() {
+  const tbody = document.getElementById('sa-cards-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = CARDS.map(c => `
+    <tr class="hover:bg-surface-container-low/50 border-b border-outline-variant/10">
+      <td class="p-3 font-medium text-sm">${c.name}</td>
+      <td class="p-3 text-sm text-on-surface-variant">${c.bank}</td>
+      <td class="p-3 text-sm">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</td>
+      <td class="p-3">
+        <button onclick="saEditCard('${c.id}')" class="text-primary text-xs font-semibold mr-2 hover:underline">Edit</button>
+        <button onclick="saDeleteCard('${c.id}')" class="text-error text-xs font-semibold hover:underline">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function saEditCard(id) {
+  const c = CARDS.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('sa-edit-card-id').value = id;
+  document.getElementById('sa-f-id').value = c.id;
+  document.getElementById('sa-f-name').value = c.name;
+  document.getElementById('sa-f-bank').value = c.bank;
+  document.getElementById('sa-f-joining').value = c.joining;
+  document.getElementById('sa-f-annual').value = c.annual;
+  document.getElementById('sa-f-waiver').value = c.waiver || '';
+  document.getElementById('sa-f-type').value = c.type;
+  document.getElementById('sa-f-excluded').value = c.excluded.join(', ');
+  document.getElementById('sa-f-benefits').value = c.benefits.join('\n');
+  document.getElementById('sa-f-rewards').value = c.rewards.map(r => `${r.cat} | ${r.rate} | ${r.cap||''} | ${r.unit}`).join('\n');
+  document.getElementById('sa-f-mitc').value = Object.entries(c.mitc).map(([k,v]) => `${k} | ${v}`).join('\n');
+  document.getElementById('sa-card-form-title').textContent = 'Edit Card: ' + c.name;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function saSaveCard() {
+  const id = document.getElementById('sa-f-id').value.trim().toLowerCase().replace(/\s+/g,'-');
+  const name = document.getElementById('sa-f-name').value.trim();
+  const bank = document.getElementById('sa-f-bank').value.trim();
+  if (!id||!name||!bank) { toast('Fill in ID, Name, and Bank'); return; }
+  const rewardsRaw = document.getElementById('sa-f-rewards').value.trim().split('\n').filter(Boolean);
+  const rewards = rewardsRaw.map(line => { const p=line.split('|').map(s=>s.trim()); return {cat:p[0],rate:parseFloat(p[1])||0,cap:p[2]?parseFloat(p[2]):null,unit:p[3]||'cashback'}; });
+  const mitcRaw = document.getElementById('sa-f-mitc').value.trim().split('\n').filter(Boolean);
+  const mitc = {};
+  mitcRaw.forEach(line => { const p=line.split('|'); if(p.length>=2) mitc[p[0].trim()]=p.slice(1).join('|').trim(); });
+  const card = { id, name, bank, type:document.getElementById('sa-f-type').value, joining:parseInt(document.getElementById('sa-f-joining').value)||0, annual:parseInt(document.getElementById('sa-f-annual').value)||0, waiver:document.getElementById('sa-f-waiver').value?parseInt(document.getElementById('sa-f-waiver').value):null, rewards, mitc, excluded:document.getElementById('sa-f-excluded').value.split(',').map(s=>s.trim()).filter(Boolean), benefits:document.getElementById('sa-f-benefits').value.split('\n').map(s=>s.trim()).filter(Boolean) };
+  const idx = CARDS.findIndex(c => c.id === id);
+  if (idx >= 0) CARDS[idx] = card; else CARDS.push(card);
+  saRenderCards();
+  document.getElementById('sa-cards-count').textContent = CARDS.length;
+  saClearForm();
+  toast('Card saved: ' + name);
+}
+
+function saDeleteCard(id) {
+  if (!confirm('Delete card: ' + id + '?')) return;
+  const idx = CARDS.findIndex(c => c.id === id);
+  if (idx >= 0) CARDS.splice(idx, 1);
+  saRenderCards();
+  document.getElementById('sa-cards-count').textContent = CARDS.length;
+  toast('Card deleted');
+}
+
+function saClearForm() {
+  ['sa-f-id','sa-f-name','sa-f-bank','sa-f-joining','sa-f-annual','sa-f-waiver','sa-f-excluded','sa-f-benefits','sa-f-rewards','sa-f-mitc'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('sa-edit-card-id').value = '';
+  document.getElementById('sa-card-form-title').textContent = 'Add New Card';
+}
+
+function saChangePassword() {
+  const p1 = document.getElementById('sa-new-pw-1').value;
+  const p2 = document.getElementById('sa-new-pw-2').value;
+  if (!p1) { toast('Enter a new password'); return; }
+  if (p1 !== p2) { toast('Passwords do not match'); return; }
+  localStorage.setItem(ADMIN_PW_KEY, p1);
+  document.getElementById('sa-new-pw-1').value = '';
+  document.getElementById('sa-new-pw-2').value = '';
+  toast('Password updated ✓');
+}
+
+// Handle hash change for admin route
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#secret-admin') {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('secret-admin-screen').style.display = 'block';
+  } else if (window.location.hash === '') {
+    document.getElementById('secret-admin-screen').style.display = 'none';
+    initAuth();
+  }
 });
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
+});
+
 </script>
 </body>
 </html>
