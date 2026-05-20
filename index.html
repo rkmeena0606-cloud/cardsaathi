@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CardSaathi | India's Credit Card Optimizer</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -1056,128 +1056,20 @@ function handleGlobalSearch(val) {
   else { showSection('mcc'); document.getElementById('mcc-search').value = val; renderMCC(); }
 }
 
-// ===================== ADMIN =====================
-const ADMIN_PW_KEY = 'cs_admin_pw';
-const ADMIN_DATA_KEY = 'cs_admin_data';
-function getAdminPw() { return localStorage.getItem(ADMIN_PW_KEY) || 'admin123'; }
-
-function checkAdminPw() {
-  const pw = document.getElementById('admin-pw-input').value;
-  if (pw === getAdminPw()) {
-    document.getElementById('admin-lock').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
-    renderAdminCards();
-    renderAdminInfo();
-    toast('Admin unlocked ✓');
-  } else {
-    document.getElementById('admin-pw-input').value = '';
-    document.getElementById('admin-pw-input').placeholder = 'Wrong password — try again';
-    setTimeout(() => document.getElementById('admin-pw-input').placeholder = 'Enter password', 2000);
-  }
-}
-
-function lockAdmin() {
-  document.getElementById('admin-lock').style.display = 'block';
-  document.getElementById('admin-content').style.display = 'none';
-  document.getElementById('admin-pw-input').value = '';
-  showSection('home');
-}
-
-function renderAdminCards() {
-  const tbody = document.getElementById('admin-cards-tbody');
-  if (!tbody) return;
-  tbody.innerHTML = CARDS.map(c => `
-    <tr class="hover:bg-surface-container-low/50 border-b border-outline-variant/10">
-      <td class="p-3 font-medium text-sm">${c.name}</td>
-      <td class="p-3 text-sm text-on-surface-variant">${c.bank}</td>
-      <td class="p-3 text-sm">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</td>
-      <td class="p-3"><button onclick="editCard('${c.id}')" class="text-primary text-xs font-semibold mr-2 hover:underline">Edit</button><button onclick="deleteCard('${c.id}')" class="text-error text-xs font-semibold hover:underline">Delete</button></td>
-    </tr>
-  `).join('');
-}
-
-function renderAdminInfo() {
-  const ic = document.getElementById('info-cards-count');
-  const im = document.getElementById('info-mcc-count');
-  const ie = document.getElementById('info-ecat-count');
-  if (ic) ic.textContent = CARDS.length;
-  if (im) im.textContent = MCC_DATA.length;
-  if (ie) ie.textContent = EXPENSE_CATS.length;
-}
-
-function editCard(id) {
-  const c = CARDS.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('edit-card-id').value = id;
-  document.getElementById('f-id').value = c.id;
-  document.getElementById('f-name').value = c.name;
-  document.getElementById('f-bank').value = c.bank;
-  document.getElementById('f-joining').value = c.joining;
-  document.getElementById('f-annual').value = c.annual;
-  document.getElementById('f-waiver').value = c.waiver || '';
-  document.getElementById('f-type').value = c.type;
-  document.getElementById('f-excluded').value = c.excluded.join(', ');
-  document.getElementById('f-benefits').value = c.benefits.join('\n');
-  document.getElementById('f-rewards').value = c.rewards.map(r => `${r.cat} | ${r.rate} | ${r.cap||''} | ${r.unit}`).join('\n');
-  document.getElementById('f-mitc').value = Object.entries(c.mitc).map(([k,v]) => `${k} | ${v}`).join('\n');
-  document.getElementById('card-form-title').textContent = 'Edit Card: ' + c.name;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function saveCard() {
-  const id = document.getElementById('f-id').value.trim().toLowerCase().replace(/\s+/g,'-');
-  const name = document.getElementById('f-name').value.trim();
-  const bank = document.getElementById('f-bank').value.trim();
-  if (!id||!name||!bank) { toast('Fill in ID, Name, and Bank'); return; }
-  const rewardsRaw = document.getElementById('f-rewards').value.trim().split('\n').filter(Boolean);
-  const rewards = rewardsRaw.map(line => { const p=line.split('|').map(s=>s.trim()); return {cat:p[0],rate:parseFloat(p[1])||0,cap:p[2]?parseFloat(p[2]):null,unit:p[3]||'cashback'}; });
-  const mitcRaw = document.getElementById('f-mitc').value.trim().split('\n').filter(Boolean);
-  const mitc = {};
-  mitcRaw.forEach(line => { const p=line.split('|'); if(p.length>=2) mitc[p[0].trim()]=p.slice(1).join('|').trim(); });
-  const card = { id, name, bank, type:document.getElementById('f-type').value, joining:parseInt(document.getElementById('f-joining').value)||0, annual:parseInt(document.getElementById('f-annual').value)||0, waiver:document.getElementById('f-waiver').value?parseInt(document.getElementById('f-waiver').value):null, rewards, mitc, excluded:document.getElementById('f-excluded').value.split(',').map(s=>s.trim()).filter(Boolean), benefits:document.getElementById('f-benefits').value.split('\n').map(s=>s.trim()).filter(Boolean) };
-  const idx = CARDS.findIndex(c => c.id === id);
-  if (idx >= 0) CARDS[idx] = card; else CARDS.push(card);
-  renderAdminCards(); renderAdminInfo(); clearCardForm();
-  toast('Card saved: ' + name);
-}
-
-function deleteCard(id) {
-  if (!confirm('Delete card: ' + id + '?')) return;
-  const idx = CARDS.findIndex(c => c.id === id);
-  if (idx >= 0) CARDS.splice(idx, 1);
-  renderAdminCards(); renderAdminInfo(); toast('Card deleted');
-}
-
-function clearCardForm() {
-  ['f-id','f-name','f-bank','f-joining','f-annual','f-waiver','f-excluded','f-benefits','f-rewards','f-mitc'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('edit-card-id').value = '';
-  document.getElementById('card-form-title').textContent = 'Add New Card';
-}
-
-function changePassword() {
-  const p1 = document.getElementById('new-pw-1').value;
-  const p2 = document.getElementById('new-pw-2').value;
-  if (!p1) { toast('Enter a new password'); return; }
-  if (p1 !== p2) { toast('Passwords do not match'); return; }
-  localStorage.setItem(ADMIN_PW_KEY, p1);
-  document.getElementById('new-pw-1').value = '';
-  document.getElementById('new-pw-2').value = '';
-  toast('Password updated ✓');
-}
-
-function exportData() {
-  const data = { version:'1.2', exportedAt:new Date().toISOString(), cards:CARDS, mccData:MCC_DATA, rewardMap:REWARD_MAP, expenseCats:EXPENSE_CATS };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download='cardsaathi-data.json'; a.click();
-  URL.revokeObjectURL(url);
-  toast('Exported cardsaathi-data.json');
-}
-
 // ===================== SUPABASE AUTH =====================
 const SUPABASE_URL = 'https://cwfihdkooygavqalwcdj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_gKeHhiyrWKfayGi6P9yrVQ_tk1Ll7TN';
+
+// In-memory storage fallback for tracking prevention browsers
+const memoryStorage = (() => {
+  let store = {};
+  return {
+    getItem: (k) => store[k] ?? localStorage.getItem(k),
+    setItem: (k, v) => { store[k] = v; try { localStorage.setItem(k, v); } catch(e) {} },
+    removeItem: (k) => { delete store[k]; try { localStorage.removeItem(k); } catch(e) {} },
+    clear: () => { store = {}; try { localStorage.clear(); } catch(e) {} }
+  };
+})();
 
 let sb = null;
 let currentUser = null;
@@ -1187,12 +1079,25 @@ function getAdminPw() { return localStorage.getItem(ADMIN_PW_KEY) || 'admin123';
 
 function initSupabase() {
   try {
-    // Try new supabase global
+    const clientConfig = {
+      auth: {
+        storage: memoryStorage,
+        storageKey: 'cardsaathi-auth',
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        flowType: 'implicit'
+      }
+    };
     if (window.supabase && window.supabase.createClient) {
-      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, clientConfig);
+      console.log('Supabase initialized OK');
       return true;
     }
-  } catch(e) { console.error('Supabase init error:', e); }
+    console.error('Supabase not found on window');
+  } catch(e) {
+    console.error('Supabase init error:', e);
+  }
   return false;
 }
 
@@ -1208,11 +1113,10 @@ async function initAuth() {
   // Try to init Supabase
   const ok = initSupabase();
   if (!ok) {
-    // Supabase failed to load — show login screen anyway
     console.error('Supabase failed to load');
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
-    showAuthError('Connection error. Please refresh the page.');
+    showAuthError('⚠️ Connection error. Please refresh the page (Ctrl+Shift+R). If this persists, try a different browser.');
     return;
   }
 
