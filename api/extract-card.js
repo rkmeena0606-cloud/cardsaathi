@@ -23,26 +23,26 @@ module.exports = async (req, res) => {
           content: [
             {
               type: 'document',
-              source: {
-                type: 'base64',
-                media_type: 'application/pdf',
-                data: req.body.pdfBase64
-              }
+              source: { type: 'base64', media_type: 'application/pdf', data: req.body.pdfBase64 }
             },
             {
               type: 'text',
-              text: 'Analyze this Indian credit card MITC PDF. Return ONLY valid JSON with no markdown: {"name":"","bank":"","type":"Cashback","joining":0,"annual":0,"waiver":null,"rewards":[{"cat":"","rate":0,"cap":null,"unit":"cashback"}],"excluded":[],"benefits":[],"mitc":{}}. Extract all reward tiers, fees, excluded categories and MITC fields. Numbers only for fees and rates.'
+              text: 'Analyze this Indian credit card MITC PDF. Return ONLY a valid JSON object, no markdown, no extra text. Use this exact structure: {"name":"card name","bank":"bank name","type":"Cashback","joining":0,"annual":0,"waiver":null,"rewards":[{"cat":"category name","rate":5,"cap":null,"unit":"cashback"}],"excluded":["Fuel","Wallet"],"benefits":["benefit 1","benefit 2"],"mitc":{"Interest Rate":"3.5% per month","Foreign Markup":"3.5%"}}. Important: all numbers must be plain numbers not strings, cap must be null or a number, waiver must be null or a number. Keep benefit strings short under 80 characters each. Keep mitc values short under 60 characters each.'
             }
           ]
         }]
       })
     });
     const responseText = await r.text();
-    if (!r.ok) return res.status(500).json({ error: 'Anthropic: ' + responseText.substring(0, 300) });
+    if (!r.ok) return res.status(500).json({ error: responseText.substring(0, 200) });
     const d = JSON.parse(responseText);
-    const t = (d.content[0] ? d.content[0].text : '').replace(/```json|```/g, '').trim();
-    const m = t.match(/\{[\s\S]*\}/);
-    const card = JSON.parse(m ? m[0] : t);
+    let text = d.content && d.content[0] ? d.content[0].text : '';
+    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start === -1 || end === -1) return res.status(500).json({ error: 'No JSON found in response' });
+    const jsonStr = text.substring(start, end + 1);
+    const card = JSON.parse(jsonStr);
     return res.status(200).json({ success: true, card: card });
   } catch(e) {
     return res.status(500).json({ error: e.message });
