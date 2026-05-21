@@ -489,6 +489,9 @@ tailwind.config = {
     <div class="flex gap-2 mb-5">
       <button onclick="switchAdminTab('cards')" id="admin-tab-cards" class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white">Cards</button>
       <button onclick="switchAdminTab('rewards')" id="admin-tab-rewards" class="px-4 py-2 rounded-xl text-sm font-semibold bg-surface-container text-on-surface-variant">Reward Map</button>
+      <button onclick="switchAdminTab('suggestions')" id="admin-tab-suggestions" class="px-4 py-2 rounded-xl text-sm font-semibold bg-surface-container text-on-surface-variant">
+        Suggestions <span id="suggestion-badge" class="ml-1 bg-error text-white text-xs rounded-full px-1.5 py-0.5 hidden">0</span>
+      </button>
     </div>
 
     <!-- CARDS TAB -->
@@ -596,10 +599,83 @@ tailwind.config = {
     </div>
   </div>
 
+  <!-- SUGGESTIONS TAB -->
+  <div id="admin-section-suggestions" style="display:none">
+    <div class="bg-white rounded-2xl border border-outline-variant/20 p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-semibold">User Suggestions</h3>
+          <p class="text-xs text-on-surface-variant mt-0.5">Review and approve corrections submitted by users.</p>
+        </div>
+        <button onclick="clearApprovedSuggestions()" class="text-xs text-on-surface-variant hover:text-error">Clear Approved</button>
+      </div>
+      <div id="suggestions-list"><p class="text-sm text-on-surface-variant text-center py-8">No suggestions yet.</p></div>
+    </div>
+  </div>
+
   </div><!-- end secret-admin-panel -->
 </div>
 
-<!-- STATUS MODAL -->
+<!-- SUGGESTION MODAL -->
+<div id="suggest-modal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" onclick="if(event.target===this)closeSuggestModal()">
+  <div class="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-bold text-lg">Suggest a Correction</h3>
+        <p class="text-xs text-on-surface-variant mt-0.5" id="suggest-card-name">—</p>
+      </div>
+      <button onclick="closeSuggestModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Correction type -->
+    <div class="mb-4">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-2">What's wrong?</label>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="setSuggestType('reward_rate')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="reward_rate">💰 Reward Rate Wrong</button>
+        <button onclick="setSuggestType('reward_cap')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="reward_cap">🔒 Cap/Limit Wrong</button>
+        <button onclick="setSuggestType('excluded')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="excluded">🚫 Excluded Category Wrong</button>
+        <button onclick="setSuggestType('fee')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="fee">₹ Fee/Waiver Wrong</button>
+        <button onclick="setSuggestType('benefit')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="benefit">🎁 Benefit Wrong</button>
+        <button onclick="setSuggestType('other')" class="suggest-type-btn px-3 py-2 rounded-xl text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary" data-type="other">📝 Other</button>
+      </div>
+    </div>
+
+    <!-- Current vs correct -->
+    <div class="mb-3">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">What's currently shown (wrong)</label>
+      <input id="suggest-current" type="text" placeholder="e.g. 5% cashback on Amazon" class="w-full px-3 py-2.5 border border-error/40 rounded-xl text-sm outline-none focus:border-error bg-error-container/10"/>
+    </div>
+    <div class="mb-3">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">What it should be (correct)</label>
+      <input id="suggest-correct" type="text" placeholder="e.g. 5% cashback capped ₹1000/month" class="w-full px-3 py-2.5 border border-green-400/60 rounded-xl text-sm outline-none focus:border-green-500 bg-green-50"/>
+    </div>
+    <div class="mb-4">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Source (optional but helpful)</label>
+      <input id="suggest-source" type="text" placeholder="e.g. HDFC website / bank app / statement" class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+    </div>
+
+    <!-- Personal override option -->
+    <div class="mb-4 p-3 bg-primary-container/10 rounded-xl border border-primary/20">
+      <label class="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox" id="suggest-personal" class="mt-0.5 accent-primary w-4 h-4"/>
+        <div>
+          <div class="text-sm font-semibold text-primary">Apply to my calculations only</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">This correction will immediately update YOUR expense planner and card comparisons, regardless of admin approval. Others won't see it until reviewed.</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="submitSuggestion()" class="flex-1 bg-primary text-white py-3 rounded-xl text-sm font-semibold hover:opacity-90">Submit Suggestion</button>
+      <button onclick="closeSuggestModal()" class="flex-1 bg-surface-container text-on-surface-variant py-3 rounded-xl text-sm font-semibold">Cancel</button>
+    </div>
+    <p class="text-xs text-center text-on-surface-variant mt-3">All suggestions are reviewed before going live. Thank you for making CardSaathi more accurate! 🙏</p>
+  </div>
+</div>
+
+<!-- SUGGESTION MODAL -->
 <div id="status-modal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
   <div class="bg-white rounded-3xl w-full max-w-md p-6">
     <h3 class="font-bold text-lg mb-1">Card Status</h3>
@@ -1225,11 +1301,15 @@ function renderCards() {
           ${isPoints && pv.note ? `<div class="text-xs text-on-surface-variant bg-surface-container-low rounded-xl p-2 mb-2">💡 ${pv.note}</div>` : ''}
           ${isClosed && status.replacement ? `<div class="text-xs bg-primary-container/20 rounded-xl p-2 mb-2 text-primary"><strong>✅ Best replacement:</strong> ${status.replacement}</div>` : ''}
           ${isDevalued ? `<div class="text-xs bg-amber-50 rounded-xl p-2 mb-2 text-amber-800">⚠️ ${status.note || 'Benefits devalued — verify current features on bank website'}</div>` : ''}
+          ${(() => { const ov = getPersonalOverrideNote(c.id); return ov ? `<div class="text-xs bg-blue-50 rounded-xl p-2 mb-2 text-blue-700 flex items-start justify-between gap-2"><div>📝 <strong>Your override:</strong> ${ov.correct}</div><button onclick="clearPersonalOverride('${c.id}')" class="text-blue-400 hover:text-error flex-shrink-0">✕</button></div>` : ''; })()}
           ${c.excluded.length ? `<div class="flex flex-wrap gap-1 mb-2">${c.excluded.slice(0,4).map(e=>`<span class="badge badge-red">${e}</span>`).join('')}${c.excluded.length>4?`<span class="badge badge-gray">+${c.excluded.length-4}</span>`:''}</div>` : ''}
 
           <div class="flex gap-2 mt-2">
             <button onclick="toggleMyCard('${c.id}')" class="flex-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${owned ? 'bg-primary-container/30 text-primary border-primary' : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary'}">
               ${owned ? '✓ My Card' : '+ Add to My Cards'}
+            </button>
+            <button onclick="openSuggestModal('${c.id}')" title="Suggest a correction" class="px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+              ✏️ Fix
             </button>
           </div>
 
@@ -1946,13 +2026,225 @@ const TRAVEL_REWARDS = {
   "yes-first-exclusive":    { portal:"YES BANK Travel", flight:12, hotel:6,  train:1,  bus:1,  note:"12X on travel bookings" },
 };
 
+// ===================== SUGGESTION SYSTEM =====================
+let suggestCardId = null;
+let suggestType = null;
+let personalOverrides = JSON.parse(localStorage.getItem('cs_personal_overrides') || '{}');
+// personalOverrides[cardId] = { rewardMap: {catId: rate}, notes: "..." }
+
+let suggestions = JSON.parse(localStorage.getItem('cs_suggestions') || '[]');
+// suggestion: { id, cardId, cardName, type, current, correct, source, personal, status, ts }
+
+function saveSuggestions() {
+  localStorage.setItem('cs_suggestions', JSON.stringify(suggestions));
+}
+
+function savePersonalOverrides() {
+  localStorage.setItem('cs_personal_overrides', JSON.stringify(personalOverrides));
+}
+
+function openSuggestModal(cardId) {
+  suggestCardId = cardId;
+  suggestType = null;
+  const card = CARDS.find(c => c.id === cardId);
+  document.getElementById('suggest-card-name').textContent = card ? card.name + ' — ' + card.bank : cardId;
+  document.getElementById('suggest-current').value = '';
+  document.getElementById('suggest-correct').value = '';
+  document.getElementById('suggest-source').value = '';
+  document.getElementById('suggest-personal').checked = false;
+  document.querySelectorAll('.suggest-type-btn').forEach(b => {
+    b.classList.remove('border-primary','bg-primary/10','text-primary');
+    b.classList.add('border-outline-variant','text-on-surface-variant');
+  });
+  document.getElementById('suggest-modal').style.display = 'flex';
+}
+
+function closeSuggestModal() {
+  document.getElementById('suggest-modal').style.display = 'none';
+  suggestCardId = null;
+}
+
+function setSuggestType(type) {
+  suggestType = type;
+  document.querySelectorAll('.suggest-type-btn').forEach(b => {
+    const isActive = b.dataset.type === type;
+    b.classList.toggle('border-primary', isActive);
+    b.classList.toggle('bg-primary/10', isActive);
+    b.classList.toggle('text-primary', isActive);
+    b.classList.toggle('border-outline-variant', !isActive);
+    b.classList.toggle('text-on-surface-variant', !isActive);
+  });
+}
+
+function submitSuggestion() {
+  if (!suggestCardId) return;
+  if (!suggestType) { toast('Please select what type of correction'); return; }
+  const current = document.getElementById('suggest-current').value.trim();
+  const correct = document.getElementById('suggest-correct').value.trim();
+  const source = document.getElementById('suggest-source').value.trim();
+  const isPersonal = document.getElementById('suggest-personal').checked;
+
+  if (!correct) { toast('Please describe the correct information'); return; }
+
+  const card = CARDS.find(c => c.id === suggestCardId);
+  const suggestion = {
+    id: Date.now().toString(),
+    cardId: suggestCardId,
+    cardName: card ? card.name : suggestCardId,
+    bank: card ? card.bank : '',
+    type: suggestType,
+    current: current || '(not specified)',
+    correct,
+    source: source || 'User submitted',
+    personal: isPersonal,
+    status: 'pending',
+    ts: new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})
+  };
+
+  suggestions.push(suggestion);
+  saveSuggestions();
+
+  // Apply personal override immediately if requested
+  if (isPersonal && suggestType === 'reward_rate') {
+    applyPersonalOverride(suggestion);
+  }
+
+  closeSuggestModal();
+  updateSuggestionBadge();
+  toast(isPersonal ? '✅ Applied to your calculations! Suggestion also submitted for review.' : '✅ Suggestion submitted! Thank you for helping improve CardSaathi.');
+}
+
+function applyPersonalOverride(suggestion) {
+  // Try to parse reward rate from the suggestion
+  // e.g. "5% cashback on Amazon" → try to extract the rate and apply
+  if (!personalOverrides[suggestion.cardId]) {
+    personalOverrides[suggestion.cardId] = { notes: [], rewardText: '' };
+  }
+  personalOverrides[suggestion.cardId].notes.push({
+    type: suggestion.type,
+    correct: suggestion.correct,
+    ts: suggestion.ts
+  });
+  personalOverrides[suggestion.cardId].rewardText = suggestion.correct;
+  savePersonalOverrides();
+}
+
+function hasPersonalOverride(cardId) {
+  return personalOverrides[cardId] && personalOverrides[cardId].notes && personalOverrides[cardId].notes.length > 0;
+}
+
+function getPersonalOverrideNote(cardId) {
+  if (!hasPersonalOverride(cardId)) return null;
+  const overrides = personalOverrides[cardId].notes;
+  return overrides[overrides.length - 1];
+}
+
+function clearPersonalOverride(cardId) {
+  delete personalOverrides[cardId];
+  savePersonalOverrides();
+  renderCards();
+  toast('Personal override cleared');
+}
+
+function updateSuggestionBadge() {
+  const pending = suggestions.filter(s => s.status === 'pending').length;
+  const badge = document.getElementById('suggestion-badge');
+  if (badge) {
+    badge.textContent = pending;
+    badge.classList.toggle('hidden', pending === 0);
+  }
+}
+
+// ---- Admin: render suggestions ----
+function renderSuggestions() {
+  const el = document.getElementById('suggestions-list');
+  if (!el) return;
+  updateSuggestionBadge();
+
+  const pending = suggestions.filter(s => s.status === 'pending');
+  const approved = suggestions.filter(s => s.status === 'approved');
+  const rejected = suggestions.filter(s => s.status === 'rejected');
+
+  if (!suggestions.length) {
+    el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-8">No suggestions yet.</p>';
+    return;
+  }
+
+  const renderGroup = (items, title, color) => {
+    if (!items.length) return '';
+    return `
+      <div class="mb-4">
+        <p class="text-xs font-bold uppercase tracking-wider text-${color}-600 mb-2">${title} (${items.length})</p>
+        ${items.map(s => `
+          <div class="border border-outline-variant/20 rounded-xl p-4 mb-2 ${s.status === 'approved' ? 'bg-green-50' : s.status === 'rejected' ? 'bg-red-50' : 'bg-white'}">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                  <span class="font-semibold text-sm text-on-surface">${s.cardName}</span>
+                  <span class="badge badge-gray text-xs">${s.bank}</span>
+                  <span class="badge ${s.type === 'reward_rate' ? 'badge-green' : 'badge-amber'} text-xs">${s.type.replace('_',' ')}</span>
+                  ${s.personal ? '<span class="badge badge-gray text-xs">personal</span>' : ''}
+                </div>
+                <div class="text-xs mb-1"><span class="text-error font-medium">Was: </span><span class="text-on-surface-variant">${s.current}</span></div>
+                <div class="text-xs mb-1"><span class="text-green-700 font-medium">Should be: </span><span class="text-on-surface font-semibold">${s.correct}</span></div>
+                ${s.source !== 'User submitted' ? `<div class="text-xs text-on-surface-variant">Source: ${s.source}</div>` : ''}
+                <div class="text-xs text-on-surface-variant mt-1">${s.ts}</div>
+              </div>
+              ${s.status === 'pending' ? `
+                <div class="flex flex-col gap-1.5 flex-shrink-0">
+                  <button onclick="approveSuggestion('${s.id}')" class="px-3 py-1.5 bg-green-100 text-green-800 rounded-xl text-xs font-semibold hover:bg-green-200">✅ Approve</button>
+                  <button onclick="rejectSuggestion('${s.id}')" class="px-3 py-1.5 bg-red-100 text-red-800 rounded-xl text-xs font-semibold hover:bg-red-200">❌ Reject</button>
+                </div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  };
+
+  el.innerHTML = renderGroup(pending, 'Pending Review', 'amber') +
+    renderGroup(approved, 'Approved', 'green') +
+    renderGroup(rejected, 'Rejected', 'red');
+}
+
+function approveSuggestion(id) {
+  const s = suggestions.find(x => x.id === id);
+  if (!s) return;
+  s.status = 'approved';
+  saveSuggestions();
+  renderSuggestions();
+  toast('Suggestion approved — update the card data manually in the Cards tab');
+}
+
+function rejectSuggestion(id) {
+  const s = suggestions.find(x => x.id === id);
+  if (!s) return;
+  s.status = 'rejected';
+  saveSuggestions();
+  renderSuggestions();
+  toast('Suggestion rejected');
+}
+
+function clearApprovedSuggestions() {
+  suggestions = suggestions.filter(s => s.status !== 'approved' && s.status !== 'rejected');
+  saveSuggestions();
+  renderSuggestions();
+  toast('Cleared approved/rejected suggestions');
+}
+
 // ===================== ADMIN TABS =====================
 function switchAdminTab(tab) {
   document.getElementById('admin-section-cards').style.display = tab === 'cards' ? 'block' : 'none';
   document.getElementById('admin-section-rewards').style.display = tab === 'rewards' ? 'block' : 'none';
-  document.getElementById('admin-tab-cards').className = 'px-4 py-2 rounded-xl text-sm font-semibold ' + (tab === 'cards' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant');
-  document.getElementById('admin-tab-rewards').className = 'px-4 py-2 rounded-xl text-sm font-semibold ' + (tab === 'rewards' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant');
+  document.getElementById('admin-section-suggestions').style.display = tab === 'suggestions' ? 'block' : 'none';
+
+  ['cards','rewards','suggestions'].forEach(t => {
+    const btn = document.getElementById('admin-tab-' + t);
+    if (!btn) return;
+    btn.className = 'px-4 py-2 rounded-xl text-sm font-semibold ' + (t === tab ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant');
+  });
+
   if (tab === 'rewards') initRewardMapEditor();
+  if (tab === 'suggestions') renderSuggestions();
 }
 
 function initRewardMapEditor() {
@@ -2182,6 +2474,8 @@ function prefillCardForm(data) {
 document.addEventListener('DOMContentLoaded', () => {
   // Show app immediately
   showSection('home');
+  // Update suggestion badge
+  updateSuggestionBadge();
   // Then init auth in background
   initAuth();
 });
