@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0"/>
 <!-- v1.3 -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -65,15 +65,15 @@ tailwind.config = {
   .toast { position: fixed; bottom: 80px; right: 20px; background: #005245; color: white; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   .toast.show { opacity: 1; }
   @media (min-width: 768px) { .toast { bottom: 20px; } }
-  #app-screen { display: none !important; }
-  #app-screen.visible { display: block !important; }
-  #auth-screen.hidden-screen { display: none !important; }
+  #app-screen { display: block; }
+  #auth-screen { display: none; }
+  #auth-screen.show-auth { display: flex; }
 </style>
 </head>
 <body class="overflow-x-hidden">
 
 <!-- LOGIN SCREEN -->
-<div id="auth-screen" class="min-h-screen flex items-center justify-center bg-surface px-4">
+<div id="auth-screen" class="min-h-screen flex items-center justify-center bg-surface px-4" style="display:none">
   <div class="w-full max-w-md">
     <!-- Logo -->
     <div class="text-center mb-8">
@@ -149,12 +149,17 @@ tailwind.config = {
         By signing up you agree to our <a href="#" class="text-primary hover:underline">Terms</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
         We are not financial advisors — CardSaathi is an informational tool only.
       </p>
+      <div class="mt-4 pt-4 border-t border-outline-variant/20 text-center">
+        <button onclick="continueAsGuest()" class="text-sm text-on-surface-variant hover:text-primary transition-colors underline">
+          Continue as Guest (no account needed)
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MAIN APP (hidden until login) -->
-<div id="app-screen" style="display:none">
+<!-- MAIN APP -->
+<div id="app-screen">
 
 <!-- SIDEBAR NAV (Desktop) -->
 <aside class="hidden md:flex flex-col h-full w-[260px] fixed left-0 top-0 bg-white border-r border-outline-variant/30 z-50">
@@ -394,8 +399,12 @@ tailwind.config = {
     <div class="flex items-center justify-between mb-5">
       <div>
         <h2 class="text-xl font-bold text-on-surface">Card Database</h2>
-        <p class="text-sm text-on-surface-variant mt-0.5">48 Indian credit cards with full MITC details</p>
+        <p class="text-sm text-on-surface-variant mt-0.5" id="db-count-label">83 Indian credit cards with full MITC details</p>
       </div>
+      <button onclick="openCompare()" id="compare-btn" class="hidden bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5">
+        <span class="material-symbols-outlined" style="font-size:16px">compare</span>
+        Compare (<span id="compare-count">0</span>)
+      </button>
     </div>
     <div class="flex flex-col sm:flex-row gap-3 mb-4">
       <div class="relative flex-1">
@@ -405,7 +414,21 @@ tailwind.config = {
       <button id="my-cards-filter-btn" onclick="toggleMyCards()" class="px-4 py-2.5 bg-white border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant hover:border-primary whitespace-nowrap">My Cards Only</button>
     </div>
     <div class="flex flex-wrap gap-2 mb-4" id="bank-filters"></div>
+    <p class="text-xs text-on-surface-variant mb-3">💡 Tick cards to compare side-by-side (max 3)</p>
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4" id="db-grid"></div>
+  </div>
+
+  <!-- COMPARE MODAL -->
+  <div id="compare-modal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" onclick="if(event.target===this)closeCompare()">
+    <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-xl font-bold">Card Comparison</h2>
+        <button onclick="closeCompare()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div id="compare-content"></div>
+    </div>
   </div>
 
   <!-- ===== ADMIN ===== -->
@@ -459,10 +482,17 @@ tailwind.config = {
       <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-cards-count">48</div><div class="text-xs text-on-surface-variant mt-1">Cards</div></div>
       <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-mcc-count">35</div><div class="text-xs text-on-surface-variant mt-1">MCC Entries</div></div>
       <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary" id="sa-users-count">—</div><div class="text-xs text-on-surface-variant mt-1">Registered Users</div></div>
-      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary">v1.2</div><div class="text-xs text-on-surface-variant mt-1">Version</div></div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center"><div class="text-2xl font-bold text-primary">v1.3</div><div class="text-xs text-on-surface-variant mt-1">Version</div></div>
     </div>
-    <!-- Add/Edit Card Form -->
-    <div class="bg-white rounded-2xl border border-outline-variant/20 p-5 mb-4">
+
+    <!-- Admin Tabs -->
+    <div class="flex gap-2 mb-5">
+      <button onclick="switchAdminTab('cards')" id="admin-tab-cards" class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white">Cards</button>
+      <button onclick="switchAdminTab('rewards')" id="admin-tab-rewards" class="px-4 py-2 rounded-xl text-sm font-semibold bg-surface-container text-on-surface-variant">Reward Map</button>
+    </div>
+
+    <!-- CARDS TAB -->
+    <div id="admin-section-cards">
       <h3 class="font-semibold mb-4" id="sa-card-form-title">Add New Card</h3>
 
       <!-- PDF UPLOAD WITH AI EXTRACTION -->
@@ -525,6 +555,7 @@ tailwind.config = {
           <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Card</th>
           <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Bank</th>
           <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Annual</th>
+          <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Status</th>
           <th class="text-left p-3 text-xs font-semibold text-on-surface-variant">Actions</th>
         </tr></thead>
         <tbody id="sa-cards-tbody"></tbody>
@@ -538,6 +569,59 @@ tailwind.config = {
         <input type="password" id="sa-new-pw-2" placeholder="Confirm password" class="px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
       </div>
       <button onclick="saChangePassword()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold">Update Password</button>
+    </div>
+  </div><!-- end admin-section-cards -->
+
+  <!-- REWARD MAP TAB -->
+  <div id="admin-section-rewards" style="display:none">
+    <div class="bg-white rounded-2xl border border-outline-variant/20 p-5 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-semibold">Reward Map Editor</h3>
+          <p class="text-xs text-on-surface-variant mt-0.5">Fix which card gives what % for each spend category. Changes apply instantly.</p>
+        </div>
+        <button onclick="exportRewardMap()" class="bg-primary text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Export Map</button>
+      </div>
+
+      <!-- Category selector -->
+      <div class="mb-4">
+        <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1.5">Select Category to Edit</label>
+        <select id="rm-cat-select" onchange="renderRewardMapEditor()" class="w-full px-3 py-2.5 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary">
+          <option value="">— Choose category —</option>
+        </select>
+      </div>
+
+      <!-- Reward map table for selected category -->
+      <div id="rm-editor-area"></div>
+    </div>
+  </div>
+
+  </div><!-- end secret-admin-panel -->
+</div>
+
+<!-- STATUS MODAL -->
+<div id="status-modal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+  <div class="bg-white rounded-3xl w-full max-w-md p-6">
+    <h3 class="font-bold text-lg mb-1">Card Status</h3>
+    <p class="text-sm text-on-surface-variant mb-4" id="status-modal-cardname"></p>
+    <div class="flex gap-2 mb-4">
+      <button onclick="setStatus('active')" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-green-100 text-green-800 hover:bg-green-200">✅ Active</button>
+      <button onclick="setStatus('devalued')" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200">⚠️ Devalued</button>
+      <button onclick="setStatus('closed')" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-red-100 text-red-800 hover:bg-red-200">🚫 Closed</button>
+    </div>
+    <div id="status-extra-fields">
+      <div class="mb-3">
+        <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Note (shown to users)</label>
+        <input id="status-note" type="text" placeholder="e.g. 10X rewards reduced to 5X from Jan 2026" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+      </div>
+      <div class="mb-4">
+        <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-1">Best Replacement (for closed cards)</label>
+        <input id="status-replacement" type="text" placeholder="e.g. HDFC Millennia or Axis ACE" class="w-full px-3 py-2 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary"/>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="saveStatus()" class="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-semibold">Save Status</button>
+      <button onclick="closeStatusModal()" class="flex-1 bg-surface-container text-on-surface-variant py-2.5 rounded-xl text-sm font-semibold">Cancel</button>
     </div>
   </div>
 </div>
@@ -556,8 +640,8 @@ const CARDS = [
   { id:"amex-rewards", bank:"American Express", name:"Amex Rewards Card", joining:1000, annual:4500, waiver:null, type:"Points", rewards:[{cat:"All Spends",rate:1,cap:null,unit:"MR Points"}], excluded:["Fuel","Govt","Insurance"], benefits:["1 MR = ₹0.50 on Amazon","Transfer to Air India","Amex Offers"], mitc:{"MR Value":"₹0.35–₹1 depending on redemption","Milestone":"4000 MR on ₹1.5L in 6mo","Foreign Markup":"3.5%"}},
   { id:"amex-gold", bank:"American Express", name:"Amex Gold Charge", joining:1000, annual:4500, waiver:null, type:"Points", rewards:[{cat:"Travel (Amex Travel)",rate:5,cap:null,unit:"MR Points"},{cat:"Dining",rate:5,cap:null,unit:"MR Points"},{cat:"Others",rate:1,cap:null,unit:"MR Points"}], excluded:["Fuel","Govt","Insurance"], benefits:["Quarterly ₹1000 Taj/Marriott voucher","MR transfers to airlines","Amex concierge"], mitc:{"MR Value":"₹0.50–₹1","Charge Card":"Full payment required monthly","Foreign Markup":"3.5%"}},
   { id:"idfc-select", bank:"IDFC FIRST Bank", name:"IDFC FIRST Select", joining:0, annual:0, waiver:null, type:"Points", rewards:[{cat:"Weekend Dining",rate:10,cap:null,unit:"Points"},{cat:"Online Spends",rate:3,cap:null,unit:"Points"},{cat:"Others",rate:1.5,cap:null,unit:"Points"}], excluded:["Fuel","EMI","Wallet","Govt"], benefits:["Lifetime free","4 lounge visits/year","10x weekend dining","₹2L personal accident cover"], mitc:{"Point Value":"1 = ₹0.25","Foreign Markup":"1.99%","Lounge":"4 visits/year"}},
-  { id:"rbl-iocl", bank:"RBL Bank", name:"RBL IOCL Fuel", joining:500, annual:500, waiver:100000, type:"Cashback", rewards:[{cat:"IOCL Fuel",rate:4,cap:null,unit:"cashback"},{cat:"Groceries",rate:2,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Wallet","Govt"], benefits:["4% value back on IOCL fuel","1% surcharge waiver","Up to ₹100/month surcharge waiver"], mitc:{"Fuel Value-back":"4% via RBL Rewards","Surcharge Waiver":"1% at IOCL","Foreign Markup":"3.5%"}},
-  { id:"rbl-bms", bank:"RBL Bank", name:"RBL BookMyShow Play", joining:499, annual:499, waiver:150000, type:"Cashback+Voucher", rewards:[{cat:"BookMyShow",rate:10,cap:200,unit:"cashback"},{cat:"Entertainment",rate:5,cap:300,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Fuel","Wallet","Govt"], benefits:["1 free movie ticket/month","10% on BMS","Swiggy discount vouchers"], mitc:{"Free Movie":"Up to ₹200 on BMS, 1/month","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1.5L/year"}},
+  { id:"rbl-iocl", bank:"RBL Bank", name:"RBL IndianOil Credit Card", joining:500, annual:500, waiver:175000, type:"Cashback", rewards:[{cat:"IOCL Fuel",rate:4,cap:null,unit:"cashback"},{cat:"Groceries",rate:2,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Wallet","Govt","Rent"], benefits:["4% value back on IOCL fuel","Annual fee waived on ₹1.75L spend","1% fuel surcharge waiver","RBL Rewards program"], mitc:{"Interest Rate":"Up to 3.99% per month (47.88% p.a.) based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1.75L annual spend","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Utility Fee":"1% on utility above ₹50k/month","Fuel Fee":"1% on fuel above ₹10k per transaction","FASTag Fee":"1% on FASTag above ₹10k (w.e.f Jan 2026)","Category A CIBIL >775":"3.35% p.m.","Category B CIBIL 725-775":"3.85% p.m.","Category C CIBIL <725":"3.99% p.m."}},
+  { id:"rbl-bms", bank:"RBL Bank", name:"RBL Bank Play Credit Card", joining:500, annual:500, waiver:150000, type:"Cashback+Voucher", rewards:[{cat:"BookMyShow",rate:10,cap:200,unit:"cashback"},{cat:"Entertainment",rate:5,cap:300,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["EMI","Fuel above ₹10k","Wallet","Govt","Rent"], benefits:["1 free movie ticket/month via BMS","10% on BookMyShow (capped ₹200)","5% on entertainment (capped ₹300)","Annual fee waived on ₹1.5L spend"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1.5L annual spend","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Fuel Fee":"1% on fuel above ₹10k per transaction","Utility Fee":"1% on utility above ₹50k/month","Reward Redemption Fee":"₹99 + GST"}},
   { id:"bob-eterna", bank:"Bank of Baroda", name:"BoB Eterna", joining:2499, annual:2499, waiver:200000, type:"Points", rewards:[{cat:"Online Shopping",rate:15,cap:null,unit:"Reward Points"},{cat:"Dining & Entertainment",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:3,cap:null,unit:"Reward Points"}], excluded:["Fuel","EMI","Govt","Wallet"], benefits:["1 RP = ₹0.25","Unlimited domestic lounge","Golf privileges"], mitc:{"Reward Value":"1 RP = ₹0.25","Lounge":"Unlimited domestic","Foreign Markup":"3.5%"}},
   { id:"hdfc-regalia", bank:"HDFC Bank", name:"HDFC Regalia", joining:2500, annual:2500, waiver:300000, type:"Points", rewards:[{cat:"All Spends",rate:4,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt","Rent","Gaming"], benefits:["1 RP = ₹0.50 on Smartbuy","12 lounge visits/year","Priority Pass (6 int'l)","10,000 RP at ₹5L milestone","Reward points valid 2 years"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 (slab-based)","Foreign Markup":"2%","Reward Expiry":"2 years","Max Rewards":"50,000 points per statement cycle","Lounge":"Priority Pass (domestic via swipe)","Grocery Cap":"2000 RP/month","Utility Cap":"2000 RP/month","Insurance Cap":"2000 RP/month","Rent":"No reward points on rent (w.e.f Jan 2023)","Govt":"No reward points on govt transactions","Overlimit":"2.5% of overlimit, min ₹550","Reissue Fee":"₹199 non-metal"}},
   { id:"axis-ace", bank:"Axis Bank", name:"Axis ACE", joining:499, annual:499, waiver:200000, type:"Cashback", rewards:[{cat:"Bill Pay via Google Pay",rate:5,cap:null,unit:"cashback"},{cat:"Zomato, Swiggy, Ola",rate:4,cap:null,unit:"cashback"},{cat:"Others",rate:2,cap:null,unit:"cashback"}], excluded:["Fuel above ₹50k","EMI","Govt","Wallet above ₹10k","Rent","Gaming above ₹10k","Education via 3rd party","Utility above ₹25k"], benefits:["5% on bill payment via GPay","Flat 2% on all other spends — highest flat rate entry card","4 lounge visits/year","Annual fee waived on ₹2L spend","Fuel surcharge waiver up to ₹500/month"], mitc:{"Interest Rate":"3.75% per month (55.55% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"Nil up to ₹500 | ₹500 (₹501–₹5k) | ₹750 (₹5k–₹10k) | ₹1200 above ₹10k","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2L annual spend","Fuel Surcharge Waiver":"1% refunded on ₹400–₹4000 txn, max ₹500/cycle","Fuel Fee":"1% on cumulative fuel above ₹50k/cycle (w.e.f Dec 2024)","Wallet Fee":"1% on wallet load above ₹10k/cycle (w.e.f Dec 2024)","Utility Fee":"1% on utility above ₹25k/cycle (w.e.f Dec 2024)","Rent Fee":"1% per rent transaction","Education Fee":"1% on education via 3rd party apps","Gaming Fee":"1% on gaming above ₹10k/cycle","Overlimit":"2.5% of overlimit, min ₹500","Reward Forfeiture":"30 days after card closure (w.e.f Oct 2025)"}},
@@ -574,7 +658,7 @@ const CARDS = [
   { id:"axis-magnus", bank:"Axis Bank", name:"Axis Magnus", joining:12500, annual:12500, waiver:2500000, type:"Points", rewards:[{cat:"Travel Edge (flights/hotels)",rate:35,cap:null,unit:"Edge Reward Points"},{cat:"All Other Spends",rate:12,cap:null,unit:"Edge Reward Points"}], excluded:["Rent","Wallet","Govt","EMI","Insurance","Gold","Fuel — waiver threshold exclusions"], benefits:["1 ERP = ₹0.20 base (₹0.40 on Travel Edge)","Unlimited lounge Priority Pass","₹10,000 travel voucher on activation","Annual fee waived on ₹25L spend","Cash advance waived","Lower interest 3.0% p.m."], mitc:{"Interest Rate":"3.0% per month (42.58% p.a.) — lower than standard","Grace Period":"20–50 days","Cash Advance":"Waived for Magnus","Late Payment":"₹1200 above ₹10k outstanding","Foreign Markup":"2%","Annual Fee Waiver":"₹25L spend (excl. Rent/Wallet/Govt/EMI/Insurance/Gold/Fuel)","Waiver Exclusions":"Rent, Wallet, Utilities, Govt, EMI conversions, Cash, Insurance, Gold, Fuel (effective Sep 2023 and Apr 2024)","Overlimit":"2.5% of overlimit, min ₹500","Reward Forfeiture":"30 days after closure (w.e.f Oct 2025)","Fuel Fee":"1% on fuel above ₹50k/cycle","Wallet Fee":"1% on wallet above ₹10k/cycle","Utility Fee":"1% on utility above ₹25k/cycle","Rent Fee":"1% per rent transaction"}},
   { id:"axis-reserve", bank:"Axis Bank", name:"Axis Reserve", joining:50000, annual:50000, waiver:3500000, type:"Points", rewards:[{cat:"Travel Edge",rate:45,cap:null,unit:"Edge Reward Points"},{cat:"All Spends",rate:15,cap:null,unit:"Edge Reward Points"}], excluded:["Rent","Wallet","Govt","EMI","Insurance","Gold","Fuel — waiver threshold exclusions"], benefits:["Ultra-premium metal card","Unlimited lounge + guest passes","Dedicated relationship manager","Cash advance waived","Annual fee waived on ₹35L spend","1.5% forex markup — low"], mitc:{"Interest Rate":"3.0% per month (42.58% p.a.)","Grace Period":"20–50 days","Cash Advance":"Waived","Late Payment":"₹1200 above ₹10k outstanding","Foreign Markup":"1.5%","Annual Fee Waiver":"₹35L spend (excl. Rent/Wallet/Govt/EMI/Insurance/Gold/Fuel)","Overlimit":"2.5% of overlimit, min ₹500","Fuel Fee":"1% on fuel above ₹50k/cycle","Wallet Fee":"1% on wallet above ₹10k/cycle","Utility Fee":"1% on utility above ₹25k/cycle","Rent Fee":"1% per rent transaction"}},
   { id:"axis-vistara-infinite", bank:"Axis Bank", name:"Axis Vistara Infinite", joining:10000, annual:10000, waiver:null, type:"Miles", rewards:[{cat:"All Spends",rate:6,cap:null,unit:"Club Vistara Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 CV Point = ~₹0.50 on Vistara","Complimentary Business Class ticket","4 lounge visits/year","Vistara Gold membership"], mitc:{"CV Point Value":"~₹0.50 on Vistara","Welcome Gift":"1 Business Class ticket","Lounge":"4 visits/year","Foreign Markup":"3.5%"}},
-  { id:"hdfc-moneyback-plus", bank:"HDFC Bank", name:"HDFC MoneyBack+", joining:500, annual:500, waiver:50000, type:"Cashback", rewards:[{cat:"Amazon, Flipkart, Swiggy, Uber",rate:10,cap:500,unit:"CashPoints"},{cat:"Other Online",rate:5,cap:null,unit:"CashPoints"},{cat:"Offline",rate:1,cap:null,unit:"CashPoints"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["10X on top online merchants","Annual fee waiver on ₹50k spend","1 CashPoint = ₹0.25"], mitc:{"CashPoint Value":"1 CP = ₹0.25","Monthly Cap":"₹500 on 10X categories","Annual Fee Waiver":"₹50k spend","Foreign Markup":"3.5%"}},
+  { id:"hdfc-moneyback-plus", bank:"HDFC Bank", name:"HDFC MoneyBack+", joining:500, annual:500, waiver:50000, type:"CashPoints", rewards:[{cat:"Amazon, Flipkart, Swiggy, BigBasket, Reliance Smart",rate:10,cap:null,unit:"CashPoints"},{cat:"All Other Spends",rate:1,cap:null,unit:"CashPoints"}], excluded:["Fuel","Wallet","EMI","Govt","Rent","Gaming"], benefits:["10X CashPoints (2.5% value) on Amazon/Flipkart/Swiggy/BigBasket/Reliance Smart","2 CashPoints per ₹200 on other spends (=1% value)","₹500 gift voucher on ₹50,000 quarterly spend","1% fuel surcharge waiver on ₹400–₹5000 txn (max ₹250/cycle)","Annual fee waived on ₹50k annual spend","500 bonus CashPoints on paying joining fee"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 slab","Foreign Markup":"3.5%","CashPoint Value":"1 CashPoint = ₹0.25 on redemption","10X Earn Rate":"10 CashPoints per ₹150 spend = 2.5% effective value","Other Earn Rate":"2 CashPoints per ₹200 spend = 1% effective value","Quarterly Milestone":"₹500 voucher on ₹50,000/quarter","Annual Fee Waiver":"₹50,000 annual spend","Fuel Surcharge":"1% waiver on ₹400–₹5000, max ₹250/cycle","Reward Expiry":"2 years"}},
   { id:"hdfc-pixel-play", bank:"HDFC Bank", name:"HDFC Pixel Play", joining:500, annual:500, waiver:100000, type:"Cashback", rewards:[{cat:"Chosen category (1 of 6)",rate:5,cap:1000,unit:"CashPoints"},{cat:"All Other Spends",rate:1,cap:15000,unit:"CashPoints"}], excluded:["Fuel above ₹15k","Wallet above ₹10k","Rent","EMI","Govt","Gaming above ₹10k"], benefits:["Choose reward category every month","5% on chosen category (dining/travel/shopping/entertainment/utilities/grocery)","1% unlimited on all other spends","Waive joining fee on ₹20k spend in 90 days","Dual card: Visa + RuPay"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 slab","Foreign Markup":"3.5%","Joining Fee Waiver":"₹20,000 in first 90 days","Annual Fee Waiver":"₹1L annual spend","Fuel Fee":"1% on fuel above ₹15,000 (w.e.f Oct 2025)","Wallet Fee":"1% on wallet load above ₹10,000/month","Rent Fee":"1% on rent transactions (w.e.f Oct 2025)","Utility Fee":"1% if total utility above ₹50,000/month","Cashback Cap":"₹15,000/month on 1% category","Insurance Cap":"2000 CashPoints/month","Gaming":"No CashPoints on gaming","Reward Expiry":"2 years"}},
   { id:"icici-sapphiro", bank:"ICICI Bank", name:"ICICI Sapphiro", joining:6500, annual:3500, waiver:600000, type:"Points", rewards:[{cat:"International Spends",rate:4,cap:null,unit:"PAYBACK Points"},{cat:"Dining & Entertainment",rate:2,cap:null,unit:"PAYBACK Points"},{cat:"Others",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","4 lounge visits","Golf privileges","Concierge service"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"4 visits/year domestic","Foreign Markup":"3.5%"}},
   { id:"icici-coral", bank:"ICICI Bank", name:"ICICI Coral", joining:500, annual:500, waiver:150000, type:"Points", rewards:[{cat:"All Spends",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","2 lounge visits/quarter","1 free movie ticket/month"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"2 visits/quarter","Movie Benefit":"1 free ticket/month","Annual Fee Waiver":"₹1.5L"}},
@@ -593,7 +677,7 @@ const CARDS = [
   { id:"hsbc-live-plus", bank:"HSBC India", name:"HSBC Live+ Card", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"Dining, Food Delivery, Grocery",rate:10,cap:1000,unit:"cashback"},{cat:"Others",rate:1.5,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Lifetime free","10% on food & grocery","1.5% flat on all other spends"], mitc:{"Cashback Cap":"₹1000/month on 10% categories","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
   { id:"yes-ace", bank:"Yes Bank", name:"Yes Ace Credit Card", joining:0, annual:0, waiver:null, type:"Cashback", rewards:[{cat:"All Spends",rate:1.5,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["Lifetime free","Flat 1.5% cashback on everything","Good backup card"], mitc:{"Cashback":"Flat 1.5% on all eligible spends","Annual Fee":"Lifetime free","Foreign Markup":"3.5%"}},
   { id:"standard-chartered-ultimate", bank:"Standard Chartered", name:"SC Ultimate Card", joining:5000, annual:5000, waiver:null, type:"Cashback", rewards:[{cat:"All Spends",rate:3.3,cap:null,unit:"cashback"}], excluded:["Fuel","Wallet","Govt","EMI"], benefits:["3.3% flat cashback — highest flat rate in India","2 Priority Pass visits/month","No category restrictions"], mitc:{"Cashback Rate":"3.3% on all eligible spends","Lounge":"2 Priority Pass visits/month","Foreign Markup":"3.5%","Note":"Best flat-rate cashback card in India"}},
-  { id:"rbl-world-safari", bank:"RBL Bank", name:"RBL World Safari", joining:3000, annual:3000, waiver:300000, type:"Miles", rewards:[{cat:"Travel Spends",rate:5,cap:null,unit:"Travel Points"},{cat:"All Others",rate:2,cap:null,unit:"Travel Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["Zero forex markup","Unlimited domestic lounge","4 int'l lounge visits/year","Travel insurance"], mitc:{"Point Value":"1 Travel Point = ₹0.50 on travel","Foreign Markup":"0%","Lounge":"Unlimited domestic + 4 int'l","Annual Fee Waiver":"₹3L spend"}},
+  { id:"rbl-world-safari", bank:"RBL Bank", name:"RBL World Safari", joining:3000, annual:3000, waiver:null, type:"Miles", rewards:[{cat:"Travel Spends",rate:5,cap:null,unit:"Travel Points"},{cat:"All Others",rate:2,cap:null,unit:"Travel Points"}], excluded:["Fuel above ₹10k","Wallet","EMI","Govt","Rent"], benefits:["ZERO forex markup — best for international travel","Unlimited domestic lounge access","4 international lounge visits/year","Travel insurance included","Reward redemption fee waived"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"0% — unique feature among mid-range cards","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Fuel Fee":"1% on fuel above ₹10k per transaction","Utility Fee":"1% on utility above ₹50k/month","Reward Redemption Fee":"Waived for World Safari","Card Replacement":"NIL"}},
   { id:"federal-imperio", bank:"Federal Bank", name:"Federal Imperio", joining:3000, annual:3000, waiver:null, type:"Points", rewards:[{cat:"Travel & Hotels",rate:10,cap:null,unit:"Imperio Points"},{cat:"International Spends",rate:5,cap:null,unit:"Imperio Points"},{cat:"Others",rate:2,cap:null,unit:"Imperio Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["Unlimited lounge","Priority Pass","Concierge service","Golf privileges"], mitc:{"Point Value":"~₹0.50 on travel","Foreign Markup":"2%","Lounge":"Unlimited Priority Pass"}},
   { id:"sbi-aurum", bank:"SBI Card", name:"SBI AURUM", joining:9999, annual:9999, waiver:1200000, type:"Points", rewards:[{cat:"Travel & Dining",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:4,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet"], benefits:["Annual fee waived on ₹12L spend","Reward Points never expire","Unlimited lounge access","Lowest forex markup 1.99%","Priority concierge service","No reward redemption fee"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"Nil to ₹1300 (slab-based)","Foreign Markup":"1.99%","Reward Point Expiry":"Never expire","Annual Fee Waiver":"₹12L annual spend","Card Replacement":"₹1500"}},
   { id:"sbi-miles-elite", bank:"SBI Card", name:"SBI Card MILES ELITE", joining:4999, annual:4999, waiver:1500000, type:"Miles", rewards:[{cat:"International Spends",rate:8,cap:null,unit:"Miles"},{cat:"Domestic Spends",rate:4,cap:null,unit:"Miles"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["Annual fee waived on ₹15L spend","Low forex markup 1.99%","Air miles transfer partners","Lounge access priority pass","Travel insurance included"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Foreign Markup":"1.99%","Annual Fee Waiver":"₹15L annual spend","Late Payment":"₹100–₹1300 slab"}},
@@ -608,8 +692,7 @@ const CARDS = [
   { id:"sbi-simply-save-upi", bank:"SBI Card", name:"SimplySAVE UPI SBI Card", joining:499, annual:499, waiver:100000, type:"Points", rewards:[{cat:"Dining, Movies, Grocery",rate:10,cap:null,unit:"Reward Points"},{cat:"Others",rate:1,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["10X on lifestyle categories","UPI payments supported","Annual fee waived on ₹1L spend","Entry level card — easy approval"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1L annual spend","Late Payment":"₹100–₹1300 slab","Reward Expiry":"24 months"}},
   { id:"sbi-doctors", bank:"SBI Card", name:"Doctor's SBI Card", joining:1499, annual:1499, waiver:200000, type:"Points", rewards:[{cat:"Medical Equipment & Supplies",rate:10,cap:null,unit:"Reward Points"},{cat:"Dining",rate:5,cap:null,unit:"Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["Designed for medical professionals","10X on medical supplies","Annual fee waived on ₹2L spend","Professional indemnity insurance"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2L annual spend","Reward Expiry":"24 months"}},
   { id:"sbi-shaurya-select", bank:"SBI Card", name:"Shaurya Select SBI Card", joining:0, annual:250, waiver:50000, type:"Points", rewards:[{cat:"Defence Canteen & Groceries",rate:10,cap:null,unit:"Reward Points"},{cat:"Dining",rate:5,cap:null,unit:"Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["Designed for defence personnel","Lower finance charge 2.75% p.m.","Annual fee waived on ₹50k spend","Defence canteen rewards"], mitc:{"Interest Rate":"2.75% per month (33% p.a.) — defence benefit","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Foreign Markup":"3.5%","Annual Fee Waiver":"₹50k annual spend","Reward Expiry":"24 months"}},
-  { id:"sbi-phonePe-purple", bank:"SBI Card", name:"PhonePe SBI Card PURPLE", joining:499, annual:499, waiver:100000, type:"Cashback", rewards:[{cat:"PhonePe & Partner Merchants",rate:5,cap:500,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["5% cashback on PhonePe app","Annual fee waived on ₹1L spend","Cashback auto-credited to statement","Contactless payments enabled"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1L annual spend","Cashback Cap":"₹500/month on 5% category","Reward Expiry":"Cashback credited monthly"}}
-];
+  { id:"sbi-phonePe-purple", bank:"SBI Card", name:"PhonePe SBI Card PURPLE", joining:499, annual:499, waiver:100000, type:"Cashback", rewards:[{cat:"PhonePe & Partner Merchants",rate:5,cap:500,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel","Govt","Wallet","EMI"], benefits:["5% cashback on PhonePe app","Annual fee waived on ₹1L spend","Cashback auto-credited to statement","Contactless payments enabled"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Foreign Markup":"3.5%","Annual Fee Waiver":"₹1L annual spend","Cashback Cap":"₹500/month on 5% category","Reward Expiry":"Cashback credited monthly"}},
 
   { id:"hdfc-regalia-gold", bank:"HDFC Bank", name:"HDFC Regalia Gold", joining:2500, annual:2500, waiver:400000, type:"Points", rewards:[{cat:"All Spends",rate:4,cap:null,unit:"Reward Points"}], excluded:["Fuel","Wallet","EMI","Govt","Rent","Gaming"], benefits:["Annual fee waived on ₹4L spend","Lounge access on quarterly spend criteria","Priority Pass for international","2000 RP/month grocery cap","Reward points valid 2 years"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 slab","Foreign Markup":"3.5%","Annual Fee Waiver":"₹4L annual spend","Lounge":"Quarterly spend criteria for domestic","Max Rewards":"50,000 per statement cycle","Grocery Cap":"2000 RP/month","Utility Cap":"2000 RP/month","Reissue Fee":"₹199"}},
   { id:"hdfc-diners-black-metal", bank:"HDFC Bank", name:"HDFC Diners Black Metal", joining:10000, annual:10000, waiver:800000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"}], excluded:["Fuel","Govt","Wallet","Gaming"], benefits:["1 RP = ₹1 on Smartbuy","Unlimited lounge access","Annual fee waived on ₹8L spend","Reward points valid 3 years","No late payment charges","Low interest 1.99% p.m.","Max 75,000 RP per cycle"], mitc:{"Interest Rate":"1.99% per month (23.88% p.a.)","Grace Period":"20–50 days","Cash Advance":"Not applicable","Late Payment":"Not applicable","Foreign Markup":"0% (Fuel surcharge waiver not applicable)","Reward Expiry":"3 years","Annual Fee Waiver":"₹8L annual spend","Max Rewards":"75,000 per statement cycle","Grocery Cap":"2000 RP/month","Reissue Fee":"₹3500 (metal card)"}},
@@ -628,6 +711,14 @@ const CARDS = [
   { id:"axis-spicejet-voyage", bank:"Axis Bank", name:"SpiceJet Axis Voyage", joining:750, annual:750, waiver:null, type:"Miles", rewards:[{cat:"SpiceJet Flights",rate:10,cap:null,unit:"SpiceClub Points"},{cat:"Others",rate:2,cap:null,unit:"SpiceClub Points"}], excluded:["Fuel","Wallet","Govt","Rent","EMI"], benefits:["10% back on SpiceJet bookings","SpiceClub membership","Airport lounge access","Fuel surcharge waiver — NOT refunded"], mitc:{"Interest Rate":"3.75% per month (55.55% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"Nil up to ₹500 | ₹500–₹750–₹1200 (slab)","Foreign Markup":"3.5%","Note":"Fuel surcharge refund NOT applicable on this card","Rent Fee":"1% per transaction"}},
   { id:"axis-horizon", bank:"Axis Bank", name:"Axis Horizon", joining:3000, annual:3000, waiver:null, type:"Points", rewards:[{cat:"Travel & Hotels",rate:8,cap:null,unit:"Edge Reward Points"},{cat:"Dining",rate:5,cap:null,unit:"Edge Reward Points"},{cat:"Others",rate:2,cap:null,unit:"Edge Reward Points"}], excluded:["Fuel above ₹50k","Wallet above ₹10k","Govt","Rent","EMI"], benefits:["8X on travel and hotels","5X on dining","Unlimited lounge access","Travel insurance","Golf privileges"], mitc:{"Interest Rate":"3.75% per month (55.55% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"Nil up to ₹500 | ₹500–₹750–₹1200 (slab)","Foreign Markup":"3.5%","Fuel Surcharge Waiver":"1% on ₹400–₹4000, max ₹400/cycle","Rent Fee":"1% per transaction","Wallet Fee":"1% above ₹10k/cycle"}},
   { id:"axis-magnus-burgundy", bank:"Axis Bank", name:"Axis Magnus for Burgundy", joining:30000, annual:30000, waiver:3000000, type:"Points", rewards:[{cat:"Travel Edge (flights/hotels)",rate:35,cap:null,unit:"Edge Reward Points"},{cat:"All Other Spends",rate:12,cap:null,unit:"Edge Reward Points"}], excluded:["Rent","Wallet","Govt","EMI","Insurance","Gold","Fuel — waiver exclusions"], benefits:["All Magnus benefits + Burgundy perks","Complimentary for Burgundy customers maintaining TRV","Annual fee waived on ₹30L spend","Lower interest 3.0% p.m.","Cash advance waived"], mitc:{"Interest Rate":"3.0% per month (42.58% p.a.)","Grace Period":"20–50 days","Cash Advance":"Waived","Late Payment":"₹1200 above ₹10k","Foreign Markup":"2%","Annual Fee Waiver":"₹30L spend (for Burgundy customers)","Note":"Complimentary for Burgundy Private clients. Reverts to Magnus ₹12,500 if Burgundy status lost","Waiver Exclusions":"Rent/Wallet/Utilities/Govt/EMI/Cash/Insurance/Gold/Fuel"}},
+
+  { id:"rbl-world-safari-plus", bank:"RBL Bank", name:"RBL World Safari Plus", joining:6000, annual:6000, waiver:null, type:"Miles", rewards:[{cat:"International Travel",rate:8,cap:null,unit:"Travel Points"},{cat:"Domestic Travel",rate:5,cap:null,unit:"Travel Points"},{cat:"All Others",rate:2,cap:null,unit:"Travel Points"}], excluded:["Fuel above ₹10k","Wallet","EMI","Govt","Rent"], benefits:["ZERO forex markup","Premium travel benefits","Unlimited lounge access domestic + international","Comprehensive travel insurance","Reward redemption fee waived"], mitc:{"Interest Rate":"3.4% per month (40.8% p.a.) — better rate","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"0%","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Fuel Fee":"1% on fuel above ₹10k per transaction","Card Replacement":"NIL"}},
+  { id:"rbl-nova", bank:"RBL Bank", name:"RBL Nova Credit Card", joining:12500, annual:12500, waiver:1000000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"},{cat:"Travel & Dining",rate:10,cap:null,unit:"Reward Points"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["Annual fee waived on ₹10L spend","Lower interest 3.4% p.m.","2% forex — better than standard","Reward redemption fee waived","Premium concierge service","Unlimited lounge access"], mitc:{"Interest Rate":"3.4% per month (40.8% p.a.) — lower rate","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"2% — lower than standard","Annual Fee Waiver":"₹10L annual spend","Overlimit Fee":"NIL","Reward Redemption Fee":"Waived","Card Replacement":"NIL"}},
+  { id:"rbl-blockbuster", bank:"RBL Bank", name:"RBL Blockbuster Credit Card", joining:3000, annual:3000, waiver:null, type:"Cashback+Voucher", rewards:[{cat:"OTT Platforms",rate:10,cap:500,unit:"cashback"},{cat:"Dining & Movies",rate:5,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["10% on OTT subscriptions","5% on dining and movies","Complimentary OTT subscriptions","Lounge access","Entertainment focused card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Fuel Fee":"1% on fuel above ₹10k","Reward Redemption Fee":"₹99 + GST"}},
+  { id:"rbl-popcorn", bank:"RBL Bank", name:"RBL Popcorn Credit Card", joining:1000, annual:1000, waiver:null, type:"Cashback+Voucher", rewards:[{cat:"Movies & OTT",rate:8,cap:300,unit:"cashback"},{cat:"Dining",rate:5,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["8% on movies and OTT","Free movie tickets monthly","Dining benefits","Entertainment rewards card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Reward Redemption Fee":"₹99 + GST"}},
+  { id:"rbl-insignia", bank:"RBL Bank", name:"RBL Insignia Credit Card", joining:7000, annual:7000, waiver:1000000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"},{cat:"Travel & Luxury",rate:8,cap:null,unit:"Reward Points"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["Annual fee waived on ₹10L spend","1.5% forex — low for premium card","Reward redemption fee waived","Priority banking benefits","Unlimited lounge access","Concierge service"], mitc:{"Interest Rate":"3.4% per month (40.8% p.a.)","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"1.5% — low","Annual Fee Waiver":"₹10L annual spend (or free for Insignia Preferred Banking customers)","Overlimit Fee":"NIL","Reward Redemption Fee":"Waived","Card Replacement":"NIL"}},
+  { id:"rbl-iocl-xtra", bank:"RBL Bank", name:"RBL IndianOil XTRA Credit Card", joining:1500, annual:1500, waiver:275000, type:"Points", rewards:[{cat:"IOCL Fuel",rate:6.5,cap:null,unit:"IOCL Points"},{cat:"Groceries & Dining",rate:4,cap:null,unit:"IOCL Points"},{cat:"Others",rate:1,cap:null,unit:"IOCL Points"}], excluded:["Wallet","Govt","EMI","Rent"], benefits:["6.5% value back on IOCL fuel","4% on groceries and dining","Annual fee waived on ₹2.75L spend","Fuel surcharge waiver at IOCL","IOCL co-branded premium card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2.75L annual spend","Fuel Benefit":"6.5% value back via IOCL Points at IOCL pumps","Overlimit Fee":"NIL","Reward Redemption Fee":"₹99 + GST"}},
+];
 
 const EXPENSE_CATS = [
   {id:"amazon_flipkart",label:"Amazon / Flipkart",icon:"📦",mcc:"5999,5945",sub:"Online retail"},
@@ -650,61 +741,72 @@ const EXPENSE_CATS = [
   {id:"emi",label:"EMI Payments",icon:"📅",mcc:"6012",sub:"Usually excluded — No rewards!"},
 ];
 
+// ===================== CARD STATUS =====================
+// status: 'active' | 'devalued' | 'closed'
+// Updated by admin panel. Stored in localStorage.
+let CARD_STATUS = JSON.parse(localStorage.getItem('cs_card_status') || '{}');
+// devalued: { note, date } | closed: { note, replacement }
+
+function saveCardStatus() {
+  localStorage.setItem('cs_card_status', JSON.stringify(CARD_STATUS));
+}
+
 const REWARD_MAP = {
-  amazon_flipkart: {"hdfc-millennia":5,"icici-amazon-pay":5,"flipkart-axis":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hdfc-infinia":2.5,"hdfc-moneyback-plus":10,"sbi-simply-click":10,"onecard":5,"hsbc-live-plus":1.5,"standard-chartered-ultimate":3.3},
-  swiggy_zomato: {"hdfc-swiggy":10,"hdfc-swiggy-ornge":10,"hdfc-swiggy-blck":10,"airtel-axis":10,"flipkart-axis":4,"axis-ace":4,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-regalia":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"onecard":5},
-  groceries: {"hdfc-swiggy":5,"rbl-iocl":2,"hdfc-millennia":2.5,"sbi-cashback":5,"sc-simply-save":2.5,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"idfc-wealth":3,"au-altura-plus":1.5,"sbi-prime":10,"sbi-simply-save":10,"sbi-tata-neu-plus":1},
-  fuel: {"rbl-iocl":4,"hdfc-regalia":1,"hdfc-regalia-gold":1,"hdfc-biz-moneyback":5,"sbi-bpcl-octane":7.25},
+  amazon_flipkart: {"hdfc-millennia":5,"icici-amazon-pay":5,"flipkart-axis":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hdfc-infinia":2.5,"hdfc-moneyback-plus":10,"sbi-simply-click":10,"onecard":5,"hsbc-live-plus":1.5,"standard-chartered-ultimate":3.3,"amex-gold":1},
+  swiggy_zomato: {"hdfc-swiggy":10,"hdfc-swiggy-ornge":10,"hdfc-swiggy-blck":10,"airtel-axis":10,"flipkart-axis":4,"axis-ace":4,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-regalia":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"onecard":5,"amex-gold":1},
+  groceries: {"hdfc-swiggy":5,"rbl-iocl":2,"hdfc-millennia":2.5,"sbi-cashback":5,"sc-simply-save":2.5,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"idfc-wealth":3,"au-altura-plus":1.5,"sbi-prime":10,"sbi-simply-save":10,"sbi-tata-neu-plus":1,"amex-gold":1},
+  fuel: {"rbl-iocl":4,"rbl-iocl-xtra":6.5,"hdfc-regalia":1,"hdfc-regalia-gold":1,"hdfc-biz-moneyback":5,"sbi-bpcl-octane":7.25,"axis-indianoil":4},
   dining: {"idfc-select":10,"idfc-wealth":10,"sc-simply-save":2.5,"axis-privilege":10,"axis-magnus":12,"axis-magnus-burgundy":12,"axis-select":10,"axis-horizon":5,"kotak-zen":6,"bob-eterna":10,"hdfc-regalia":2,"hdfc-regalia-gold":2,"amex-gold":5,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"sbi-simply-save":10,"sbi-prime":10,"sbi-doctors":5,"sbi-shaurya-select":5,"sbi-aurum":10},
-  movies: {"rbl-bms":10,"sc-simply-save":2.5,"hdfc-millennia":2.5,"sbi-cashback":5,"icici-coral":2,"sbi-simply-click":10,"sbi-simply-save":10},
-  travel_flight: {"axis-privilege":15,"axis-magnus":35,"axis-magnus-burgundy":35,"axis-reserve":45,"axis-atlas":5,"axis-horizon":8,"axis-vistara-infinite":6,"federal-imperio":10,"hdfc-infinia":5,"hdfc-diners-black":5,"hdfc-diners-black-metal":5,"yes-first-exclusive":12,"amex-gold":5,"scapia":10,"rbl-world-safari":5,"indusind-legend":3,"idfc-wealth":3,"sbi-miles-elite":8,"sbi-air-india-signature":30,"sbi-club-vistara-prime":8,"sbi-aurum":10,"hdfc-marriott-bonvoy":8,"axis-spicejet-voyage":10},
-  utility: {"airtel-axis":10,"citi-cashback":5,"axis-ace":5,"sbi-cashback":1,"hdfc-millennia":2.5,"hdfc-pixel-play":5,"hdfc-phonePe-ultimo":2,"au-altura-plus":1,"standard-chartered-ultimate":3.3},
-  telecom: {"airtel-axis":25,"citi-cashback":5,"axis-ace":5,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-biz-moneyback":5,"standard-chartered-ultimate":3.3},
+  movies: {"rbl-bms":10,"sc-simply-save":2.5,"hdfc-millennia":2.5,"sbi-cashback":5,"icici-coral":2,"sbi-simply-click":10,"sbi-simply-save":10,"amex-gold":1},
+  travel_flight: {"axis-privilege":15,"axis-magnus":35,"axis-magnus-burgundy":35,"axis-reserve":45,"axis-atlas":5,"axis-horizon":8,"axis-vistara-infinite":6,"federal-imperio":10,"hdfc-infinia":5,"hdfc-diners-black":5,"hdfc-diners-black-metal":5,"yes-first-exclusive":12,"amex-gold":5,"scapia":10,"rbl-world-safari":5,"rbl-world-safari-plus":8,"indusind-legend":3,"idfc-wealth":3,"sbi-miles-elite":8,"sbi-air-india-signature":30,"sbi-club-vistara-prime":8,"sbi-aurum":10,"hdfc-marriott-bonvoy":2,"axis-spicejet-voyage":10},
+  utility: {"airtel-axis":10,"citi-cashback":5,"axis-ace":5,"sbi-cashback":1,"hdfc-millennia":2.5,"hdfc-pixel-play":5,"hdfc-phonePe-ultimo":2,"au-altura-plus":1,"standard-chartered-ultimate":3.3,"amex-gold":1},
+  telecom: {"airtel-axis":25,"citi-cashback":5,"axis-ace":5,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-biz-moneyback":5,"standard-chartered-ultimate":3.3,"amex-gold":1},
   rent: {"au-altura-plus":1},
-  insurance: {"hdfc-regalia":2,"hdfc-regalia-gold":2,"standard-chartered-ultimate":3.3},
+  insurance: {"hdfc-regalia":2,"hdfc-regalia-gold":2,"hdfc-infinia":5,"standard-chartered-ultimate":3.3,"amex-gold":1},
   wallet: {}, govt: {}, emi: {},
-  apparel: {"flipkart-axis":5,"hdfc-millennia":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"sbi-simply-click":5,"standard-chartered-ultimate":3.3,"onecard":5},
-  electronics: {"sbi-cashback":5,"hdfc-millennia":5,"icici-amazon-pay":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"sbi-simply-click":10,"standard-chartered-ultimate":3.3},
-  health: {"sbi-cashback":5,"icici-amazon-pay":2,"axis-ace":2,"hdfc-millennia":2.5,"standard-chartered-ultimate":3.3,"sbi-pulse":10,"sbi-doctors":10},
-  education: {"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"standard-chartered-ultimate":3.3},
+  apparel: {"flipkart-axis":5,"hdfc-millennia":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"sbi-simply-click":5,"standard-chartered-ultimate":3.3,"onecard":5,"amex-gold":1},
+  electronics: {"sbi-cashback":5,"hdfc-millennia":5,"icici-amazon-pay":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"sbi-simply-click":10,"standard-chartered-ultimate":3.3,"amex-gold":1},
+  health: {"sbi-cashback":5,"icici-amazon-pay":2,"axis-ace":2,"hdfc-millennia":2.5,"standard-chartered-ultimate":3.3,"sbi-pulse":10,"sbi-doctors":10,"amex-gold":1},
+  education: {"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"standard-chartered-ultimate":3.3,"amex-gold":1},
 };
 
 const MCC_DATA = [
-  {code:"5411",merchant:"Grocery Stores / Supermarkets",category:"Groceries",status:"earns",notes:"Earns on most cards. HSBC Live+ gives 10%."},
-  {code:"5812",merchant:"Eating Places & Restaurants",category:"Dining",status:"earns",notes:"IDFC Select 10X on weekends. Axis Magnus 12X."},
-  {code:"5541",merchant:"Service Stations (Fuel)",category:"Fuel",status:"no-reward",notes:"Excluded from rewards on almost all cards. 1% surcharge waiver only."},
-  {code:"5542",merchant:"Automated Fuel Dispensers",category:"Fuel",status:"no-reward",notes:"Same as 5541 — no rewards, only surcharge waiver."},
-  {code:"6540",merchant:"POI (Wallet Loading)",category:"Wallet",status:"excluded",notes:"All wallets excluded. Paytm, PhonePe, GPay top-ups get 0 rewards and excluded from milestone."},
-  {code:"6513",merchant:"Real Estate / Rent Agents",category:"Rent",status:"no-reward",notes:"Most cards exclude rent. Check your statement."},
-  {code:"9311",merchant:"Tax Payments",category:"Govt",status:"excluded",notes:"Income tax, GST, challan — universally excluded."},
-  {code:"9222",merchant:"Fines / Govt Fees",category:"Govt",status:"excluded",notes:"Court fees, traffic fines — no rewards."},
-  {code:"4900",merchant:"Utilities (Electricity, Gas, Water)",category:"Utilities",status:"earns",notes:"Axis ACE 5% via GPay. Airtel Axis 10%. Citi 5% via autopay."},
-  {code:"4812",merchant:"Telephone & Telecom",category:"Telecom",status:"earns",notes:"Airtel Axis gives 25% on Airtel recharges."},
-  {code:"5999",merchant:"Miscellaneous Online Retail",category:"Online Shopping",status:"earns",notes:"Amazon, most e-commerce. SBI Cashback, HDFC Millennia give 5%."},
-  {code:"5732",merchant:"Electronics Shops",category:"Electronics",status:"earns",notes:"Croma, Reliance Digital. SBI SimplyCLICK 10X."},
-  {code:"7832",merchant:"Motion Picture Theatres",category:"Entertainment",status:"earns",notes:"PVR, INOX. RBL BMS 10%. SC Simply Save 10X."},
-  {code:"5912",merchant:"Drug Stores & Pharmacies",category:"Health",status:"earns",notes:"1mg, Netmeds, Apollo Pharmacy. SBI Cashback 5%."},
-  {code:"5621",merchant:"Women's Ready-to-Wear / Apparel",category:"Apparel",status:"earns",notes:"Myntra, Westside. 5% on SBI Cashback, Flipkart Axis."},
-  {code:"6300",merchant:"Insurance",category:"Insurance",status:"capped",notes:"LIC, health insurance — excluded on SBI Cashback, HDFC Millennia."},
-  {code:"6012",merchant:"Financial Institutions — EMI",category:"EMI",status:"excluded",notes:"Credit card EMIs, loan repayments — excluded from ALL cards. Critical milestone trap."},
-  {code:"3000-3299",merchant:"Airlines",category:"Travel",status:"earns",notes:"Best on Axis Magnus (35X), Axis Reserve (45X), Axis Privilege (15X), HDFC Infinia (5X)."},
-  {code:"7011",merchant:"Hotels & Lodging",category:"Travel",status:"earns",notes:"Amex Gold gives quarterly vouchers for Taj/Marriott."},
-  {code:"5813",merchant:"Bars / Taverns / Liquor",category:"Dining",status:"earns",notes:"Usually treated as dining — earns normal rewards."},
-  {code:"8299",merchant:"Schools / Educational",category:"Education",status:"capped",notes:"Earns base reward generally. Not boosted on most cards."},
-  {code:"4121",merchant:"Taxi / Rideshare (Ola, Uber)",category:"Transport",status:"earns",notes:"Axis ACE 4% on Ola. Flipkart Axis 4% on partner apps."},
-  {code:"5944",merchant:"Jewelry Stores",category:"Jewellery",status:"capped",notes:"Jewellery excluded from accelerated rewards on HDFC Millennia."},
-  {code:"6011",merchant:"ATM Cash Withdrawals",category:"Cash",status:"excluded",notes:"No rewards on cash advances. High fees apply."},
-  {code:"8062",merchant:"Hospitals",category:"Healthcare",status:"earns",notes:"Apollo, Fortis. Earns base rewards."},
-  {code:"7922",merchant:"Theatrical Producers / Ticketing",category:"Entertainment",status:"earns",notes:"Event tickets, BookMyShow. RBL BMS 10%."},
-  {code:"5200",merchant:"Home Supply Stores",category:"Home",status:"earns",notes:"IKEA, Home Centre. Standard rewards on most cards."},
-  {code:"4814",merchant:"Telecommunication Services",category:"Telecom",status:"earns",notes:"Airtel, Jio, Vi. Airtel Axis up to 25% on Airtel services."},
-  {code:"5511",merchant:"Car Dealers (New)",category:"Automotive",status:"capped",notes:"Most banks cap rewards on auto purchases."},
-  {code:"5172",merchant:"Petroleum Products",category:"Fuel",status:"no-reward",notes:"Commercial fuel — treated same as regular fuel. No rewards."},
-  {code:"7523",merchant:"Automobile Parking Lots",category:"Parking",status:"earns",notes:"FASTag, parking. Earns base rewards. Not boosted."},
-  {code:"5661",merchant:"Shoe Stores",category:"Apparel",status:"earns",notes:"Bata, Woodland. Earns base rewards."},
-  {code:"8011",merchant:"Doctors",category:"Health",status:"earns",notes:"Generally earns standard rewards."},
-  {code:"4111",merchant:"Local Commuter Transport / Metro",category:"Transport",status:"capped",notes:"Metro, buses. Usually earns base. Check if excluded."},
-  {code:"5045",merchant:"Computers & Peripherals",category:"Electronics",status:"earns",notes:"Enterprise electronics. Earns normally."},
+  {code:"5411",merchant:"Grocery Stores / Supermarkets",category:"Groceries",status:"earns",notes:"HSBC Live+ 10%, HDFC Swiggy 5%, SBI Prime 10X, Airtel Axis 10%.",cards:["hsbc-live-plus","hdfc-swiggy","sbi-prime","airtel-axis","hdfc-millennia"]},
+  {code:"5812",merchant:"Eating Places & Restaurants",category:"Dining",status:"earns",notes:"IDFC Select 10X, Axis Magnus 12X, Amex Gold 5X MR Points, HDFC Infinia 5X.",cards:["idfc-select","axis-magnus","amex-gold","hdfc-infinia","axis-privilege"]},
+  {code:"5541",merchant:"Service Stations (Fuel)",category:"Fuel",status:"earns",notes:"SBI BPCL Octane 7.25% at BPCL, RBL IndianOil 4% at IOCL, Indian Oil Axis 4% at IOCL, HDFC Regalia 1% surcharge waiver. Regular cards only give surcharge waiver, not rewards.",cards:["sbi-bpcl-octane","rbl-iocl","axis-indianoil","hdfc-regalia","rbl-iocl-xtra"]},
+  {code:"5542",merchant:"Automated Fuel Dispensers",category:"Fuel",status:"earns",notes:"Same as 5541 — fuel co-branded cards earn rewards here. Others only get surcharge waiver.",cards:["sbi-bpcl-octane","rbl-iocl","axis-indianoil","hdfc-regalia"]},
+  {code:"5172",merchant:"Petroleum Products (Commercial)",category:"Fuel",status:"no-reward",notes:"Commercial fuel purchase — usually no rewards or surcharge waiver. Check card T&C.",cards:[]},
+  {code:"6540",merchant:"POI — Wallet Loading",category:"Wallet",status:"excluded",notes:"All wallets excluded from rewards. 1% fee above threshold (HDFC ₹10k, Axis ₹10k, SBI ₹1000). Excluded from milestone spend too.",cards:[]},
+  {code:"6513",merchant:"Real Estate / Rent Agents",category:"Rent",status:"no-reward",notes:"Most cards charge 1% processing fee + no rewards. Only a few niche cards earn on rent.",cards:["au-altura-plus"]},
+  {code:"9311",merchant:"Tax Payments (Income Tax / GST)",category:"Govt",status:"excluded",notes:"Universally excluded. No rewards, excluded from milestone calculations on all cards.",cards:[]},
+  {code:"9222",merchant:"Fines / Govt Fees",category:"Govt",status:"excluded",notes:"Court fees, traffic fines, RTO — no rewards on any card.",cards:[]},
+  {code:"4900",merchant:"Utilities — Electric, Gas, Water",category:"Utilities",status:"earns",notes:"Axis ACE 5% via GPay. Airtel Axis 10%. But note: 1% fee kicks in above ₹25k (Axis), ₹50k (SBI/HDFC) per cycle.",cards:["axis-ace","airtel-axis","citi-cashback","hdfc-pixel-play"]},
+  {code:"4812",merchant:"Telephone & Telecom Services",category:"Telecom",status:"earns",notes:"Airtel Axis 25% on Airtel. Axis ACE 5%. HDFC Biz MoneyBack 5%. Amex gold 1X.",cards:["airtel-axis","axis-ace","hdfc-biz-moneyback","amex-gold"]},
+  {code:"5999",merchant:"Miscellaneous Online Retail",category:"Online Shopping",status:"earns",notes:"SBI Cashback 5%, HDFC Millennia 5%, Flipkart Axis 5%, Axis ACE 2%. Amex earns 1X MR Points.",cards:["sbi-cashback","hdfc-millennia","flipkart-axis","icici-amazon-pay","amex-gold"]},
+  {code:"5732",merchant:"Electronics Shops",category:"Electronics",status:"earns",notes:"Croma, Reliance Digital. SBI SimplyCLICK 10X, SBI Cashback 5%, Amex 1X MR Points.",cards:["sbi-simply-click","sbi-cashback","hdfc-millennia","amex-gold"]},
+  {code:"7832",merchant:"Motion Picture Theatres",category:"Entertainment",status:"earns",notes:"PVR, INOX. RBL BMS/Play 10%, SC Simply Save 5X, ICICI Coral 2X. Amex Gold earns 1X.",cards:["rbl-bms","sc-simply-save","icici-coral","amex-gold"]},
+  {code:"5912",merchant:"Drug Stores & Pharmacies",category:"Health",status:"earns",notes:"1mg, Netmeds, Apollo. SBI Pulse 10X on health, SBI Cashback 5%, SBI Doctors 10X.",cards:["sbi-pulse","sbi-doctors","sbi-cashback","amex-gold"]},
+  {code:"5621",merchant:"Women's Ready-to-Wear / Apparel",category:"Apparel",status:"earns",notes:"Myntra, Westside. Flipkart Axis 5%, SBI Cashback 5%, HDFC Millennia 5%. Amex 1X.",cards:["flipkart-axis","sbi-cashback","hdfc-millennia","amex-gold"]},
+  {code:"6300",merchant:"Insurance Premiums",category:"Insurance",status:"capped",notes:"HDFC Infinia 5X capped 10k RP/month. Axis Magnus/Reserve excluded from fee waiver. SBI Cashback excluded. Amex Gold 1X MR (no cap).",cards:["hdfc-infinia","hdfc-regalia","amex-gold"]},
+  {code:"6012",merchant:"Financial Institutions — Loan EMI",category:"EMI",status:"excluded",notes:"Credit card EMIs, loan repayments — excluded from ALL rewards AND milestone spend. Common trap.",cards:[]},
+  {code:"3000-3299",merchant:"Airlines (Flight Bookings)",category:"Travel",status:"earns",notes:"Best: Axis Reserve 45X, Axis Magnus 35X (via Travel Edge portal). HDFC Infinia 5X, Amex 5X MR. Book via card portal for best rates.",cards:["axis-reserve","axis-magnus","hdfc-infinia","amex-gold","sbi-air-india-signature"]},
+  {code:"7011",merchant:"Hotels & Lodging",category:"Travel",status:"earns",notes:"Marriott Bonvoy HDFC 8X. Axis Magnus 35X via Travel Edge. Amex Gold Taj/Marriott vouchers. HDFC Infinia 10X on SmartBuy.",cards:["hdfc-marriott-bonvoy","axis-magnus","hdfc-infinia","amex-gold","axis-reserve"]},
+  {code:"4111",merchant:"Local Commuter Transport / Metro",category:"Transport",status:"earns",notes:"Usually earns base rewards. Amex Gold 1X. SBI SimplyCLICK earns. FASTag 1% fee above ₹10k (RBL from Jan 2026).",cards:["amex-gold","sbi-simply-click","axis-ace"]},
+  {code:"4121",merchant:"Taxi / Rideshare (Ola, Uber)",category:"Transport",status:"earns",notes:"Axis ACE 4% on Ola. Flipkart Axis 4% on Uber. Amex 1X.",cards:["axis-ace","flipkart-axis","airtel-axis","amex-gold"]},
+  {code:"5813",merchant:"Bars / Taverns / Liquor",category:"Dining",status:"earns",notes:"Usually treated as dining — earns normal dining rewards.",cards:["idfc-select","axis-magnus","amex-gold"]},
+  {code:"8299",merchant:"Schools / Educational Services",category:"Education",status:"capped",notes:"1% fee on 3rd-party apps (CRED, PhonePe etc) on most cards. Direct school/college website payments — no fee. Amex earns 1X.",cards:["amex-gold","hdfc-regalia"]},
+  {code:"5944",merchant:"Jewelry Stores",category:"Jewellery",status:"capped",notes:"Excluded from accelerated rewards on HDFC Millennia. Axis Magnus/Reserve excludes from fee waiver. Most cards earn only base rate.",cards:["amex-gold","hdfc-regalia"]},
+  {code:"6011",merchant:"ATM Cash Withdrawals",category:"Cash",status:"excluded",notes:"No rewards on cash advances. High interest from day 1. 2.5% fee or ₹500 min on most cards.",cards:[]},
+  {code:"8062",merchant:"Hospitals",category:"Healthcare",status:"earns",notes:"Apollo, Fortis. SBI Pulse 10X, SBI Doctors 10X, Amex Gold 1X MR.",cards:["sbi-pulse","sbi-doctors","amex-gold"]},
+  {code:"7922",merchant:"Theatrical / Event Ticketing",category:"Entertainment",status:"earns",notes:"BookMyShow, Zomato Live. RBL Play 10%, Amex Gold 1X, SC Simply Save 5X.",cards:["rbl-bms","amex-gold","sc-simply-save"]},
+  {code:"5200",merchant:"Home Improvement / Supply Stores",category:"Home",status:"earns",notes:"IKEA, Home Centre. Standard rewards. Amex Gold 1X.",cards:["amex-gold","hdfc-regalia","sbi-cashback"]},
+  {code:"4814",merchant:"Telecommunication Services",category:"Telecom",status:"earns",notes:"Airtel, Jio, Vi postpaid. Airtel Axis 25%, Axis ACE 5%, Amex Gold 1X.",cards:["airtel-axis","axis-ace","hdfc-biz-moneyback","amex-gold"]},
+  {code:"5511",merchant:"Car Dealers (New Cars)",category:"Automotive",status:"capped",notes:"Most banks cap rewards. Usually only base rate. Large transactions may not earn.",cards:["amex-gold","hdfc-regalia"]},
+  {code:"7523",merchant:"Automobile Parking Lots",category:"Parking",status:"earns",notes:"FASTag, parking lots. Note: RBL charges 1% on FASTag above ₹10k per txn from Jan 2026.",cards:["amex-gold","sbi-cashback","axis-ace"]},
+  {code:"5661",merchant:"Shoe Stores",category:"Apparel",status:"earns",notes:"Bata, Woodland. Earns base rewards on most cards. Amex 1X.",cards:["amex-gold","flipkart-axis","sbi-cashback"]},
+  {code:"8011",merchant:"Doctors / Physician Services",category:"Health",status:"earns",notes:"SBI Pulse 10X, SBI Doctors 10X, Amex 1X.",cards:["sbi-pulse","sbi-doctors","amex-gold"]},
+  {code:"5045",merchant:"Computers & Peripherals",category:"Electronics",status:"earns",notes:"Dell, HP, Apple — earns normally. Amex 1X.",cards:["sbi-cashback","hdfc-millennia","amex-gold"]},
+  {code:"4784",merchant:"Toll Charges / FASTag",category:"Transport",status:"capped",notes:"RBL charges 1% on FASTag above ₹10k per txn from Jan 2026. Others earn base rate.",cards:["axis-ace","amex-gold"]},
 ];
 
 // ===================== STATE =====================
@@ -718,17 +820,25 @@ let customCards = [], customMCC = [], customRewardMap = {}, customECats = [];
 
 // ===================== NAV =====================
 function showSection(name) {
-  document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(b => b.classList.remove('active'));
-  document.getElementById('section-' + name).classList.add('active');
-  document.querySelectorAll(`[data-section="${name}"]`).forEach(b => b.classList.add('active'));
-  const titles = {home:'Home',planner:'Expense Planner',mcc:'MCC Guide',milestones:'Milestone Tracker',cards:'Card Database',admin:'Admin'};
-  document.getElementById('page-title').textContent = titles[name] || name;
-  if (name === 'planner') renderExpenseInputs();
-  if (name === 'mcc') renderMCC();
-  if (name === 'milestones') renderMilestones();
-  if (name === 'cards') renderCards();
-  if (name === 'admin') renderAdminCards();
+  try {
+    document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(b => b.classList.remove('active'));
+    const sec = document.getElementById('section-' + name);
+    if (!sec) { console.error('Section not found:', name); return; }
+    sec.classList.add('active');
+    document.querySelectorAll('[data-section="' + name + '"]').forEach(b => b.classList.add('active'));
+    const titleEl = document.getElementById('page-title');
+    const titles = {home:'Home',planner:'Expense Planner',mcc:'MCC Guide',milestones:'Milestone Tracker',cards:'Card Database'};
+    if (titleEl) titleEl.textContent = titles[name] || name;
+    // Scroll to top on mobile
+    window.scrollTo(0, 0);
+    if (name === 'planner') renderExpenseInputs();
+    if (name === 'mcc') renderMCC();
+    if (name === 'milestones') renderMilestones();
+    if (name === 'cards') renderCards();
+  } catch(e) {
+    console.error('showSection error:', e);
+  }
 }
 
 // ===================== UTILS =====================
@@ -793,45 +903,108 @@ function calcRewards() {
     const el = document.getElementById('exp-' + cat.id);
     const amt = parseFloat(el?.value || 0);
     if (!amt) return;
-    const catRates = REWARD_MAP[cat.id] || {};
-    let bestCard = null, bestRate = 0;
-    cardsToCheck.forEach(cid => {
-      const rate = catRates[cid] || 0;
-      if (rate > bestRate) { bestRate = rate; bestCard = cid; }
-    });
-    if (['wallet','govt','emi'].includes(cat.id) || bestRate === 0) {
-      warnings.push(`${cat.icon} <strong>${cat.label}</strong> — earns NO rewards (excluded category)`);
+
+    if (['wallet','govt','emi'].includes(cat.id)) {
+      warnings.push(`${cat.icon} <strong>${cat.label}</strong> — earns NO rewards on any card`);
       return;
     }
-    if (cat.id === 'rent') { warnings.push('🏠 <strong>Rent</strong> — most cards excluded. Check your card MITC before paying.'); return; }
-    const card = CARDS.find(c => c.id === bestCard);
-    const reward = amt * bestRate / 100;
-    totalReward += reward;
-    results.push({cat:cat.label, icon:cat.icon, card:card?.name || bestCard, rate:bestRate, reward, amt});
+    if (cat.id === 'rent') {
+      warnings.push('🏠 <strong>Rent</strong> — most cards charge 1% fee + no rewards. Verify your card MITC.');
+      return;
+    }
+
+    const catRates = REWARD_MAP[cat.id] || {};
+    const candidates = [];
+
+    cardsToCheck.forEach(cid => {
+      const rate = catRates[cid] || 0;
+      if (!rate) return;
+      const card = CARDS.find(c => c.id === cid);
+      if (!card) return;
+
+      // Skip closed cards in suggestions
+      const status = CARD_STATUS[cid];
+      if (status && status.status === 'closed') return;
+
+      const isExcluded = card.excluded && card.excluded.some(ex =>
+        cat.label.toLowerCase().includes(ex.toLowerCase()) ||
+        ex.toLowerCase().includes(cat.id.toLowerCase())
+      );
+      if (isExcluded) return;
+
+      // Find monthly cap from card rewards
+      let monthlyCap = null;
+      if (card.rewards) {
+        const tier = card.rewards.find(r =>
+          r.cat.toLowerCase().includes(cat.id.toLowerCase()) ||
+          cat.label.toLowerCase().includes(r.cat.toLowerCase().split(' ')[0])
+        );
+        if (tier && tier.cap) monthlyCap = tier.cap;
+      }
+
+      const unit = (card.rewards[0] && card.rewards[0].unit) || 'cashback';
+      const pv = POINT_VALUES[unit] || { value: 0.25 };
+      const effRate = rate * pv.value;
+      let rawReward = amt * rate / 100;
+      let cappedReward = monthlyCap !== null ? Math.min(rawReward, monthlyCap) : rawReward;
+
+      candidates.push({
+        cid, card, rate, effRate,
+        reward: cappedReward,
+        rawReward,
+        monthlyCap,
+        unit,
+        pvNote: pv.note || '',
+        isCapped: monthlyCap !== null && rawReward > monthlyCap,
+        isDevalued: status && status.status === 'devalued'
+      });
+    });
+
+    if (!candidates.length) {
+      warnings.push(`${cat.icon} <strong>${cat.label}</strong> — no reward card in your selection`);
+      return;
+    }
+
+    // Sort by effective value descending
+    candidates.sort((a, b) => b.effRate - a.effRate || b.reward - a.reward);
+    const top = candidates.slice(0, 5);
+    totalReward += top[0].reward;
+
+    results.push({ cat: cat.label, icon: cat.icon, amt, top });
   });
 
   document.getElementById('total-reward-num').textContent = fmt(totalReward);
-  document.getElementById('total-reward-sub').textContent = `Estimated monthly rewards across ${results.length} categories`;
+  document.getElementById('total-reward-sub').textContent = `Best card rewards across ${results.length} categories`;
 
   const recEl = document.getElementById('rec-list');
   if (!results.length) {
-    recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Best Card Per Category</p><p class="text-sm text-white/40 text-center py-4">Enter spend amounts above</p>';
-  } else {
-    recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Best Card Per Category</p>' +
-      results.map(r => `
-        <div class="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
-          <div>
-            <div class="text-xs text-white/50">${r.icon} ${r.cat}</div>
-            <div class="text-sm font-semibold text-white">${r.card}</div>
-            <div class="text-xs text-white/40">on ${fmt(r.amt)} spend</div>
-          </div>
-          <div class="text-right">
-            <div class="text-lg font-bold text-secondary-container">${fmt(r.reward)}</div>
-            <div class="text-xs text-white/40">${r.rate}% back</div>
-          </div>
-        </div>
-      `).join('');
+    recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Recommended Cards Per Category</p><p class="text-sm text-white/40 text-center py-4">Enter spend amounts above</p>';
+    return;
   }
+
+  recEl.innerHTML = '<p class="text-xs uppercase tracking-widest text-white/40 mb-4">Recommended Cards Per Category</p>' +
+    results.map(r => `
+      <div class="py-3 border-b border-white/10 last:border-0">
+        <div class="text-xs text-white/50 mb-2">${r.icon} ${r.cat} — ${fmt(r.amt)}/month</div>
+        ${r.top.map((c, i) => `
+          <div class="flex items-center justify-between py-1.5 ${i === 0 ? '' : 'opacity-70'}">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold ${i===0?'text-secondary-container':'text-white/40'} w-4">#${i+1}</span>
+              <div>
+                <div class="text-xs font-semibold ${i===0?'text-white':'text-white/70'}">${c.card.name}
+                  ${c.isDevalued ? '<span class="text-amber-300 text-xs ml-1">⚠️ Devalued</span>' : ''}
+                </div>
+                <div class="text-xs text-white/40">${c.rate}% ${c.unit !== 'cashback' ? c.unit : ''} = ~₹${c.effRate.toFixed(2)}/₹100${c.isCapped ? ' • cap hit' : ''}</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-bold ${i===0?'text-secondary-container':'text-white/50'}">${fmt(c.reward)}</div>
+              ${c.isCapped ? '<div class="text-xs text-amber-300">capped</div>' : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
 
   const warnEl = document.getElementById('warn-panel');
   if (warnings.length) {
@@ -846,17 +1019,47 @@ function renderMCC() {
   let data = MCC_DATA;
   if (mccFilter !== 'all') data = data.filter(m => m.status === mccFilter);
   if (search) data = data.filter(m => m.code.includes(search) || m.merchant.toLowerCase().includes(search) || m.category.toLowerCase().includes(search));
-  const sMap = { earns:'<span class="badge badge-green">✅ Earns</span>', 'no-reward':'<span class="badge badge-red">❌ None</span>', capped:'<span class="badge badge-amber">⚠️ Capped</span>', excluded:'<span class="badge badge-red">🚫 Excluded</span>' };
-  tbody.innerHTML = data.map(m => `
-    <tr class="hover:bg-surface-container-low/50 transition-colors">
-      <td class="p-3 font-mono text-sm font-semibold text-primary-container">${m.code}</td>
+  const sMap = {
+    earns:     '<span class="badge badge-green">✅ Earns</span>',
+    'no-reward':'<span class="badge badge-red">❌ No Reward</span>',
+    capped:    '<span class="badge badge-amber">⚠️ Capped</span>',
+    excluded:  '<span class="badge badge-red">🚫 Excluded</span>'
+  };
+
+  tbody.innerHTML = data.map(m => {
+    // Build card suggestions
+    let cardTags = '';
+    if (m.cards && m.cards.length > 0) {
+      cardTags = m.cards.map(cid => {
+        const card = CARDS.find(c => c.id === cid);
+        if (!card) return '';
+        // Get rate from REWARD_MAP
+        const catKey = m.category.toLowerCase().replace(/[^a-z]/g,'_');
+        const catMap = Object.keys(REWARD_MAP).find(k =>
+          m.category.toLowerCase().includes(k) || k.includes(m.category.toLowerCase().split(' ')[0].toLowerCase())
+        );
+        const rate = catMap ? (REWARD_MAP[catMap][cid] || 0) : 0;
+        const unit = card.rewards[0]?.unit || 'cashback';
+        const pv = POINT_VALUES[unit] || { value: 0.25 };
+        const eff = rate > 0 ? `${rate}% (~₹${(rate * pv.value).toFixed(1)}/₹100)` : '';
+        return `<span class="inline-flex items-center gap-1 bg-primary-container/20 text-primary text-xs rounded-lg px-2 py-0.5 mr-1 mb-1 cursor-pointer hover:bg-primary-container/40" onclick="showSection('cards');document.getElementById('db-search').value='${card.name}';renderCards()">${card.name}${eff ? ` <span class="text-green-700 font-semibold">${eff}</span>` : ''}</span>`;
+      }).filter(Boolean).join('');
+    }
+
+    return `
+    <tr class="hover:bg-surface-container-low/50 transition-colors border-b border-outline-variant/10">
+      <td class="p-3 font-mono text-sm font-semibold text-primary">${m.code}</td>
       <td class="p-3 text-sm font-medium text-on-surface">${m.merchant}</td>
       <td class="p-3"><span class="badge badge-gray">${m.category}</span></td>
       <td class="p-3">${sMap[m.status] || m.status}</td>
-      <td class="p-3 text-xs text-on-surface-variant hidden md:table-cell max-w-xs">${m.notes}</td>
-    </tr>
-  `).join('');
+      <td class="p-3 text-xs text-on-surface-variant">
+        <div class="mb-1">${m.notes}</div>
+        ${cardTags ? `<div class="mt-1.5 flex flex-wrap">${cardTags}</div>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
 }
+
 
 function setMCCFilter(f, btn) {
   mccFilter = f;
@@ -950,6 +1153,8 @@ function removeMilestone(id) {
 }
 
 // ===================== CARD DATABASE =====================
+let compareList = [];
+
 function renderCards() {
   const grid = document.getElementById('db-grid');
   if (!grid) return;
@@ -959,31 +1164,76 @@ function renderCards() {
   if (dbFilterBank !== 'all') cards = cards.filter(c => c.bank === dbFilterBank);
   if (showMyOnly) cards = cards.filter(c => myCards.includes(c.id));
 
+  const lbl = document.getElementById('db-count-label');
+  if (lbl) lbl.textContent = `${CARDS.length} Indian credit cards — showing ${cards.length}`;
+
   grid.innerHTML = cards.map(c => {
     const owned = myCards.includes(c.id);
+    const inCompare = compareList.includes(c.id);
+    const pv = POINT_VALUES[c.rewards[0]?.unit] || { value: 0.25, note: '' };
+    const topRate = c.rewards[0];
+    const effValue = topRate ? (topRate.rate * pv.value).toFixed(2) : 0;
+    const isPoints = pv.type !== 'cashback';
+    const status = CARD_STATUS[c.id];
+    const isDevalued = status && status.status === 'devalued';
+    const isClosed = status && status.status === 'closed';
+
     return `
-      <div class="bg-white rounded-2xl border border-outline-variant/20 overflow-hidden card-hover">
-        <div class="p-4 bg-surface-container-low border-b border-outline-variant/20 flex justify-between items-start">
-          <div>
+      <div class="bg-white rounded-2xl border-2 ${isClosed ? 'border-error/40 opacity-70' : isDevalued ? 'border-amber-400/60' : inCompare ? 'border-primary' : 'border-outline-variant/20'} overflow-hidden card-hover relative">
+        ${isClosed ? `<div class="absolute top-0 left-0 right-0 bg-error text-white text-center text-xs font-bold py-1 z-10">🚫 CARD CLOSED${status.replacement ? ' — See replacement below' : ''}</div>` : ''}
+        ${isDevalued ? `<div class="absolute top-0 left-0 right-0 bg-amber-400 text-amber-900 text-center text-xs font-bold py-1 z-10">⚠️ DEVALUED — ${status.note || 'Features updated, verify current benefits'}</div>` : ''}
+        <!-- Compare checkbox -->
+        <label class="absolute top-3 right-3 flex items-center gap-1.5 cursor-pointer z-10">
+          <input type="checkbox" ${inCompare ? 'checked' : ''} onchange="toggleCompare('${c.id}', this)"
+            class="w-4 h-4 accent-primary cursor-pointer"/>
+          <span class="text-xs text-on-surface-variant font-medium">Compare</span>
+        </label>
+
+        <div class="p-4 bg-surface-container-low border-b border-outline-variant/20">
+          <div class="pr-20">
             <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">${c.bank}</div>
             <div class="font-semibold text-on-surface mt-0.5">${c.name}</div>
-            <span class="badge badge-gray mt-1.5">${c.type}</span>
+            <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span class="badge badge-gray">${c.type}</span>
+              ${effValue > 0 ? `<span class="badge badge-green">~${effValue}% eff. value</span>` : ''}
+            </div>
           </div>
-          <button onclick="toggleMyCard('${c.id}')" class="flex-shrink-0 ml-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${owned ? 'bg-primary-container/30 text-primary border-primary' : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary'}">
-            ${owned ? '✓ My Card' : '+ Add'}
-          </button>
         </div>
+
         <div class="p-4">
           <div class="grid grid-cols-3 gap-2 mb-3 text-center">
-            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Joining</div><div class="text-sm font-semibold text-on-surface">${c.joining===0?'Free':'₹'+c.joining.toLocaleString('en-IN')}</div></div>
-            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Annual</div><div class="text-sm font-semibold text-on-surface">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</div></div>
-            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Waiver</div><div class="text-sm font-semibold text-on-surface">${c.waiver?'₹'+Math.round(c.waiver/1000)+'k':'None'}</div></div>
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Joining</div><div class="text-sm font-semibold">${c.joining===0?'Free':'₹'+c.joining.toLocaleString('en-IN')}</div></div>
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Annual</div><div class="text-sm font-semibold">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</div></div>
+            <div class="bg-surface-container-low rounded-xl p-2"><div class="text-xs text-on-surface-variant">Waiver</div><div class="text-sm font-semibold">${c.waiver?'₹'+Math.round(c.waiver/1000)+'k':'None'}</div></div>
           </div>
+
           <div class="mb-3">
-            ${c.rewards.map(r => `<div class="flex justify-between text-xs py-1 border-b border-outline-variant/10 last:border-0"><span class="text-on-surface-variant">${r.cat}</span><span class="font-semibold text-primary">${r.rate}% ${r.cap?'<span class="text-error text-xs">(cap ₹'+r.cap.toLocaleString('en-IN')+'/mo)</span>':''}</span></div>`).join('')}
+            ${c.rewards.map(r => {
+              const rv = POINT_VALUES[r.unit] || { value: 0.25 };
+              const eff = (r.rate * rv.value).toFixed(2);
+              return `<div class="flex justify-between text-xs py-1.5 border-b border-outline-variant/10 last:border-0">
+                <span class="text-on-surface-variant">${r.cat}</span>
+                <div class="text-right">
+                  <span class="font-semibold text-primary">${r.rate}% ${r.unit !== 'cashback' ? `<span class="text-on-surface-variant font-normal">${r.unit}</span>` : ''}</span>
+                  ${r.unit !== 'cashback' ? `<span class="text-xs text-green-700 ml-1">(~₹${eff}/₹100)</span>` : ''}
+                  ${r.cap ? `<div class="text-error text-xs">cap ₹${r.cap.toLocaleString('en-IN')}/mo</div>` : ''}
+                </div>
+              </div>`;
+            }).join('')}
           </div>
-          ${c.excluded.length ? `<div class="flex flex-wrap gap-1 mb-2">${c.excluded.map(e=>`<span class="badge badge-red">${e}</span>`).join('')}</div>` : ''}
-          <button onclick="toggleMITC('${c.id}')" class="w-full text-xs text-on-surface-variant border-t border-outline-variant/20 pt-3 mt-1 hover:text-primary transition-colors" id="mitc-btn-${c.id}">Show MITC Details ▾</button>
+
+          ${isPoints && pv.note ? `<div class="text-xs text-on-surface-variant bg-surface-container-low rounded-xl p-2 mb-2">💡 ${pv.note}</div>` : ''}
+          ${isClosed && status.replacement ? `<div class="text-xs bg-primary-container/20 rounded-xl p-2 mb-2 text-primary"><strong>✅ Best replacement:</strong> ${status.replacement}</div>` : ''}
+          ${isDevalued ? `<div class="text-xs bg-amber-50 rounded-xl p-2 mb-2 text-amber-800">⚠️ ${status.note || 'Benefits devalued — verify current features on bank website'}</div>` : ''}
+          ${c.excluded.length ? `<div class="flex flex-wrap gap-1 mb-2">${c.excluded.slice(0,4).map(e=>`<span class="badge badge-red">${e}</span>`).join('')}${c.excluded.length>4?`<span class="badge badge-gray">+${c.excluded.length-4}</span>`:''}</div>` : ''}
+
+          <div class="flex gap-2 mt-2">
+            <button onclick="toggleMyCard('${c.id}')" class="flex-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${owned ? 'bg-primary-container/30 text-primary border-primary' : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary'}">
+              ${owned ? '✓ My Card' : '+ Add to My Cards'}
+            </button>
+          </div>
+
+          <button onclick="toggleMITC('${c.id}')" class="w-full text-xs text-on-surface-variant border-t border-outline-variant/20 pt-3 mt-3 hover:text-primary transition-colors" id="mitc-btn-${c.id}">Show MITC Details ▾</button>
           <div class="mitc-detail" id="mitc-${c.id}">
             ${Object.entries(c.mitc).map(([k,v]) => `<div class="flex gap-3 text-xs py-1 border-b border-outline-variant/10 last:border-0"><span class="font-medium text-on-surface min-w-[120px] flex-shrink-0">${k}</span><span class="text-on-surface-variant">${v}</span></div>`).join('')}
           </div>
@@ -999,9 +1249,156 @@ function renderCards() {
     banksEl.innerHTML = `<button class="filter-btn active px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-on-surface text-white" onclick="setDBBank('all',this)">All Banks</button>` +
       banks.map(b => `<button class="filter-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant bg-white text-on-surface-variant" onclick="setDBBank('${b}',this)">${b}</button>`).join('');
   }
-  document.getElementById('sidebar-card-count').textContent = CARDS.length;
-  document.getElementById('home-card-count').textContent = CARDS.length;
+
+  const el1 = document.getElementById('sidebar-card-count');
+  const el2 = document.getElementById('home-card-count');
+  if (el1) el1.textContent = CARDS.length;
+  if (el2) el2.textContent = CARDS.length;
 }
+
+// ===================== COMPARE =====================
+function toggleCompare(id, checkbox) {
+  if (checkbox.checked) {
+    if (compareList.length >= 3) {
+      checkbox.checked = false;
+      toast('Maximum 3 cards for comparison');
+      return;
+    }
+    if (!compareList.includes(id)) compareList.push(id);
+  } else {
+    compareList = compareList.filter(x => x !== id);
+  }
+  updateCompareBtn();
+  renderCards();
+}
+
+function updateCompareBtn() {
+  const btn = document.getElementById('compare-btn');
+  const cnt = document.getElementById('compare-count');
+  if (!btn) return;
+  if (compareList.length >= 2) {
+    btn.classList.remove('hidden');
+    btn.style.display = 'flex';
+  } else {
+    btn.classList.add('hidden');
+    btn.style.display = 'none';
+  }
+  if (cnt) cnt.textContent = compareList.length;
+}
+
+function openCompare() {
+  const cards = compareList.map(id => CARDS.find(c => c.id === id)).filter(Boolean);
+  if (cards.length < 2) { toast('Select at least 2 cards to compare'); return; }
+
+  const modal = document.getElementById('compare-modal');
+  const content = document.getElementById('compare-content');
+  modal.style.display = 'flex';
+
+  // Build comparison rows
+  const rows = [
+    { label: 'Bank', fn: c => c.bank },
+    { label: 'Type', fn: c => c.type },
+    { label: 'Joining Fee', fn: c => c.joining === 0 ? 'Free' : '₹' + c.joining.toLocaleString('en-IN') },
+    { label: 'Annual Fee', fn: c => c.annual === 0 ? 'Free' : '₹' + c.annual.toLocaleString('en-IN') },
+    { label: 'Fee Waiver', fn: c => c.waiver ? '₹' + Math.round(c.waiver/1000) + 'k spend' : 'None' },
+    { label: 'Interest Rate', fn: c => c.mitc['Interest Rate'] || '—' },
+    { label: 'Foreign Markup', fn: c => c.mitc['Foreign Markup'] || '—' },
+    { label: 'Cash Advance', fn: c => c.mitc['Cash Advance'] || '—' },
+    { label: 'Late Payment', fn: c => c.mitc['Late Payment'] || '—' },
+  ];
+
+  // Reward rows
+  const allCats = [...new Set(cards.flatMap(c => c.rewards.map(r => r.cat)))];
+
+  content.innerHTML = `
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-surface-container-low">
+            <th class="text-left p-3 text-xs font-semibold text-on-surface-variant w-36">Feature</th>
+            ${cards.map(c => `<th class="text-left p-3 text-xs font-semibold text-primary">${c.name}<div class="text-on-surface-variant font-normal">${c.bank}</div></th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `
+            <tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/30">
+              <td class="p-3 text-xs font-semibold text-on-surface-variant">${row.label}</td>
+              ${cards.map(c => `<td class="p-3 text-xs text-on-surface">${row.fn(c)}</td>`).join('')}
+            </tr>
+          `).join('')}
+
+          <tr class="bg-primary/5"><td colspan="${cards.length+1}" class="p-3 text-xs font-bold text-primary uppercase tracking-wider">Reward Rates</td></tr>
+
+          ${allCats.map(cat => {
+            const vals = cards.map(c => {
+              const r = c.rewards.find(r => r.cat === cat);
+              if (!r) return { display: '—', eff: 0 };
+              const pv = POINT_VALUES[r.unit] || { value: 0.25 };
+              const eff = (r.rate * pv.value);
+              const capNote = r.cap ? ` (cap ₹${r.cap.toLocaleString('en-IN')})` : '';
+              return {
+                display: `${r.rate}% ${r.unit !== 'cashback' ? r.unit : ''}<br><span class="text-green-700 font-semibold">~₹${eff.toFixed(2)}/₹100</span>${capNote ? `<br><span class="text-error">${capNote}</span>` : ''}`,
+                eff
+              };
+            });
+            const maxEff = Math.max(...vals.map(v => v.eff));
+            return `
+              <tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/30">
+                <td class="p-3 text-xs font-medium text-on-surface-variant">${cat}</td>
+                ${vals.map(v => `<td class="p-3 text-xs ${v.eff === maxEff && maxEff > 0 ? 'bg-green-50 font-semibold' : ''}">${v.display}</td>`).join('')}
+              </tr>`;
+          }).join('')}
+
+          <tr class="bg-primary/5"><td colspan="${cards.length+1}" class="p-3 text-xs font-bold text-primary uppercase tracking-wider">Travel Portal Rewards</td></tr>
+
+          ${['flight','hotel','train','bus'].map(mode => {
+            const vals = cards.map(c => {
+              const tr = TRAVEL_REWARDS[c.id];
+              if (!tr || !tr[mode]) return { display: '—', val: 0, portal: '' };
+              // Use card's primary reward unit for effective value
+              const unit = c.rewards[0]?.unit || 'Reward Points';
+              const pv = POINT_VALUES[unit] || { value: 0.25 };
+              const pvTravel = pv.travelValue || pv.value;
+              const eff = tr[mode] * pvTravel;
+              return {
+                display: `${tr[mode]}X via ${tr.portal}<br><span class="text-green-700 font-semibold">~₹${eff.toFixed(2)}/₹100</span>`,
+                val: eff
+              };
+            });
+            const maxVal = Math.max(...vals.map(v => v.val));
+            const icons = { flight:'✈️', hotel:'🏨', train:'🚂', bus:'🚌' };
+            return `
+              <tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/30">
+                <td class="p-3 text-xs font-medium text-on-surface-variant">${icons[mode]} ${mode.charAt(0).toUpperCase()+mode.slice(1)}</td>
+                ${vals.map(v => `<td class="p-3 text-xs ${v.val === maxVal && maxVal > 0 ? 'bg-green-50 font-semibold' : ''}">${v.display}</td>`).join('')}
+              </tr>`;
+          }).join('')}
+
+          <tr class="bg-primary/5"><td colspan="${cards.length+1}" class="p-3 text-xs font-bold text-primary uppercase tracking-wider">Excluded Categories</td></tr>
+          <tr class="border-b border-outline-variant/10">
+            <td class="p-3 text-xs font-medium text-on-surface-variant">No Rewards On</td>
+            ${cards.map(c => `<td class="p-3 text-xs text-error">${c.excluded.join(', ') || 'None listed'}</td>`).join('')}
+          </tr>
+
+          <tr class="bg-primary/5"><td colspan="${cards.length+1}" class="p-3 text-xs font-bold text-primary uppercase tracking-wider">Key Benefits</td></tr>
+          <tr class="border-b border-outline-variant/10">
+            <td class="p-3 text-xs font-medium text-on-surface-variant">Benefits</td>
+            ${cards.map(c => `<td class="p-3 text-xs text-on-surface">${c.benefits.map(b=>`<div class="mb-1">• ${b}</div>`).join('')}</td>`).join('')}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 p-3 bg-surface-container-low rounded-xl text-xs text-on-surface-variant">
+      <strong>Note:</strong> Effective ₹/₹100 values are estimates based on typical redemption value. Actual value varies — cashback and NeuCoins = ₹1 always; reward points/miles value depends on how you redeem. Green cells = best value in category.
+    </div>
+  `;
+}
+
+function closeCompare() {
+  document.getElementById('compare-modal').style.display = 'none';
+}
+
+
 
 function toggleMITC(id) {
   const el = document.getElementById('mitc-' + id);
@@ -1070,91 +1467,101 @@ function initSupabase() {
         flowType: 'implicit'
       }
     };
-    if (window.supabase && window.supabase.createClient) {
-      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, clientConfig);
-      console.log('Supabase initialized OK');
+    const supabaseLib = window.supabase || window.supabaseJs;
+    if (supabaseLib && supabaseLib.createClient) {
+      sb = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY, clientConfig);
+      console.log('✓ Supabase initialized OK');
       return true;
     }
-    console.error('Supabase not found on window');
+    console.error('Supabase library not found. Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('supa')));
+    return false;
   } catch(e) {
-    console.error('Supabase init error:', e);
+    console.error('Supabase init error:', e.message);
+    return false;
   }
-  return false;
 }
 
 async function initAuth() {
   // Check if secret admin URL
   if (window.location.hash === '#secret-admin') {
-    document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'none';
     document.getElementById('secret-admin-screen').style.display = 'block';
     return;
   }
 
-  // Try to init Supabase
+  // App is already visible — set up guest user by default
+  currentUser = { email: '', user_metadata: { full_name: 'Guest' } };
+  setupAppUI(currentUser);
+
+  // Try Supabase in background
   const ok = initSupabase();
-  if (!ok) {
-    console.error('Supabase failed to load');
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('app-screen').style.display = 'none';
-    showAuthError('⚠️ Connection error. Please refresh the page (Ctrl+Shift+R). If this persists, try a different browser.');
-    return;
+  if (ok) {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        setupAppUI(session.user);
+      }
+    } catch(e) { console.error('Session error:', e); }
+
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        currentUser = session.user;
+        setupAppUI(session.user);
+        document.getElementById('auth-screen').classList.remove('show-auth');
+        document.getElementById('auth-screen').style.display = 'none';
+      } else if (event === 'SIGNED_OUT') {
+        currentUser = { email: '', user_metadata: { full_name: 'Guest' } };
+        setupAppUI(currentUser);
+      }
+    });
   }
+}
 
-  // Always show login screen first
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app-screen').style.display = 'none';
+function setupAppUI(user) {
+  const name = (user.user_metadata && user.user_metadata.full_name) || (user.email ? user.email.split('@')[0] : 'Guest');
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-name-display');
+  const emailEl = document.getElementById('user-email-display');
+  if (avatarEl) avatarEl.textContent = name[0].toUpperCase();
+  if (nameEl) nameEl.textContent = name;
+  if (emailEl) emailEl.textContent = user.email || 'Guest';
 
-  // Then check if already logged in
+  const cardCountEls = ['sidebar-card-count', 'home-card-count'];
+  cardCountEls.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = CARDS.length; });
+
+  try { loadUserCards(); } catch(e) {}
   try {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session && session.user) {
-      currentUser = session.user;
-      showApp(session.user);
-    }
-  } catch(e) {
-    console.error('Session check error:', e);
-  }
-
-  // Listen for auth changes
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      currentUser = session.user;
-      showApp(session.user);
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      document.getElementById('app-screen').style.display = 'none';
-      document.getElementById('auth-screen').style.display = 'flex';
-    }
-  });
+    const now = new Date();
+    const msSel = document.getElementById('ms-month-select');
+    if (msSel) msSel.value = now.getMonth();
+    updateMilestoneSelect();
+  } catch(e) {}
 }
 
 function showApp(user) {
-  document.getElementById('auth-screen').classList.add('hidden-screen');
+  currentUser = user;
+  setupAppUI(user);
   document.getElementById('auth-screen').style.display = 'none';
-  const appEl = document.getElementById('app-screen');
-  appEl.classList.add('visible');
-  appEl.style.display = 'block';
+  document.getElementById('app-screen').style.display = 'block';
   document.getElementById('secret-admin-screen').style.display = 'none';
+  showSection('home');
+}
 
-  // Update user display
-  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-  const el = document.getElementById('user-avatar');
-  if (el) el.textContent = name[0].toUpperCase();
-  const nd = document.getElementById('user-name-display');
-  const ed = document.getElementById('user-email-display');
-  if (nd) nd.textContent = name;
-  if (ed) ed.textContent = user.email;
+function showAuthScreen() {
+  document.getElementById('auth-screen').style.display = 'flex';
+}
 
-  // Load user data from Supabase
-  loadUserCards();
+async function signOut() {
+  if (sb) { try { await sb.auth.signOut(); } catch(e) {} }
+  currentUser = { email: '', user_metadata: { full_name: 'Guest' } };
+  setupAppUI(currentUser);
+  toast('Signed out');
+}
 
-  const now = new Date();
-  const msSel = document.getElementById('ms-month-select');
-  if (msSel) msSel.value = now.getMonth();
-  updateMilestoneSelect();
-  document.getElementById('sidebar-card-count').textContent = CARDS.length;
-  document.getElementById('home-card-count').textContent = CARDS.length;
+// ---- Guest Mode ----
+function continueAsGuest() {
+  showApp({ email: 'guest@cardsaathi.in', user_metadata: { full_name: 'Guest' } });
 }
 
 // ---- Sign In ----
@@ -1162,7 +1569,16 @@ async function signIn() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   if (!email || !password) { showAuthError('Please enter email and password'); return; }
-  if (!sb) { showAuthError('Connection error. Please refresh the page.'); return; }
+
+  if (!sb) {
+    // Guest mode fallback
+    showAuthError('Auth service unavailable. Using guest mode.');
+    setTimeout(() => {
+      showApp({ email: email, user_metadata: { full_name: email.split('@')[0] } });
+    }, 800);
+    return;
+  }
+
   setAuthLoading('login-btn', true);
   const { error } = await sb.auth.signInWithPassword({ email, password });
   setAuthLoading('login-btn', false);
@@ -1176,11 +1592,18 @@ async function signUp() {
   const password = document.getElementById('signup-password').value;
   if (!name || !email || !password) { showAuthError('Please fill all fields'); return; }
   if (password.length < 6) { showAuthError('Password must be at least 6 characters'); return; }
+
+  if (!sb) {
+    // Guest mode fallback
+    showApp({ email: email, user_metadata: { full_name: name } });
+    return;
+  }
+
   setAuthLoading('signup-btn', true);
   const { error } = await sb.auth.signUp({ email, password, options: { data: { full_name: name } } });
   setAuthLoading('signup-btn', false);
   if (error) { showAuthError(error.message); return; }
-  showAuthSuccess('Account created! Please check your email to verify your account, then sign in.');
+  showAuthSuccess('Account created! Please check your email to verify, then sign in.');
   switchAuthTab('login');
 }
 
@@ -1191,21 +1614,6 @@ async function signInWithGoogle() {
     options: { redirectTo: window.location.origin + window.location.pathname }
   });
   if (error) showAuthError(error.message);
-}
-
-// ---- Sign Out ----
-async function signOut() {
-  if (!sb) return;
-  await sb.auth.signOut();
-  myCards = [];
-  milestoneCards = [];
-  milestoneSpend = {};
-  const appEl = document.getElementById('app-screen');
-  appEl.classList.remove('visible');
-  appEl.style.display = 'none';
-  document.getElementById('auth-screen').classList.remove('hidden-screen');
-  document.getElementById('auth-screen').style.display = 'flex';
-  toast('Signed out successfully');
 }
 
 // ---- Forgot Password ----
@@ -1332,17 +1740,26 @@ async function loadAdminUserCount() {
 function saRenderCards() {
   const tbody = document.getElementById('sa-cards-tbody');
   if (!tbody) return;
-  tbody.innerHTML = CARDS.map(c => `
+  tbody.innerHTML = CARDS.map(c => {
+    const status = CARD_STATUS[c.id];
+    const statusBadge = status && status.status === 'closed'
+      ? '<span class="badge badge-red">Closed</span>'
+      : status && status.status === 'devalued'
+      ? '<span class="badge badge-amber">Devalued</span>'
+      : '<span class="badge badge-green">Active</span>';
+    return `
     <tr class="hover:bg-surface-container-low/50 border-b border-outline-variant/10">
       <td class="p-3 font-medium text-sm">${c.name}</td>
       <td class="p-3 text-sm text-on-surface-variant">${c.bank}</td>
       <td class="p-3 text-sm">${c.annual===0?'Free':'₹'+c.annual.toLocaleString('en-IN')}</td>
+      <td class="p-3">${statusBadge}</td>
       <td class="p-3">
         <button onclick="saEditCard('${c.id}')" class="text-primary text-xs font-semibold mr-2 hover:underline">Edit</button>
+        <button onclick="openStatusModal('${c.id}')" class="text-amber-600 text-xs font-semibold mr-2 hover:underline">Status</button>
         <button onclick="saDeleteCard('${c.id}')" class="text-error text-xs font-semibold hover:underline">Delete</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 function saEditCard(id) {
@@ -1421,7 +1838,221 @@ window.addEventListener('hashchange', () => {
   }
 });
 
-// ===================== PDF EXTRACTION =====================
+// ===================== CARD STATUS MANAGEMENT =====================
+let statusModalCardId = null;
+let pendingStatus = 'active';
+
+function openStatusModal(cardId) {
+  statusModalCardId = cardId;
+  const card = CARDS.find(c => c.id === cardId);
+  const current = CARD_STATUS[cardId] || { status: 'active' };
+  pendingStatus = current.status || 'active';
+
+  document.getElementById('status-modal-cardname').textContent = card ? card.name + ' — ' + card.bank : cardId;
+  document.getElementById('status-note').value = current.note || '';
+  document.getElementById('status-replacement').value = current.replacement || '';
+
+  const modal = document.getElementById('status-modal');
+  modal.style.display = 'flex';
+}
+
+function setStatus(s) {
+  pendingStatus = s;
+  toast('Status set to: ' + s + ' — click Save');
+}
+
+function saveStatus() {
+  if (!statusModalCardId) return;
+  const note = document.getElementById('status-note').value.trim();
+  const replacement = document.getElementById('status-replacement').value.trim();
+
+  if (pendingStatus === 'active') {
+    delete CARD_STATUS[statusModalCardId];
+  } else {
+    CARD_STATUS[statusModalCardId] = {
+      status: pendingStatus,
+      note: note || null,
+      replacement: replacement || null,
+      updatedOn: new Date().toLocaleDateString('en-IN', {month:'short', year:'numeric'})
+    };
+  }
+  saveCardStatus();
+  closeStatusModal();
+  renderAdminCards();
+  renderCards();
+  toast('Status saved: ' + pendingStatus);
+}
+
+function closeStatusModal() {
+  document.getElementById('status-modal').style.display = 'none';
+  statusModalCardId = null;
+}
+
+// ===================== POINT VALUES =====================
+const POINT_VALUES = {
+  "cashback":              { value: 1.00, note: "₹1 = ₹1 always",                           type: "cashback" },
+  "CashPoints":            { value: 1.00, note: "1 CashPoint = ₹1 on statement",             type: "cashback" },
+  "NeuCoins":              { value: 1.00, note: "1 NeuCoin = ₹1 on Tata Neu/BigBasket",      type: "cashback" },
+  "Scapia Coins":          { value: 1.00, note: "1 Coin = ₹1 on Scapia travel",              type: "cashback" },
+  "Reward Points":         { value: 0.25, note: "~₹0.25 on products; ~₹0.15 statement",     type: "points",  stmtValue: 0.15 },
+  "Edge Reward Points":    { value: 0.30, note: "₹0.30 base; ₹0.40 on Axis Travel Edge",    type: "points",  travelValue: 0.40 },
+  "Edge Points":           { value: 0.30, note: "₹0.30 base; ₹0.40 on travel",              type: "points",  travelValue: 0.40 },
+  "EDGE Miles":            { value: 1.00, note: "1 EDGE Mile = ₹1 on travel portal",         type: "miles" },
+  "Yes Points":            { value: 0.25, note: "~₹0.25 on Yes Bank redemption",             type: "points" },
+  "PAYBACK Points":        { value: 0.25, note: "₹0.25 on PAYBACK partners",                type: "points" },
+  "MR Points":             { value: 0.40, note: "₹0.40 on Amex Travel; ₹0.50 via transfer", type: "points",  travelValue: 0.50 },
+  "Imperio Points":        { value: 0.50, note: "₹0.50 on Federal travel portal",           type: "points" },
+  "Travel Points":         { value: 0.50, note: "₹0.50 on RBL travel portal",               type: "points" },
+  "1Card Points":          { value: 0.50, note: "₹0.50 on OneCard app",                      type: "points" },
+  "IOCL Points":           { value: 0.25, note: "Redeemed at IOCL fuel pumps",               type: "points" },
+  "SpiceClub Points":      { value: 0.50, note: "₹0.50 on SpiceJet bookings",               type: "miles" },
+  "CV Points":             { value: 0.50, note: "~₹0.50 on Air India (post Vistara merger)", type: "miles" },
+  "Club Vistara Points":   { value: 0.50, note: "~₹0.50 on Air India flights",              type: "miles" },
+  "Flying Returns Miles":  { value: 0.50, note: "~₹0.50 on Air India flights",              type: "miles" },
+  "Marriott Bonvoy Points":{ value: 0.70, note: "~₹0.70 on Marriott stays",                 type: "miles" },
+  "Miles":                 { value: 0.50, note: "Varies by airline partner",                 type: "miles" },
+  "Points":                { value: 0.25, note: "Check bank portal for exact value",         type: "points" },
+};
+
+function effectivePaise(rate, unit, mode) {
+  const pv = POINT_VALUES[unit] || { value: 0.25 };
+  const val = mode === 'travel' && pv.travelValue ? pv.travelValue : pv.value;
+  return rate * val; // effective cashback % in ₹
+}
+
+const TRAVEL_REWARDS = {
+  "hdfc-infinia":           { portal:"HDFC SmartBuy",  flight:5,  hotel:10, train:1,  bus:1,  note:"Best on SmartBuy; unlimited RP" },
+  "hdfc-diners-black":      { portal:"HDFC SmartBuy",  flight:5,  hotel:10, train:1,  bus:1,  note:"Unlimited SmartBuy" },
+  "hdfc-diners-black-metal":{ portal:"HDFC SmartBuy",  flight:5,  hotel:10, train:1,  bus:1,  note:"Unlimited SmartBuy" },
+  "hdfc-regalia":           { portal:"HDFC SmartBuy",  flight:4,  hotel:4,  train:1,  bus:1,  note:"Cap 50k RP/month on SmartBuy" },
+  "hdfc-regalia-gold":      { portal:"HDFC SmartBuy",  flight:4,  hotel:4,  train:1,  bus:1,  note:"Quarterly spend criteria for lounge" },
+  "axis-magnus":            { portal:"Axis Travel Edge",flight:35, hotel:35, train:2,  bus:2,  note:"35X = ~₹10.50/₹100 at 0.30/pt" },
+  "axis-magnus-burgundy":   { portal:"Axis Travel Edge",flight:35, hotel:35, train:2,  bus:2,  note:"35X same as Magnus" },
+  "axis-reserve":           { portal:"Axis Travel Edge",flight:45, hotel:45, train:2,  bus:2,  note:"45X = ~₹13.50/₹100 — best travel card" },
+  "axis-atlas":             { portal:"Axis Travel Edge",flight:5,  hotel:5,  train:1,  bus:1,  note:"EDGE Miles = ₹1 each on travel" },
+  "axis-privilege":         { portal:"Axis Travel Edge",flight:15, hotel:15, train:1,  bus:1,  note:"15X on travel bookings" },
+  "axis-horizon":           { portal:"Axis Travel Edge",flight:8,  hotel:8,  train:1,  bus:1,  note:"8X on travel" },
+  "sbi-miles-elite":        { portal:"SBI Miles",       flight:8,  hotel:4,  train:1,  bus:1,  note:"Transfer to airlines" },
+  "sbi-air-india-signature":{ portal:"Air India Direct",flight:30, hotel:4,  train:1,  bus:1,  note:"30X Flying Returns on Air India" },
+  "sbi-irctc-premier":      { portal:"IRCTC",           flight:1,  hotel:1,  train:10, bus:1,  note:"10% value back on IRCTC train bookings" },
+  "hdfc-irctc":             { portal:"IRCTC",           flight:1,  hotel:1,  train:5,  bus:1,  note:"Railway fee waiver on IRCTC" },
+  "rbl-world-safari":       { portal:"RBL Travel",      flight:5,  hotel:5,  train:1,  bus:1,  note:"0% forex markup on international" },
+  "rbl-world-safari-plus":  { portal:"RBL Travel",      flight:8,  hotel:8,  train:1,  bus:1,  note:"0% forex + 8X travel" },
+  "hdfc-marriott-bonvoy":   { portal:"Marriott Direct", flight:2,  hotel:8,  train:1,  bus:1,  note:"8X on Marriott; points never expire" },
+  "amex-gold":              { portal:"Amex Travel",     flight:5,  hotel:5,  train:1,  bus:1,  note:"MR transfer to Air India/BA/SQ" },
+  "scapia":                 { portal:"Scapia App",      flight:10, hotel:10, train:2,  bus:2,  note:"0% forex + 10% on all travel" },
+  "federal-imperio":        { portal:"Federal Travel",  flight:10, hotel:5,  train:1,  bus:1,  note:"10X on travel via portal" },
+  "indusind-legend":        { portal:"IndusMoments",    flight:3,  hotel:3,  train:1,  bus:1,  note:"Points on travel" },
+  "yes-first-exclusive":    { portal:"YES BANK Travel", flight:12, hotel:6,  train:1,  bus:1,  note:"12X on travel bookings" },
+};
+
+// ===================== ADMIN TABS =====================
+function switchAdminTab(tab) {
+  document.getElementById('admin-section-cards').style.display = tab === 'cards' ? 'block' : 'none';
+  document.getElementById('admin-section-rewards').style.display = tab === 'rewards' ? 'block' : 'none';
+  document.getElementById('admin-tab-cards').className = 'px-4 py-2 rounded-xl text-sm font-semibold ' + (tab === 'cards' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant');
+  document.getElementById('admin-tab-rewards').className = 'px-4 py-2 rounded-xl text-sm font-semibold ' + (tab === 'rewards' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant');
+  if (tab === 'rewards') initRewardMapEditor();
+}
+
+function initRewardMapEditor() {
+  const sel = document.getElementById('rm-cat-select');
+  if (sel.options.length > 1) return; // already populated
+  EXPENSE_CATS.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat.id;
+    opt.textContent = cat.icon + ' ' + cat.label;
+    sel.appendChild(opt);
+  });
+}
+
+function renderRewardMapEditor() {
+  const catId = document.getElementById('rm-cat-select').value;
+  const area = document.getElementById('rm-editor-area');
+  if (!catId) { area.innerHTML = ''; return; }
+
+  const cat = EXPENSE_CATS.find(c => c.id === catId);
+  const currentMap = REWARD_MAP[catId] || {};
+
+  area.innerHTML = `
+    <div class="mb-3 p-3 bg-surface-container-low rounded-xl text-xs text-on-surface-variant">
+      <strong>${cat.icon} ${cat.label}</strong> — edit reward % for each card below. Set to 0 to remove. Changes apply immediately.
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="bg-surface-container-low">
+          <th class="text-left p-2 text-xs font-semibold text-on-surface-variant rounded-tl-xl">Card</th>
+          <th class="text-left p-2 text-xs font-semibold text-on-surface-variant">Bank</th>
+          <th class="text-center p-2 text-xs font-semibold text-on-surface-variant">Current %</th>
+          <th class="text-center p-2 text-xs font-semibold text-on-surface-variant rounded-tr-xl">New %</th>
+        </tr></thead>
+        <tbody>
+          ${CARDS.map(card => {
+            const current = currentMap[card.id] || 0;
+            const isExcluded = card.excluded && card.excluded.some(ex =>
+              cat.label.toLowerCase().includes(ex.toLowerCase()) ||
+              ex.toLowerCase().includes(catId)
+            );
+            return `<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/30 ${isExcluded ? 'opacity-40' : ''}">
+              <td class="p-2 font-medium text-xs">${card.name}</td>
+              <td class="p-2 text-xs text-on-surface-variant">${card.bank}</td>
+              <td class="p-2 text-center">
+                ${current > 0 ? `<span class="badge badge-green">${current}%</span>` : '<span class="text-xs text-on-surface-variant">—</span>'}
+              </td>
+              <td class="p-2 text-center">
+                <input type="number" step="0.5" min="0" max="50"
+                  value="${current}"
+                  data-card="${card.id}"
+                  data-cat="${catId}"
+                  onchange="updateRewardRate(this)"
+                  class="w-20 px-2 py-1 border border-outline-variant rounded-lg text-xs text-center outline-none focus:border-primary ${isExcluded ? 'bg-gray-100' : ''}"/>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-3 flex gap-2">
+      <button onclick="renderRewardMapEditor()" class="bg-surface-container text-on-surface-variant px-3 py-1.5 rounded-xl text-xs font-semibold">Refresh</button>
+      <button onclick="clearCategoryMap('${catId}')" class="bg-error-container text-error px-3 py-1.5 rounded-xl text-xs font-semibold">Clear All for Category</button>
+    </div>
+  `;
+}
+
+function updateRewardRate(input) {
+  const cardId = input.dataset.card;
+  const catId = input.dataset.cat;
+  const rate = parseFloat(input.value) || 0;
+
+  if (!REWARD_MAP[catId]) REWARD_MAP[catId] = {};
+
+  if (rate <= 0) {
+    delete REWARD_MAP[catId][cardId];
+  } else {
+    REWARD_MAP[catId][cardId] = rate;
+  }
+
+  // Visual feedback
+  input.style.borderColor = '#1a6b5c';
+  setTimeout(() => input.style.borderColor = '', 1000);
+  toast('Updated: ' + CARDS.find(c=>c.id===cardId)?.name + ' → ' + catId + ' = ' + rate + '%');
+}
+
+function clearCategoryMap(catId) {
+  if (!confirm('Clear all reward rates for this category?')) return;
+  REWARD_MAP[catId] = {};
+  renderRewardMapEditor();
+  toast('Cleared reward map for category');
+}
+
+function exportRewardMap() {
+  const blob = new Blob([JSON.stringify(REWARD_MAP, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'reward-map.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported reward-map.json');
+}
 function handlePDFDrop(event) {
   event.preventDefault();
   document.getElementById('pdf-drop-zone').classList.remove('border-primary');
@@ -1549,6 +2180,9 @@ function prefillCardForm(data) {
 
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', () => {
+  // Show app immediately
+  showSection('home');
+  // Then init auth in background
   initAuth();
 });
 
