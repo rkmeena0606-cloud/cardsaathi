@@ -228,65 +228,100 @@ tailwind.config = {
 
   <!-- ===== HOME ===== -->
   <div id="section-home" class="section-panel active px-5 md:px-8 py-6">
-    <!-- Hero -->
-    <div class="relative overflow-hidden rounded-3xl bg-primary p-7 md:p-10 mb-6 text-white shadow-xl">
-      <div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
-        <svg class="w-full h-full" fill="none" viewBox="0 0 400 400"><path d="M400 0L200 400H400V0Z" fill="white"></path><circle cx="350" cy="50" r="100" stroke="white" stroke-width="2"></circle></svg>
+
+    <!-- Hero Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-primary p-6 md:p-10 mb-6 text-white shadow-xl">
+      <div class="absolute inset-0 opacity-10 pointer-events-none">
+        <svg class="w-full h-full" fill="none" viewBox="0 0 600 300"><circle cx="500" cy="50" r="180" stroke="white" stroke-width="1.5"/><circle cx="550" cy="250" r="120" stroke="white" stroke-width="1"/><path d="M0 300L300 0H600V300Z" fill="white"/></svg>
       </div>
-      <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <p class="text-xs uppercase tracking-widest text-on-primary-container/80 mb-2">Maximise Every Rupee</p>
-          <h3 class="text-4xl md:text-5xl font-bold leading-none mb-2">CardSaathi</h3>
-          <p class="text-on-primary-container/80 text-sm md:text-base">India's smartest credit card optimizer</p>
+      <div class="relative z-10">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">🇮🇳 India's Credit Card Optimizer</span>
         </div>
-        <div class="flex gap-3 flex-wrap">
-          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[130px] border border-white/10">
-            <p class="text-xs text-white/60 mb-1">Cards in Database</p>
-            <p class="text-3xl font-bold" id="home-card-count">48</p>
+        <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-2">Stop Leaving<br/>Rewards on the Table</h1>
+        <p class="text-white/80 text-sm md:text-base mb-6 max-w-lg">CardSaathi tells you exactly which card to swipe for every purchase — with real numbers from official MITC documents.</p>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="showSection('planner')" class="bg-white text-primary font-bold px-5 py-3 rounded-2xl text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:18px">calculate</span>
+            Find Best Card for My Spends
+          </button>
+          <button onclick="showSection('cards')" class="bg-white/20 text-white font-semibold px-5 py-3 rounded-2xl text-sm hover:bg-white/30 transition-colors border border-white/20">
+            Browse <span id="home-card-count">84</span> Cards
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+        <div class="text-2xl font-bold text-primary" id="home-stat-cards">84</div>
+        <div class="text-xs text-on-surface-variant mt-0.5">Credit Cards</div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+        <div class="text-2xl font-bold text-primary">35+</div>
+        <div class="text-xs text-on-surface-variant mt-0.5">MCC Codes</div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-outline-variant/20 text-center">
+        <div class="text-2xl font-bold text-primary">100%</div>
+        <div class="text-xs text-on-surface-variant mt-0.5">Free Forever</div>
+      </div>
+    </div>
+
+    <!-- Quick Tips -->
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-lg">💡</span>
+        <span class="font-semibold text-amber-900 text-sm">Did you know?</span>
+      </div>
+      <div id="home-tip" class="text-sm text-amber-800"></div>
+      <button onclick="nextTip()" class="text-xs text-amber-600 mt-2 hover:underline">Next tip →</button>
+    </div>
+
+    <!-- Top Picks by Category -->
+    <div class="mb-6">
+      <h3 class="font-bold text-on-surface mb-1">🏆 Top Cards by Category</h3>
+      <p class="text-xs text-on-surface-variant mb-3">Based on highest effective value — verified from bank websites</p>
+      <div class="grid md:grid-cols-2 gap-3" id="home-top-picks"></div>
+    </div>
+
+    <!-- How to use -->
+    <div class="bg-white rounded-2xl p-5 border border-outline-variant/20 mb-4">
+      <h4 class="font-bold text-on-surface mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary" style="font-size:20px">rocket_launch</span>
+        Get Started in 3 Steps
+      </h4>
+      <div class="space-y-4">
+        <div class="flex gap-4 items-start cursor-pointer hover:opacity-80 transition-opacity" onclick="showSection('cards')">
+          <div class="w-10 h-10 rounded-2xl bg-primary text-white font-bold text-lg flex items-center justify-center flex-shrink-0">1</div>
+          <div>
+            <div class="font-semibold text-sm text-on-surface">Add Your Cards</div>
+            <div class="text-xs text-on-surface-variant mt-0.5">Go to Card Database → tap "+ Add to My Cards" on the cards you own. Your portfolio is saved locally.</div>
           </div>
-          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[130px] border border-white/10">
-            <p class="text-xs text-white/60 mb-1">MCC Codes</p>
-            <p class="text-3xl font-bold">40+</p>
+        </div>
+        <div class="flex gap-4 items-start cursor-pointer hover:opacity-80 transition-opacity" onclick="showSection('planner')">
+          <div class="w-10 h-10 rounded-2xl bg-primary text-white font-bold text-lg flex items-center justify-center flex-shrink-0">2</div>
+          <div>
+            <div class="font-semibold text-sm text-on-surface">Enter Monthly Spends</div>
+            <div class="text-xs text-on-surface-variant mt-0.5">In Expense Planner, enter how much you spend on fuel, groceries, dining etc. CardSaathi ranks the top 3-5 cards for each.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start cursor-pointer hover:opacity-80 transition-opacity" onclick="showSection('milestones')">
+          <div class="w-10 h-10 rounded-2xl bg-primary text-white font-bold text-lg flex items-center justify-center flex-shrink-0">3</div>
+          <div>
+            <div class="font-semibold text-sm text-on-surface">Track Fee Waivers</div>
+            <div class="text-xs text-on-surface-variant mt-0.5">Use Milestone Tracker to see how close you are to annual fee waiver. Never pay a fee you could have avoided.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Quick Start -->
-    <div class="bg-surface-container-low rounded-2xl p-5 mb-6 border border-outline-variant/20">
-      <h4 class="font-semibold text-on-surface mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-primary" style="font-size:20px">bolt</span> Quick Start</h4>
-      <ol class="space-y-2 text-sm text-on-surface-variant pl-1">
-        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>Go to <strong class="text-primary cursor-pointer" onclick="showSection('cards')">Card Database</strong> → click "+ Add Card" on cards you own</li>
-        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>Head to <strong class="text-primary cursor-pointer" onclick="showSection('planner')">Expense Planner</strong> → enter your monthly spend</li>
-        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>See which card to use for maximum rewards per category</li>
-        <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>Track <strong class="text-primary cursor-pointer" onclick="showSection('milestones')">Milestones</strong> to hit annual fee waivers</li>
-      </ol>
-    </div>
-
-    <!-- Feature Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('planner')">
-        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">calculate</span></div>
-        <div class="font-semibold text-sm text-on-surface mb-1">Expense Planner</div>
-        <div class="text-xs text-on-surface-variant">Best card per category</div>
-      </div>
-      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('mcc')">
-        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">category</span></div>
-        <div class="font-semibold text-sm text-on-surface mb-1">MCC Guide</div>
-        <div class="text-xs text-on-surface-variant">Avoid reward traps</div>
-      </div>
-      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('milestones')">
-        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">flag</span></div>
-        <div class="font-semibold text-sm text-on-surface mb-1">Milestones</div>
-        <div class="text-xs text-on-surface-variant">Track fee waivers</div>
-      </div>
-      <div class="card-hover bg-white rounded-2xl p-5 border border-outline-variant/20 cursor-pointer" onclick="showSection('cards')">
-        <div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center mb-3"><span class="material-symbols-outlined text-primary">credit_card</span></div>
-        <div class="font-semibold text-sm text-on-surface mb-1">48 Cards</div>
-        <div class="text-xs text-on-surface-variant">Full MITC database</div>
-      </div>
+    <!-- Disclaimer -->
+    <div class="text-xs text-on-surface-variant text-center bg-surface-container-low rounded-2xl p-3">
+      ⚠️ CardSaathi is an informational tool. Reward rates change frequently — always verify on your bank's official website before making decisions. Found an error? Use the ✏️ Fix button on any card.
     </div>
   </div>
+
 
   <!-- ===== EXPENSE PLANNER ===== -->
   <div id="section-planner" class="section-panel px-5 md:px-8 py-6">
@@ -734,7 +769,6 @@ const CARDS = [
   { id:"axis-magnus", bank:"Axis Bank", name:"Axis Magnus", joining:12500, annual:12500, waiver:2500000, type:"Points", rewards:[{cat:"Travel Edge (flights/hotels)",rate:35,cap:null,unit:"Edge Reward Points"},{cat:"All Other Spends",rate:12,cap:null,unit:"Edge Reward Points"}], excluded:["Rent","Wallet","Govt","EMI","Insurance","Gold","Fuel — waiver threshold exclusions"], benefits:["1 ERP = ₹0.20 base (₹0.40 on Travel Edge)","Unlimited lounge Priority Pass","₹10,000 travel voucher on activation","Annual fee waived on ₹25L spend","Cash advance waived","Lower interest 3.0% p.m."], mitc:{"Interest Rate":"3.0% per month (42.58% p.a.) — lower than standard","Grace Period":"20–50 days","Cash Advance":"Waived for Magnus","Late Payment":"₹1200 above ₹10k outstanding","Foreign Markup":"2%","Annual Fee Waiver":"₹25L spend (excl. Rent/Wallet/Govt/EMI/Insurance/Gold/Fuel)","Waiver Exclusions":"Rent, Wallet, Utilities, Govt, EMI conversions, Cash, Insurance, Gold, Fuel (effective Sep 2023 and Apr 2024)","Overlimit":"2.5% of overlimit, min ₹500","Reward Forfeiture":"30 days after closure (w.e.f Oct 2025)","Fuel Fee":"1% on fuel above ₹50k/cycle","Wallet Fee":"1% on wallet above ₹10k/cycle","Utility Fee":"1% on utility above ₹25k/cycle","Rent Fee":"1% per rent transaction"}},
   { id:"axis-reserve", bank:"Axis Bank", name:"Axis Reserve", joining:50000, annual:50000, waiver:3500000, type:"Points", rewards:[{cat:"Travel Edge",rate:45,cap:null,unit:"Edge Reward Points"},{cat:"All Spends",rate:15,cap:null,unit:"Edge Reward Points"}], excluded:["Rent","Wallet","Govt","EMI","Insurance","Gold","Fuel — waiver threshold exclusions"], benefits:["Ultra-premium metal card","Unlimited lounge + guest passes","Dedicated relationship manager","Cash advance waived","Annual fee waived on ₹35L spend","1.5% forex markup — low"], mitc:{"Interest Rate":"3.0% per month (42.58% p.a.)","Grace Period":"20–50 days","Cash Advance":"Waived","Late Payment":"₹1200 above ₹10k outstanding","Foreign Markup":"1.5%","Annual Fee Waiver":"₹35L spend (excl. Rent/Wallet/Govt/EMI/Insurance/Gold/Fuel)","Overlimit":"2.5% of overlimit, min ₹500","Fuel Fee":"1% on fuel above ₹50k/cycle","Wallet Fee":"1% on wallet above ₹10k/cycle","Utility Fee":"1% on utility above ₹25k/cycle","Rent Fee":"1% per rent transaction"}},
   { id:"axis-vistara-infinite", bank:"Axis Bank", name:"Axis Vistara Infinite", joining:10000, annual:10000, waiver:null, type:"Miles", rewards:[{cat:"All Spends",rate:6,cap:null,unit:"Club Vistara Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 CV Point = ~₹0.50 on Vistara","Complimentary Business Class ticket","4 lounge visits/year","Vistara Gold membership"], mitc:{"CV Point Value":"~₹0.50 on Vistara","Welcome Gift":"1 Business Class ticket","Lounge":"4 visits/year","Foreign Markup":"3.5%"}},
-  { id:"hdfc-moneyback-plus", bank:"HDFC Bank", name:"HDFC MoneyBack+", joining:500, annual:500, waiver:50000, type:"CashPoints", rewards:[{cat:"Amazon, Flipkart, Swiggy, BigBasket, Reliance Smart",rate:10,cap:null,unit:"CashPoints"},{cat:"All Other Spends",rate:1,cap:null,unit:"CashPoints"}], excluded:["Fuel","Wallet","EMI","Govt","Rent","Gaming"], benefits:["10X CashPoints (2.5% value) on Amazon/Flipkart/Swiggy/BigBasket/Reliance Smart","2 CashPoints per ₹200 on other spends (=1% value)","₹500 gift voucher on ₹50,000 quarterly spend","1% fuel surcharge waiver on ₹400–₹5000 txn (max ₹250/cycle)","Annual fee waived on ₹50k annual spend","500 bonus CashPoints on paying joining fee"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 slab","Foreign Markup":"3.5%","CashPoint Value":"1 CashPoint = ₹0.25 on redemption","10X Earn Rate":"10 CashPoints per ₹150 spend = 2.5% effective value","Other Earn Rate":"2 CashPoints per ₹200 spend = 1% effective value","Quarterly Milestone":"₹500 voucher on ₹50,000/quarter","Annual Fee Waiver":"₹50,000 annual spend","Fuel Surcharge":"1% waiver on ₹400–₹5000, max ₹250/cycle","Reward Expiry":"2 years"}},
   { id:"hdfc-pixel-play", bank:"HDFC Bank", name:"HDFC Pixel Play", joining:500, annual:500, waiver:100000, type:"Cashback", rewards:[{cat:"Chosen category (1 of 6)",rate:5,cap:1000,unit:"CashPoints"},{cat:"All Other Spends",rate:1,cap:15000,unit:"CashPoints"}], excluded:["Fuel above ₹15k","Wallet above ₹10k","Rent","EMI","Govt","Gaming above ₹10k"], benefits:["Choose reward category every month","5% on chosen category (dining/travel/shopping/entertainment/utilities/grocery)","1% unlimited on all other spends","Waive joining fee on ₹20k spend in 90 days","Dual card: Visa + RuPay"], mitc:{"Interest Rate":"3.75% per month (45% p.a.)","Grace Period":"20–50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"₹100–₹1300 slab","Foreign Markup":"3.5%","Joining Fee Waiver":"₹20,000 in first 90 days","Annual Fee Waiver":"₹1L annual spend","Fuel Fee":"1% on fuel above ₹15,000 (w.e.f Oct 2025)","Wallet Fee":"1% on wallet load above ₹10,000/month","Rent Fee":"1% on rent transactions (w.e.f Oct 2025)","Utility Fee":"1% if total utility above ₹50,000/month","Cashback Cap":"₹15,000/month on 1% category","Insurance Cap":"2000 CashPoints/month","Gaming":"No CashPoints on gaming","Reward Expiry":"2 years"}},
   { id:"icici-sapphiro", bank:"ICICI Bank", name:"ICICI Sapphiro", joining:6500, annual:3500, waiver:600000, type:"Points", rewards:[{cat:"International Spends",rate:4,cap:null,unit:"PAYBACK Points"},{cat:"Dining & Entertainment",rate:2,cap:null,unit:"PAYBACK Points"},{cat:"Others",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","4 lounge visits","Golf privileges","Concierge service"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"4 visits/year domestic","Foreign Markup":"3.5%"}},
   { id:"icici-coral", bank:"ICICI Bank", name:"ICICI Coral", joining:500, annual:500, waiver:150000, type:"Points", rewards:[{cat:"All Spends",rate:2,cap:null,unit:"PAYBACK Points"}], excluded:["Fuel","Wallet","EMI","Govt"], benefits:["1 PAYBACK = ₹0.25","2 lounge visits/quarter","1 free movie ticket/month"], mitc:{"Point Value":"1 PAYBACK = ₹0.25","Lounge":"2 visits/quarter","Movie Benefit":"1 free ticket/month","Annual Fee Waiver":"₹1.5L"}},
@@ -793,7 +827,7 @@ const CARDS = [
   { id:"rbl-blockbuster", bank:"RBL Bank", name:"RBL Blockbuster Credit Card", joining:3000, annual:3000, waiver:null, type:"Cashback+Voucher", rewards:[{cat:"OTT Platforms",rate:10,cap:500,unit:"cashback"},{cat:"Dining & Movies",rate:5,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["10% on OTT subscriptions","5% on dining and movies","Complimentary OTT subscriptions","Lounge access","Entertainment focused card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Fuel Fee":"1% on fuel above ₹10k","Reward Redemption Fee":"₹99 + GST"}},
   { id:"rbl-popcorn", bank:"RBL Bank", name:"RBL Popcorn Credit Card", joining:1000, annual:1000, waiver:null, type:"Cashback+Voucher", rewards:[{cat:"Movies & OTT",rate:8,cap:300,unit:"cashback"},{cat:"Dining",rate:5,cap:null,unit:"cashback"},{cat:"Others",rate:1,cap:null,unit:"cashback"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["8% on movies and OTT","Free movie tickets monthly","Dining benefits","Entertainment rewards card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Overlimit Fee":"NIL","Rent Fee":"1% per transaction","Reward Redemption Fee":"₹99 + GST"}},
   { id:"rbl-insignia", bank:"RBL Bank", name:"RBL Insignia Credit Card", joining:7000, annual:7000, waiver:1000000, type:"Points", rewards:[{cat:"All Spends",rate:5,cap:null,unit:"Reward Points"},{cat:"Travel & Luxury",rate:8,cap:null,unit:"Reward Points"}], excluded:["Fuel above ₹10k","Wallet","Govt","Rent","EMI"], benefits:["Annual fee waived on ₹10L spend","1.5% forex — low for premium card","Reward redemption fee waived","Priority banking benefits","Unlimited lounge access","Concierge service"], mitc:{"Interest Rate":"3.4% per month (40.8% p.a.)","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"1.5% — low","Annual Fee Waiver":"₹10L annual spend (or free for Insignia Preferred Banking customers)","Overlimit Fee":"NIL","Reward Redemption Fee":"Waived","Card Replacement":"NIL"}},
-  { id:"rbl-iocl-xtra", bank:"RBL Bank", name:"RBL IndianOil XTRA Credit Card", joining:1500, annual:1500, waiver:275000, type:"Points", rewards:[{cat:"IOCL Fuel",rate:6.5,cap:null,unit:"IOCL Points"},{cat:"Groceries & Dining",rate:4,cap:null,unit:"IOCL Points"},{cat:"Others",rate:1,cap:null,unit:"IOCL Points"}], excluded:["Wallet","Govt","EMI","Rent"], benefits:["6.5% value back on IOCL fuel","4% on groceries and dining","Annual fee waived on ₹2.75L spend","Fuel surcharge waiver at IOCL","IOCL co-branded premium card"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2.75L annual spend","Fuel Benefit":"6.5% value back via IOCL Points at IOCL pumps","Overlimit Fee":"NIL","Reward Redemption Fee":"₹99 + GST"}},
+  { id:"rbl-iocl-xtra", bank:"RBL Bank", name:"RBL IndianOil XTRA Credit Card", joining:1500, annual:1500, waiver:275000, type:"Points", rewards:[{cat:"IOCL Fuel",rate:15,cap:1000,unit:"IOCL Fuel Points"},{cat:"All Other Spends",rate:2,cap:null,unit:"IOCL Fuel Points"}], excluded:["Railways","Rent","Wallet","Utilities","Govt","EMI"], benefits:["8.5% total value back on IOCL fuel (7.5% points + 1% surcharge waiver)","15 Fuel Points per ₹100 at IOCL — best fuel card in India","1 Fuel Point = ₹0.50 redeemable at IOCL pumps","Cap: 2000 Fuel Points per month (= ₹1000/month = ₹12,000/year)","2 Fuel Points per ₹100 on other spends (= 1% value)","3000 welcome Fuel Points on joining fee + first txn ₹500+","Annual fee waived on ₹2.75L spend","NCMC + UPI on RuPay variant — works at metro/transit"], mitc:{"Interest Rate":"Up to 3.99% per month based on CIBIL score","Grace Period":"Up to 50 days","Cash Advance":"2.5% or ₹500 min","Late Payment":"12.5% of outstanding, min ₹5, max ₹1300","Foreign Markup":"3.5%","Annual Fee Waiver":"₹2.75L annual spend","Fuel Points Value":"1 Fuel Point = ₹0.50 at IOCL pumps","IOCL Rate":"15 Fuel Points/₹100 = 7.5% + 1% waiver = 8.5% total","Other Spends":"2 Fuel Points/₹100 = 1% value","Monthly Cap":"2000 Fuel Points (₹1000 value) on IOCL spends","Redemption":"Instant at IOCL POS via XTRAREWARDS program","Welcome Benefit":"3000 Fuel Points (= ₹1500) on joining fee + first txn","Overlimit Fee":"NIL","Reward Redemption Fee":"₹99 + GST"}},
 ];
 
 const EXPENSE_CATS = [
@@ -828,10 +862,10 @@ function saveCardStatus() {
 }
 
 const REWARD_MAP = {
-  amazon_flipkart: {"hdfc-millennia":5,"icici-amazon-pay":5,"flipkart-axis":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hdfc-infinia":2.5,"hdfc-moneyback-plus":10,"sbi-simply-click":10,"onecard":5,"hsbc-live-plus":1.5,"standard-chartered-ultimate":3.3,"amex-gold":1},
+  amazon_flipkart: {"hdfc-millennia":5,"icici-amazon-pay":5,"flipkart-axis":5,"sbi-cashback":5,"axis-ace":2,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hdfc-infinia":2.5,"sbi-simply-click":10,"onecard":5,"hsbc-live-plus":1.5,"standard-chartered-ultimate":3.3,"amex-gold":1},
   swiggy_zomato: {"hdfc-swiggy":10,"hdfc-swiggy-ornge":10,"hdfc-swiggy-blck":10,"airtel-axis":10,"flipkart-axis":4,"axis-ace":4,"sbi-cashback":5,"hdfc-millennia":2.5,"hdfc-regalia":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"onecard":5,"amex-gold":1},
   groceries: {"hdfc-swiggy":5,"rbl-iocl":2,"hdfc-millennia":2.5,"sbi-cashback":5,"sc-simply-save":2.5,"hdfc-regalia":2,"hdfc-regalia-gold":2,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"idfc-wealth":3,"au-altura-plus":1.5,"sbi-prime":10,"sbi-simply-save":10,"sbi-tata-neu-plus":1,"amex-gold":1},
-  fuel: {"rbl-iocl":4,"rbl-iocl-xtra":6.5,"hdfc-regalia":1,"hdfc-regalia-gold":1,"hdfc-biz-moneyback":5,"sbi-bpcl-octane":7.25,"axis-indianoil":4},
+  fuel: {"rbl-iocl":4,"rbl-iocl-xtra":15,"hdfc-regalia":1,"hdfc-regalia-gold":1,"hdfc-biz-moneyback":5,"sbi-bpcl-octane":7.25,"axis-indianoil":4},
   dining: {"idfc-select":10,"idfc-wealth":10,"sc-simply-save":2.5,"axis-privilege":10,"axis-magnus":12,"axis-magnus-burgundy":12,"axis-select":10,"axis-horizon":5,"kotak-zen":6,"bob-eterna":10,"hdfc-regalia":2,"hdfc-regalia-gold":2,"amex-gold":5,"hsbc-live-plus":10,"standard-chartered-ultimate":3.3,"sbi-simply-save":10,"sbi-prime":10,"sbi-doctors":5,"sbi-shaurya-select":5,"sbi-aurum":10},
   movies: {"rbl-bms":10,"sc-simply-save":2.5,"hdfc-millennia":2.5,"sbi-cashback":5,"icici-coral":2,"sbi-simply-click":10,"sbi-simply-save":10,"amex-gold":1},
   travel_flight: {"axis-privilege":15,"axis-magnus":35,"axis-magnus-burgundy":35,"axis-reserve":45,"axis-atlas":5,"axis-horizon":8,"axis-vistara-infinite":6,"federal-imperio":10,"hdfc-infinia":5,"hdfc-diners-black":5,"hdfc-diners-black-metal":5,"yes-first-exclusive":12,"amex-gold":5,"scapia":10,"rbl-world-safari":5,"rbl-world-safari-plus":8,"indusind-legend":3,"idfc-wealth":3,"sbi-miles-elite":8,"sbi-air-india-signature":30,"sbi-club-vistara-prime":8,"sbi-aurum":10,"hdfc-marriott-bonvoy":2,"axis-spicejet-voyage":10},
@@ -1918,6 +1952,80 @@ window.addEventListener('hashchange', () => {
   }
 });
 
+// ===================== HOME SCREEN =====================
+const TIPS = [
+  "🔥 RBL IndianOil XTRA gives 8.5% back on IOCL fuel — best fuel card in India right now.",
+  "⚠️ Wallet loads (Paytm, PhonePe top-ups) earn ZERO rewards on all cards and are excluded from milestone spend.",
+  "💡 Axis Magnus/Reserve excludes Rent, Wallet, Insurance, Gold, Fuel from the annual fee waiver threshold.",
+  "🚫 Paying rent via CRED or NoBroker? Most cards charge 1% fee + give zero rewards. Verify before paying.",
+  "✈️ Book flights via your bank's SmartBuy/Travel Edge portal — Axis Magnus gives 35X vs 12X on direct booking.",
+  "💳 Amex Gold earns 1X MR Points on ALL categories including insurance and government — one of the most versatile cards.",
+  "🏠 Annual fee waivers: SBI Cashback ₹2L, HDFC Millennia ₹1L, Axis ACE ₹2L — all achievable in a year.",
+  "📊 1 HDFC CashPoint = ₹0.25. But Axis Edge Points = ₹0.30 base or ₹0.40 on Travel Edge. Miles/points value varies widely!",
+  "💰 HDFC Swiggy gives 10% on Swiggy, Swiggy Dineout, Swiggy Genie — capped at ₹3,500/month. Best food card.",
+  "🔒 SBI Cashback 5% online is capped at ₹5,000/month reward. At ₹1L spend online, you hit the cap.",
+  "🎯 Use Expense Planner with 'My Cards Only' filter to see recommendations just from your wallet.",
+  "⚡ Fuel surcharge (1%) is charged by the acquiring bank — your card waives it back. Different from reward points.",
+  "📝 Found wrong data on any card? Tap ✏️ Fix — suggest a correction or apply it to your calculations instantly.",
+];
+
+let tipIndex = Math.floor(Math.random() * TIPS.length);
+
+function showTip() {
+  const el = document.getElementById('home-tip');
+  if (el) el.textContent = TIPS[tipIndex];
+}
+
+function nextTip() {
+  tipIndex = (tipIndex + 1) % TIPS.length;
+  showTip();
+}
+
+function renderHomeTopPicks() {
+  const container = document.getElementById('home-top-picks');
+  if (!container) return;
+
+  const picks = [
+    { label: '⛽ Fuel', cards: ['rbl-iocl-xtra','sbi-bpcl-octane','rbl-iocl'], catKey: 'fuel' },
+    { label: '🛒 Online Shopping', cards: ['hdfc-millennia','sbi-cashback','flipkart-axis'], catKey: 'amazon_flipkart' },
+    { label: '🍽️ Dining', cards: ['axis-magnus','idfc-select','axis-select'], catKey: 'dining' },
+    { label: '✈️ Travel', cards: ['axis-reserve','axis-magnus','hdfc-infinia'], catKey: 'travel_flight' },
+    { label: '📱 Telecom', cards: ['airtel-axis','axis-ace','hdfc-biz-moneyback'], catKey: 'telecom' },
+    { label: '🏠 Groceries', cards: ['hsbc-live-plus','sbi-prime','hdfc-swiggy'], catKey: 'groceries' },
+  ];
+
+  container.innerHTML = picks.map(pick => {
+    const cardItems = pick.cards.map(cid => {
+      const card = CARDS.find(c => c.id === cid);
+      if (!card) return null;
+      const rate = REWARD_MAP[pick.catKey] && REWARD_MAP[pick.catKey][cid] || 0;
+      const unit = card.rewards[0]?.unit || 'cashback';
+      const pv = POINT_VALUES[unit] || { value: 0.25 };
+      const eff = rate > 0 ? (rate * pv.value).toFixed(1) : null;
+      return { card, rate, eff };
+    }).filter(Boolean);
+
+    const best = cardItems[0];
+    return `
+      <div class="bg-white rounded-2xl border border-outline-variant/20 p-4 cursor-pointer hover:border-primary transition-colors" onclick="showSection('planner')">
+        <div class="text-sm font-bold text-on-surface mb-2">${pick.label}</div>
+        ${cardItems.map((item, i) => `
+          <div class="flex items-center justify-between py-1 ${i > 0 ? 'opacity-60' : ''} ${i === 0 ? 'border-b border-outline-variant/10 mb-1 pb-2' : ''}">
+            <div class="text-xs ${i === 0 ? 'font-semibold text-on-surface' : 'text-on-surface-variant'}">${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${item.card.name}</div>
+            ${item.eff ? `<span class="text-xs font-bold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-lg">${item.eff}%</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+
+  // Update counts
+  const c1 = document.getElementById('home-card-count');
+  const c2 = document.getElementById('home-stat-cards');
+  if (c1) c1.textContent = CARDS.length;
+  if (c2) c2.textContent = CARDS.length;
+}
+
 // ===================== CARD STATUS MANAGEMENT =====================
 let statusModalCardId = null;
 let pendingStatus = 'active';
@@ -1985,6 +2093,7 @@ const POINT_VALUES = {
   "Travel Points":         { value: 0.50, note: "₹0.50 on RBL travel portal",               type: "points" },
   "1Card Points":          { value: 0.50, note: "₹0.50 on OneCard app",                      type: "points" },
   "IOCL Points":           { value: 0.25, note: "Redeemed at IOCL fuel pumps",               type: "points" },
+  "IOCL Fuel Points":      { value: 0.50, note: "1 Fuel Point = ₹0.50 at IOCL XTRA pumps",  type: "points" },
   "SpiceClub Points":      { value: 0.50, note: "₹0.50 on SpiceJet bookings",               type: "miles" },
   "CV Points":             { value: 0.50, note: "~₹0.50 on Air India (post Vistara merger)", type: "miles" },
   "Club Vistara Points":   { value: 0.50, note: "~₹0.50 on Air India flights",              type: "miles" },
@@ -2474,6 +2583,9 @@ function prefillCardForm(data) {
 document.addEventListener('DOMContentLoaded', () => {
   // Show app immediately
   showSection('home');
+  // Home screen
+  showTip();
+  renderHomeTopPicks();
   // Update suggestion badge
   updateSuggestionBadge();
   // Then init auth in background
