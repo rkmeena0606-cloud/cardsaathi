@@ -2572,7 +2572,7 @@ function setAuthLoading(btnId, loading) {
 }
 
 // ===================== SUPABASE DATA SYNC =====================
-async async function loadUserCards() {
+async function loadUserCards() {
   if (!currentUser || !sb) return;
   try {
     const { data: ucData } = await sb.from('user_cards').select('card_id').eq('user_id', currentUser.id);
