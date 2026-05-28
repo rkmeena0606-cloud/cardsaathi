@@ -538,6 +538,36 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </div>
 
 
+<!-- COMPARE MODAL -->
+<div class="modal-backdrop" id="compare-modal" style="display:none" onclick="if(event.target===this)document.getElementById('compare-modal').style.display='none'">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">⚖️ Side-by-Side Comparison</div>
+      <button class="close-btn" onclick="document.getElementById('compare-modal').style.display='none'">✕</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="cmp-table"><thead id="cmp-head"></thead><tbody id="cmp-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- CARD DETAIL MODAL -->
+<div class="modal-backdrop" id="detail-modal" style="display:none" onclick="if(event.target===this)document.getElementById('detail-modal').style.display='none'">
+  <div class="modal-box" style="max-width:620px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="detail-name"></div>
+        <div style="font-size:12px;color:var(--mut)" id="detail-bank"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-apply" id="detail-apply-btn" onclick="window.open(document.getElementById('detail-apply-btn').dataset.link,'_blank')" style="display:none;font-size:12px;padding:7px 14px">Apply Now →</button>
+        <button class="close-btn" onclick="document.getElementById('detail-modal').style.display='none'">✕</button>
+      </div>
+    </div>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
 <!-- MOBILE NAV -->
 <nav class="mobile-nav" id="mob-nav">
   <div class="mnav-item active" onclick="sw('home',null);mnavActive(this)"><span class="material-icons">home</span>Home</div>
