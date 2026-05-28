@@ -2768,11 +2768,34 @@ if(typeof REWARD_MAP!=='undefined'){
   if(REWARD_MAP.swiggy_zomato)REWARD_MAP.swiggy_zomato['sbi-cashback-rupay']=5;
 }
 
+// ── PROFILE / SET NAME ────────────────────────────────────────
+var _userProfile = JSON.parse(localStorage.getItem('cs_profile') || '{}');
+
+function openProfile() {
+  const existing = _userProfile.name || '';
+  const name = prompt('Enter your name (saved locally on this device only):', existing);
+  if (name === null) return; // cancelled
+  _userProfile.name = name.trim();
+  localStorage.setItem('cs_profile', JSON.stringify(_userProfile));
+  updateProfileUI();
+  if (_userProfile.name) {
+    showToast('👋 Hi ' + _userProfile.name + '! Your name is saved locally.');
+  } else {
+    showToast('Name cleared.');
+  }
+}
+function updateProfileUI() {
+  const btn = document.getElementById('profile-btn');
+  if (!btn) return;
+  btn.textContent = _userProfile.name ? '👤 ' + _userProfile.name.split(' ')[0] : '👤 Set Name';
+}
+
 // ── DOMContentLoaded additions ───────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   const n=CARDS.length;
   ['cnt-total','nc','dcb'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});
   rDB();rHomeBest();rMCC();iExpRows();uMSel();rMS();updatePortfolioSummary();
+  updateProfileUI();
   setTimeout(()=>{loadSavedExpenses();updatePlannerCounts();},400);
 });
 
