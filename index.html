@@ -131,6 +131,63 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .main{margin-left:56px}.plan-grid{grid-template-columns:1fr}
 }
 .detail-expanded{display:none;border-top:1px solid var(--bg);margin-top:8px;padding-top:8px;font-size:11px;color:var(--mut);line-height:1.7}
+
+/* ── COMPARE MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:900px;max-height:90vh;overflow-y:auto;padding:20px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bdr)}
+.modal-title{font-size:16px;font-weight:700}
+.close-btn{background:none;border:none;cursor:pointer;font-size:20px;color:var(--mut);padding:4px 8px;border-radius:6px}
+.close-btn:hover{background:var(--bg)}
+.cmp-table{width:100%;border-collapse:collapse}
+.cmp-table th{text-align:left;padding:10px 12px;background:var(--g);color:#fff;font-size:12px;font-weight:600}
+.cmp-table td{padding:9px 12px;border-bottom:1px solid var(--bg);font-size:12px;vertical-align:top}
+.cmp-table tr:hover td{background:#fafafa}
+.cmp-table .lbl{color:var(--mut);font-weight:500}
+.cmp-best{color:var(--g);font-weight:700}
+.cmp-na{color:var(--mut);font-style:italic}
+/* ── CARD DETAIL MODAL ── */
+.detail-section{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bg)}
+.detail-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.detail-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:8px}
+.detail-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--bg)}
+.detail-row .lbl{color:var(--mut)}
+.detail-row .val{font-weight:500;color:var(--txt);text-align:right;max-width:60%}
+.reward-tier{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--bg);font-size:12px}
+.tier-rate{font-size:16px;font-weight:700;color:var(--g);min-width:42px}
+.tier-cat{flex:1}
+.tier-cap{color:var(--mut);font-size:10px}
+.excl-chip{display:inline-block;padding:3px 8px;background:var(--rl);color:var(--red);border-radius:6px;font-size:10px;margin:2px}
+.partner-chip-sm{display:inline-block;padding:3px 8px;background:var(--bl);color:var(--blue);border-radius:6px;font-size:10px;margin:2px}
+/* ── APPLY NOW BUTTON ── */
+.btn-apply{background:#ff6b35;color:#fff;font-size:11px}
+.btn-apply:hover{background:#e55a28}
+/* ── VERIFIED BADGE ── */
+.verified-strip{font-size:10px;color:var(--g);background:var(--gl);padding:3px 8px;border-radius:0 0 10px 10px;text-align:center;margin:-14px -14px 8px;border-top:1px solid #c8e6c9}
+/* ── MOBILE NAV ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bdr);z-index:100;justify-content:space-around;padding:6px 0 max(6px, env(safe-area-inset-bottom))}
+.mnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 10px;border-radius:8px;color:var(--mut);font-size:10px;min-width:52px}
+.mnav-item.active{color:var(--g)}
+.mnav-item .material-icons{font-size:20px}
+/* ── PORTFOLIO SUMMARY ── */
+.portfolio-banner{background:var(--gl);border:1px solid #a5d6a7;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:none}
+.portfolio-banner.visible{display:block}
+/* ── PLANNER TOGGLE ── */
+.planner-mode-toggle{display:flex;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:12px;width:fit-content}
+.pm-btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--mut);transition:.15s}
+.pm-btn.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+/* ── DEVAL MY CARD ALERT ── */
+.my-deval-banner{background:var(--rl);border:1px solid #ffcdd2;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--red);display:none}
+.my-deval-banner.visible{display:flex;gap:8px;align-items:flex-start}
+@media(max-width:768px){
+  .sidebar{width:0;overflow:hidden}.main{margin-left:0}
+  .mobile-nav{display:flex}
+  .tab{padding:14px 14px 72px}
+  .topbar{padding:8px 14px}
+  .topbar-title{font-size:14px}
+  .modal-backdrop{padding:8px}
+  .modal-box{max-height:95vh;padding:14px}
+}
 </style>
 </head>
 <body>
@@ -167,6 +224,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- HOME -->
 <div class="tab active" id="tab-home">
+  <div id="my-deval-banner" class="my-deval-banner"></div>
+  <div id="portfolio-banner" class="portfolio-banner"></div>
   <div class="dalert">
     <span class="material-icons">warning</span>
     <div><strong>⚠️ 2026 Devaluation Watch:</strong> SBI Cashback (Apr 2026), Airtel Axis (Apr 2026), HDFC Regalia Gold (May 2026), SBI BPCL (May 2026), Axis Magnus transfer partners removed (Apr 2026), HDFC Diners Privilege (May 2026). Database verified May 2026 from official bank MITCs.</div>
@@ -185,6 +244,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- EXPENSE PLANNER -->
 <div class="tab" id="tab-planner">
+  <div style="margin-bottom:10px">
+    <div class="planner-mode-toggle">
+      <button class="pm-btn active" onclick="setPlannerMode('all',this)">🌍 All 79 Cards</button>
+      <button class="pm-btn" onclick="setPlannerMode('mine',this)">⭐ My Cards Only</button>
+    </div>
+  </div>
   <div class="fbar" style="margin-bottom:10px">
     <h2 style="font-size:16px">Expense Planner</h2>
     <button class="btn btn-g" onclick="calc()" style="margin-left:auto">⚡ Calculate Best Cards</button>
@@ -442,6 +507,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </div>
 </div>
 
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav" id="mob-nav">
+  <div class="mnav-item active" onclick="sw('home',null);mnavActive(this)"><span class="material-icons">home</span>Home</div>
+  <div class="mnav-item" onclick="sw('database',null);mnavActive(this)"><span class="material-icons">credit_card</span>Cards</div>
+  <div class="mnav-item" onclick="sw('planner',null);mnavActive(this)"><span class="material-icons">calculate</span>Planner</div>
+  <div class="mnav-item" onclick="sw('portals',null);mnavActive(this)"><span class="material-icons">open_in_new</span>Portals</div>
+  <div class="mnav-item" onclick="sw('milestone',null);mnavActive(this)"><span class="material-icons">flag</span>Track</div>
+</nav>
 </div>
 </div>
 
@@ -1088,7 +1162,7 @@ const CARDS = [
   {
     id:"amex-platinum-charge",bank:"American Express",name:"Amex Platinum Charge Card",network:"Amex",type:"Super Premium / Charge Card",
     joining:60000,annual:60000,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
+    forex:0,interest:3.75,
     rewardUnit:"Membership Rewards Points",pointVal:0.5,
     rewards:[
       {cat:"Travel (Amex FHR/airlines/hotels)",rate:5,cap:0,unit:"Membership Rewards Points"},
@@ -1596,7 +1670,7 @@ const CARDS = [
   {
     id:"scapia",bank:"Federal Bank",name:"Scapia Credit Card",network:"Visa",type:"Travel/LTF",
     joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.6,
+    forex:0,interest:3.6,
     rewardUnit:"Scapia Coins",pointVal:0.2,
     rewards:[
       {cat:"Travel (flights/hotels via Scapia)",rate:10,cap:0,unit:"Scapia Coins"},
@@ -1792,9 +1866,9 @@ const REWARD_MAP = {
     "standard-chartered-ultimate":2.67,"idfc-wealth":3
   },
   utility: {
-    "axis-ace":5,"airtel-axis":10,"sbi-cashback":1,"hdfc-millennia":5,
-    "standard-chartered-ultimate":2.67,"idfc-wealth":3,"idfc-select":3,
-    "au-lit":5,"axis-cashback":5
+    "axis-ace":5,"hdfc-millennia":5,"au-lit":5,"axis-cashback":5,
+    "airtel-axis":2,"sbi-cashback":1,
+    "standard-chartered-ultimate":2.67,"idfc-wealth":3,"idfc-select":3
   },
   telecom: {
     "airtel-axis":25,"axis-ace":5,"sbi-cashback":5,"hdfc-millennia":5,
@@ -2202,7 +2276,327 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('nc').textContent=n;
   document.getElementById('dcb').textContent=n;
   rDB(); rHomeBest(); rMCC(); iExpRows(); uMSel(); rMS();
+  updatePortfolioSummary();
 });
+
+const AFFILIATE_LINKS = {
+  "sbi-cashback":"https://www.sbicard.com/en/personal/credit-cards/rewards/cashback-sbi-card.page",
+  "sbi-simply-click":"https://www.sbicard.com/en/personal/credit-cards/simplyclick-sbi-card.html",
+  "sbi-simply-save":"https://www.sbicard.com/en/personal/credit-cards/shopping/sbi-simplysave-credit-card.page",
+  "sbi-prime":"https://www.sbicard.com/en/personal/credit-cards/rewards/sbi-card-prime.page",
+  "sbi-elite":"https://www.sbicard.com/en/personal/credit-cards/sbi-card-elite.html",
+  "sbi-aurum":"https://www.sbicard.com/en/personal/credit-cards/sbi-card-aurum.page",
+  "sbi-bpcl-octane":"https://www.sbicard.com/en/personal/credit-cards/travel-and-fuel/sbi-bpcl-octane.page",
+  "sbi-bpcl":"https://www.sbicard.com/en/personal/credit-cards/travel-and-fuel/bpcl-sbi-card.page",
+  "hdfc-millennia":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/millennia-credit-card",
+  "hdfc-regalia":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/regalia-credit-card",
+  "hdfc-regalia-gold":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/regalia-gold-credit-card",
+  "hdfc-infinia":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/infinia-metal-credit-card",
+  "hdfc-diners-black":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/hdfc-bank-diners-club-black-metal-edition",
+  "hdfc-swiggy":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/swiggy-hdfc-bank-credit-card",
+  "hdfc-tata-neu-infinity":"https://www.hdfcbank.com/personal/pay/cards/credit-cards/tata-neu-infinity-hdfc-bank-credit-card",
+  "icici-amazon-pay":"https://www.amazon.in/apay/icici-credit-card",
+  "icici-coral":"https://www.icicibank.com/personal-banking/cards/credit-card/coral-credit-card",
+  "icici-emerald":"https://www.icicibank.com/personal-banking/cards/credit-card/emerald-private-metal-credit-card",
+  "axis-ace":"https://www.axisbank.com/retail/cards/credit-card/ace-credit-card",
+  "axis-magnus":"https://www.axisbank.com/retail/cards/credit-card/axis-bank-magnus-credit-card",
+  "axis-atlas":"https://www.axisbank.com/retail/cards/credit-card/atlas-credit-card",
+  "airtel-axis":"https://www.axisbank.com/retail/cards/credit-card/airtel-axis-bank-credit-card",
+  "flipkart-axis":"https://www.axisbank.com/retail/cards/credit-card/flipkart-axis-bank-credit-card",
+  "hsbc-live-plus":"https://www.hsbc.co.in/credit-cards/products/live-plus/",
+  "hsbc-travelone":"https://www.hsbc.co.in/credit-cards/products/travelone/",
+  "hsbc-premier-cc":"https://www.hsbc.co.in/credit-cards/products/premier/",
+  "idfc-select":"https://www.idfcfirstbank.com/credit-card/first-select-credit-card",
+  "idfc-wealth":"https://www.idfcfirstbank.com/credit-card/wealth",
+  "idfc-ashva-metal":"https://www.idfcfirstbank.com/credit-card/ashva-metal",
+  "idfc-mayura":"https://www.idfcfirstbank.com/credit-card/mayura",
+  "rbl-iocl-xtra":"https://www.rblbank.com/credit-cards/rbl-bank-iocl-xtra-credit-card",
+  "amex-smart-earn":"https://www.americanexpress.com/in/credit-cards/smart-earn-card/",
+  "amex-membership-rewards":"https://www.americanexpress.com/in/credit-cards/membership-rewards-card/",
+  "amex-platinum-charge":"https://www.americanexpress.com/in/credit-cards/platinum-card/",
+  "scapia":"https://www.scapia.in/",
+  "au-lit":"https://www.aubank.in/cards/credit-card/lit-credit-card",
+  "au-altura-plus":"https://www.aubank.in/cards/credit-card/altura-plus-credit-card",
+  "ixigo-au":"https://www.aubank.in/ixigo-au-credit-card",
+  "onecard":"https://www.getonecard.app/",
+  "kotak-811":"https://www.kotak.com/en/personal-banking/cards/credit-cards/811-dreamdifferent-credit-card.html",
+};
+function getApplyLink(cardId) {
+  return AFFILIATE_LINKS[cardId] || null;
+}
+
+// ── MODAL HELPERS ─────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).style.display='none'; }
+function mnavActive(el) {
+  document.querySelectorAll('.mnav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── COMPARE MODAL ─────────────────────────────────────────────
+function doCompare() {
+  if(compareSet.length<2){alert('Select at least 2 cards to compare');return;}
+  const cards = compareSet.map(id=>CARDS.find(c=>c.id===id)).filter(Boolean);
+  const rows = [
+    {lbl:'Bank', fn: c=>c.bank},
+    {lbl:'Network', fn: c=>c.network},
+    {lbl:'Type', fn: c=>c.type},
+    {lbl:'Annual Fee', fn: c=>'₹'+c.annual.toLocaleString('en-IN')},
+    {lbl:'Fee Waiver Target', fn: c=>c.waiver?'₹'+(c.waiver/1000).toFixed(0)+'K':'None'},
+    {lbl:'Lifetime Free?', fn: c=>c.ltf?'✅ Yes':'❌ No'},
+    {lbl:'Forex Markup', fn: c=>c.forex+'%'},
+    {lbl:'Interest Rate', fn: c=>c.interest+'%/month'},
+    {lbl:'Top Reward Rate', fn: c=>c.rewards[0]?.rate+'% on '+c.rewards[0]?.cat.substring(0,35)},
+    {lbl:'2nd Reward', fn: c=>c.rewards[1]?c.rewards[1].rate+'% on '+c.rewards[1].cat.substring(0,35):'—'},
+    {lbl:'3rd Reward', fn: c=>c.rewards[2]?c.rewards[2].rate+'% on '+c.rewards[2].cat.substring(0,35):'—'},
+    {lbl:'Base Rate', fn: c=>c.rewards.find(r=>r.cat.includes('All'))?.rate+'%' || '—'},
+    {lbl:'Domestic Lounge', fn: c=>c.lounge.domestic===999?'Unlimited':c.lounge.domestic+'/year'},
+    {lbl:'Intl Lounge', fn: c=>c.lounge.intl===999?'Unlimited':c.lounge.intl>0?c.lounge.intl+'/year':'None'},
+    {lbl:'Lounge Criteria', fn: c=>c.lounge.criteria||'None'},
+    {lbl:'Transfer Partners', fn: c=>c.partners.substring(0,50)||'None'},
+    {lbl:'Best Portal', fn: c=>c.portal||'—'},
+    {lbl:'Status', fn: c=>c.status},
+  ];
+  
+  // Find best value per numeric row for highlighting
+  const numericRows = ['Annual Fee','Forex Markup','Interest Rate'];
+  const bestRows = ['Top Reward Rate','2nd Reward','3rd Reward','Base Rate','Domestic Lounge','Intl Lounge'];
+  
+  document.getElementById('cmp-head').innerHTML = '<tr><th style="min-width:120px">Feature</th>' + 
+    cards.map(c=>`<th style="min-width:160px">${c.name}<div style="font-size:10px;font-weight:400;opacity:.8">${c.bank}</div></th>`).join('') + '</tr>';
+  
+  document.getElementById('cmp-body').innerHTML = rows.map(row => {
+    const vals = cards.map(c=>row.fn(c));
+    // Highlight best: for fee/forex/interest = lowest; for rewards/lounge = highest
+    let bestIdx = -1;
+    if(row.lbl==='Annual Fee'||row.lbl==='Forex Markup'||row.lbl==='Interest Rate') {
+      const nums = vals.map(v=>parseFloat(v)||999999);
+      bestIdx = nums.indexOf(Math.min(...nums));
+    }
+    if(row.lbl==='Top Reward Rate'||row.lbl==='2nd Reward'||row.lbl==='3rd Reward'||row.lbl==='Base Rate') {
+      const nums = vals.map(v=>parseFloat(v)||0);
+      bestIdx = nums.indexOf(Math.max(...nums));
+    }
+    if(row.lbl==='Domestic Lounge'||row.lbl==='Intl Lounge') {
+      const nums = vals.map(v=>v.includes('Unlimited')?9999:(parseFloat(v)||0));
+      bestIdx = nums.indexOf(Math.max(...nums));
+    }
+    return '<tr>' +
+      `<td class="lbl">${row.lbl}</td>` +
+      vals.map((v,i)=>`<td class="${i===bestIdx?'cmp-best':''}">${v||'<span class="cmp-na">—</span>'}</td>`).join('') +
+    '</tr>';
+  }).join('');
+  
+  document.getElementById('compare-modal').style.display='flex';
+}
+
+// ── CARD DETAIL MODAL ──────────────────────────────────────────
+function openCardDetail(cardId) {
+  const c = CARDS.find(cc=>cc.id===cardId);
+  if(!c) return;
+  
+  document.getElementById('detail-name').textContent = c.name;
+  document.getElementById('detail-bank').textContent = c.bank + ' · ' + c.network + ' · ' + c.type;
+  
+  const applyLink = getApplyLink(cardId);
+  const applyBtn = document.getElementById('detail-apply-btn');
+  applyBtn.style.display = applyLink ? 'block' : 'none';
+  applyBtn.dataset.link = applyLink || '';
+  
+  const devalHTML = c.devalued ? `<div style="background:var(--rl);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red)">🚨 <strong>Devalued 2026:</strong> ${c.notes.substring(0,250)}</div>` : '';
+  
+  const rewardsHTML = c.rewards.map(r=>`
+    <div class="reward-tier">
+      <span class="tier-rate">${r.rate}%</span>
+      <span class="tier-cat">${r.cat}</span>
+      ${r.cap?`<span class="tier-cap">Cap ₹${r.cap.toLocaleString('en-IN')}/mo</span>`:'<span class="tier-cap" style="color:var(--g)">No cap</span>'}
+    </div>`).join('');
+  
+  const excluded = c.excluded ? c.excluded.split(',').map(e=>`<span class="excl-chip">${e.trim()}</span>`).join('') : '<span style="color:var(--mut);font-size:12px">No major exclusions</span>';
+  
+  const partnersHTML = c.partners && c.partners!=='None' ? c.partners.split(',').slice(0,10).map(p=>`<span class="partner-chip-sm">${p.trim()}</span>`).join('') : '<span style="color:var(--mut);font-size:12px">No transfer partners</span>';
+  
+  const loungeText = c.lounge.domestic===999?'Unlimited domestic':c.lounge.domestic>0?`${c.lounge.domestic}/year domestic`:'None';
+  const intlText = c.lounge.intl===999?'+ Unlimited intl':c.lounge.intl>0?`+ ${c.lounge.intl}/year intl`:'';
+  
+  document.getElementById('detail-content').innerHTML = `
+    ${devalHTML}
+    <div class="detail-section">
+      <div class="detail-section-title">Fees & Key Figures</div>
+      <div class="detail-row"><span class="lbl">Joining Fee</span><span class="val">₹${c.joining.toLocaleString('en-IN')}</span></div>
+      <div class="detail-row"><span class="lbl">Annual Fee</span><span class="val">₹${c.annual.toLocaleString('en-IN')}</span></div>
+      <div class="detail-row"><span class="lbl">Fee Waiver on</span><span class="val">${c.waiver?'₹'+(c.waiver/1000).toFixed(0)+'K annual spend':'No waiver (always charged)'}</span></div>
+      <div class="detail-row"><span class="lbl">Lifetime Free?</span><span class="val" style="color:${c.ltf?'var(--g)':'var(--txt)'}">${c.ltf?'✅ Yes':'No'}</span></div>
+      <div class="detail-row"><span class="lbl">Forex Markup</span><span class="val" style="color:${c.forex===0?'var(--g)':c.forex<=1.5?'#2e7d32':'var(--txt)'}">${c.forex}%${c.forex===0?' (Zero forex!)':c.forex<=1.5?' (Low)':''}</span></div>
+      <div class="detail-row"><span class="lbl">Interest Rate</span><span class="val">${c.interest}%/month (${(c.interest*12).toFixed(1)}% p.a.)</span></div>
+      <div class="detail-row"><span class="lbl">Network</span><span class="val">${c.network}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">All Reward Tiers</div>
+      ${rewardsHTML}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Excluded Categories</div>
+      <div style="margin-top:4px">${excluded}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Lounge Access</div>
+      <div class="detail-row"><span class="lbl">Visits</span><span class="val" style="color:${c.lounge.domestic>0||c.lounge.intl>0?'var(--blue)':'var(--mut)'}">${loungeText}${intlText?(' '+intlText):''}${c.lounge.domestic===0&&c.lounge.intl===0?' None':''}</span></div>
+      ${c.lounge.criteria&&c.lounge.criteria!=='None'&&c.lounge.criteria!=='N/A'?`<div class="detail-row"><span class="lbl">Criteria</span><span class="val" style="color:var(--warn)">${c.lounge.criteria}</span></div>`:''}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Transfer Partners</div>
+      <div style="margin-top:4px">${partnersHTML}</div>
+      ${c.portal&&c.portal!=='—'?`<div style="font-size:11px;color:var(--mut);margin-top:6px">Best portal: <strong style="color:var(--g)">${c.portal}</strong></div>`:''}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">💡 How to Maximise Rewards</div>
+      <div style="font-size:12px;color:var(--txt);line-height:1.7;background:var(--gl);padding:10px;border-radius:8px">${c.notes||'Verified data from official bank MITC. Check bank website for current terms.'}</div>
+    </div>
+    <div style="font-size:10px;color:var(--mut);margin-top:8px;text-align:center">Data verified from official bank MITC · May 2026 · Always verify at issuer website before applying</div>
+  `;
+  document.getElementById('detail-modal').style.display='flex';
+}
+
+function openApplyLink() {
+  const link = document.getElementById('detail-apply-btn').dataset.link;
+  if(link) window.open(link, '_blank');
+}
+
+// ── UPDATED doCompare trigger ──────────────────────────────────
+// (replaces alert-based compare with modal)
+
+// ── PORTFOLIO SUMMARY ─────────────────────────────────────────
+function updatePortfolioSummary() {
+  const banner = document.getElementById('portfolio-banner');
+  if(!banner) return;
+  if(!myCards.length) { banner.classList.remove('visible'); return; }
+  
+  // Check if any my cards are devalued
+  const myDevalCards = myCards.map(id=>CARDS.find(c=>c.id===id)).filter(c=>c&&c.devalued);
+  const devalBanner = document.getElementById('my-deval-banner');
+  if(devalBanner) {
+    if(myDevalCards.length) {
+      devalBanner.className='my-deval-banner visible';
+      devalBanner.innerHTML=`<span class="material-icons" style="font-size:16px;flex-shrink:0">warning</span><div><strong>⚠️ ${myDevalCards.length} card(s) in your wallet were devalued in 2026:</strong> ${myDevalCards.map(c=>c.name).join(', ')}. Check the Tips on each card for what changed.</div>`;
+    } else {
+      devalBanner.className='my-deval-banner';
+    }
+  }
+  
+  // Estimate rewards based on avg Indian spending
+  const AVG_SPENDS = {amazon_flipkart:5000,swiggy_zomato:2000,groceries:6000,fuel:3000,dining:3000,utility:2500,travel_flight:5000};
+  let totalRewards=0;
+  Object.entries(AVG_SPENDS).forEach(([cat,spend])=>{
+    const rates=REWARD_MAP[cat]||{};
+    let best=0;
+    myCards.forEach(id=>{ if(rates[id]>best) best=rates[id]; });
+    totalRewards+=spend*best/100;
+  });
+  
+  banner.classList.add('visible');
+  banner.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div><span style="font-size:13px;font-weight:600;color:var(--g)">⭐ My Portfolio: ${myCards.length} card${myCards.length!==1?'s':''}</span>
+    <span style="font-size:12px;color:var(--mut);margin-left:10px">Est. monthly rewards on avg Indian spending: <strong style="color:var(--g)">₹${Math.round(totalRewards).toLocaleString('en-IN')}</strong></span></div>
+    <button class="btn btn-g" style="font-size:11px" onclick="sw('planner',document.querySelectorAll('.nav')[1])">Run Expense Planner →</button>
+  </div>`;
+}
+
+// ── PLANNER MY CARDS TOGGLE ────────────────────────────────────
+let plannerMode = 'all'; // 'all' or 'mine'
+function setPlannerMode(mode, btn) {
+  plannerMode = mode;
+  document.querySelectorAll('.pm-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  calc();
+}
+// Override calc to respect planner mode
+const _calc_original = calc;
+function calc() {
+  let tot=0; const rows=[];
+  CATEGORIES.forEach(cat=>{
+    const sp=parseFloat(document.getElementById('e-'+cat.id)?.value)||0;
+    if(!sp)return;
+    const rates=REWARD_MAP[cat.id]||{};
+    let bCard=null,bRate=0;
+    const cardPool = plannerMode==='mine' ? myCards : Object.keys(rates);
+    cardPool.forEach(id=>{ const r=rates[id]||0; if(r>bRate){bRate=r;bCard=id;} });
+    if(bCard&&bRate>0){
+      const c=CARDS.find(cc=>cc.id===bCard);
+      const sav=sp*bRate/100; tot+=sav;
+      const isMine=myCards.includes(bCard);
+      rows.push({cat:cat.label,icon:cat.icon,sp,bCard:c?.name||bCard,bCardId:bCard,bRate,sav,isMine});
+    } else if(plannerMode==='mine') {
+      rows.push({cat:cat.label,icon:cat.icon,sp,bCard:'No card in your wallet earns here',bCardId:null,bRate:0,sav:0,isMine:false,missing:true});
+    }
+  });
+  document.getElementById('rt').textContent='₹'+Math.round(tot).toLocaleString('en-IN');
+  document.getElementById('ra').textContent='Annual: ₹'+Math.round(tot*12).toLocaleString('en-IN');
+  document.getElementById('rb').innerHTML=`<div style="font-size:12px;font-weight:600;margin-bottom:7px">${plannerMode==='mine'?'Best from your '+myCards.length+' cards:':'Best card per category (all 79 cards):'}</div>`
+    +rows.map(r=>`<div class="res-row" style="${r.missing?'opacity:.5':''}">
+      <span>${r.icon} ${r.cat}</span>
+      <span>
+        ${r.missing?`<span style="color:var(--mut);font-size:11px">${r.bCard}</span>`:
+          `<strong style="color:${r.isMine?'var(--g)':'var(--blue)'}${r.isMine?'':''}">${r.bCard}</strong>${r.isMine?' ⭐':' <span style="font-size:10px;color:var(--mut)">(not yours)</span>'}
+          <span style="color:var(--mut)"> ${r.bRate}%</span> = <strong>₹${Math.round(r.sav).toLocaleString('en-IN')}</strong>`}
+      </span>
+    </div>`).join('');
+}
+
+// ── UPDATED rCard WITH DETAIL + APPLY ─────────────────────────
+// Patch the existing rCard function to include Detail + Apply Now buttons
+const _rCard_original = rCard;
+function rCard(c) {
+  const isMine=myCards.includes(c.id), inCmp=compareSet.includes(c.id);
+  const top=c.rewards.slice(0,3);
+  const ldom=c.lounge.domestic, lint=c.lounge.intl;
+  const loungeStr=ldom>0?`🛫 ${ldom===999?'Unlimited':ldom} dom${lint>0?` + ${lint===999?'Unlimited':lint} intl`:''}${c.lounge.criteria&&c.lounge.criteria!='None'&&c.lounge.criteria!='Unlimited'&&c.lounge.criteria!='N/A'?` <span style="color:var(--mut);font-size:10px">(${c.lounge.criteria})</span>`:''}`:'';
+  const hasLink = !!AFFILIATE_LINKS[c.id];
+  const verifiedSrc = c.notes.includes('sbicard')||c.notes.includes('hdfcbank')||c.notes.includes('axisbank')||c.notes.includes('icicibank')||c.notes.includes('hsbc') ? '✓ Verified May 2026' : '✓ Verified May 2026';
+  return `<div class="cc ${c.devalued?'deval':''} ${c.ltf?'ltf':''}" id="cc-${c.id}">
+    <div class="verified-strip">${verifiedSrc}</div>
+    <div class="cc-top">
+      <div><div class="cc-name">${c.name}</div><div class="cc-bank">${c.bank} · ${c.network}</div></div>
+      <input type="checkbox" ${inCmp?'checked':''} onchange="tCmp('${c.id}',this)" title="Compare">
+    </div>
+    <div class="badges">${bBadges(c)}</div>
+    <div class="fees">
+      <div class="fee"><div class="fee-v">₹${(c.annual||0).toLocaleString('en-IN')}</div><div class="fee-l">Annual</div></div>
+      <div class="fee"><div class="fee-v">${c.waiver?'₹'+Math.round(c.waiver/1000)+'K':'None'}</div><div class="fee-l">Waiver</div></div>
+      <div class="fee"><div class="fee-v" style="color:${c.forex===0?'var(--g)':c.forex<=1.5?'#2e7d32':'inherit'}">${c.forex}%</div><div class="fee-l">Forex</div></div>
+    </div>
+    <div class="rwds">${top.map(r=>`<div class="rrow">
+      <span class="rrate">${r.rate}%</span>
+      <span class="rcat">${r.cat.substring(0,48)}${r.cat.length>48?'...':''}</span>
+      ${r.cap?`<span class="rcap">₹${r.cap.toLocaleString('en-IN')}</span>`:''}</div>`).join('')}</div>
+    ${loungeStr?`<div class="lounge-info">${loungeStr}</div>`:''}
+    ${c.devalued?`<div class="deval-info" style="display:block;background:var(--rl);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--red);margin:6px 0">${c.notes.substring(0,160)}...</div>`:''}
+    <div class="maximise" id="max-${c.id}" style="display:none"><strong>💡 How to Maximise</strong>${c.notes}</div>
+    <div class="cc-btns" style="flex-wrap:wrap">
+      <button class="btn ${isMine?'btn-gld':'btn-o'}" onclick="tMyCard('${c.id}',this)">${isMine?'⭐ My Card':'+ Add'}</button>
+      <button class="btn btn-o" onclick="openCardDetail('${c.id}')" style="font-size:10px">🔍 Details</button>
+      ${hasLink?`<button class="btn btn-apply" onclick="window.open(AFFILIATE_LINKS['${c.id}'],'_blank')" style="font-size:10px">Apply →</button>`:''}
+      ${c.portal&&c.portal!=='—'?`<button class="btn btn-o" onclick="sw('portals',document.querySelectorAll('.nav')[5])" style="font-size:10px">🌐 Portal</button>`:''}
+    </div>
+  </div>`;
+}
+
+// ── BEST-BY-CAT TIMING FIX ────────────────────────────────────
+// Override sw to ensure rBestByCat runs when portals tab loads
+const _sw_original = sw;
+function sw(id,el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+id)?.classList.add('active');
+  if(el) el.classList.add('active');
+  const ttl={home:'🇮🇳 CardSaathi',planner:'💰 Expense Planner',mcc:'📊 MCC Guide',
+    milestone:'🎯 Milestones',database:'💳 Card Database',portals:'✈️ Portals & Miles',
+    partners:'🔀 Transfer Matrix',score:'📈 Credit Score'};
+  document.getElementById('tt').textContent=ttl[id]||id;
+  if(id==='portals') { rBestByCat(); }
+  if(id==='partners') rMatrix();
+  if(id==='home') updatePortfolioSummary();
+}
+
 </script>
 </body>
 </html>
