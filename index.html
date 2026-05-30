@@ -403,10 +403,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div><strong>⚠️ 2026 Devaluation Watch:</strong> 🆕 PhonePe SBI SELECT BLACK (Jul 1 2026 — insurance sub-cap ₹500/mo), SBI Cashback (Apr 2026), Airtel Axis (Apr 2026), HDFC Regalia Gold (May 2026), SBI BPCL (May 2026), Axis Magnus transfer partners removed (Apr 2026), ICICI Sapphiro lounge criteria added. Database verified May 2026 from official bank MITCs.</div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-n" id="cnt-total" style="color:var(--g)">0</div><div class="stat-l">Credit Cards</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--blue)">33+</div><div class="stat-l">MCC Codes</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--red)">6</div><div class="stat-l">2026 Devaluations</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--gold)">100%</div><div class="stat-l">Free Forever</div></div>
+    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4])" style="cursor:pointer" title="Browse all credit cards">
+      <div class="stat-n" id="cnt-total" style="color:var(--g)">0</div>
+      <div class="stat-l">Credit Cards ↗</div>
+    </div>
+    <div class="stat" onclick="sw('mcc',document.querySelectorAll('.nav')[2])" style="cursor:pointer" title="View MCC Guide">
+      <div class="stat-n" style="color:var(--blue)">33+</div>
+      <div class="stat-l">MCC Codes ↗</div>
+    </div>
+    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{fDB('deval',document.querySelector('#tab-database .chip:nth-child(3)'))},200)" style="cursor:pointer" title="See devalued cards">
+      <div class="stat-n" style="color:var(--red)">12</div>
+      <div class="stat-l">2026 Devaluations ↗</div>
+    </div>
+    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{fDB('ltf',document.querySelector('#tab-database .chip:nth-child(2)'))},200)" style="cursor:pointer" title="See lifetime free cards">
+      <div class="stat-n" style="color:var(--gold)">Free</div>
+      <div class="stat-l">15 LTF Cards ↗</div>
+    </div>
   </div>
   <h3 style="margin-bottom:10px;font-size:14px">🏆 Best Card By Category (May 2026)</h3>
   <div id="home-best" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:20px"></div>
@@ -918,24 +930,24 @@ const CARDS = [
     partners:"None",portal:"—",
     status:"❌ Devalued",devalued:true,isNew:false,
     isTravel:false,isCashback:true,isPremium:false,
-    notes:"Apr 2026: cap ₹5K→₹4K/mo combined; gaming/tolls/govt newly excluded. Cap split: ₹2K online + ₹2K offline. Best for online-heavy spenders."
+    notes:"Apr 2026 devaluation: Combined cap Rs4,000/cycle (Rs2K online + Rs2K offline). New exclusions: gaming (MCC 7993/7994/5816), tolls/FASTag (MCC 4784), jewellery (MCC 5094). Nov 2025: 1% fee on wallet loads and education via 3rd party. 5% cashback on ALL online (no merchant restriction) - no Amazon/Flipkart lock-in. 1% offline. Auto-credited within 2 days of statement. 1% fuel waiver Rs500-Rs3K, max Rs100/cycle. Fee waiver Rs2L annual spend. Best online cashback card with no merchant restrictions."
   },
   {
     id:"sbi-simply-click",bank:"SBI Card",name:"SimplyCLICK SBI Card",network:"Visa",type:"Rewards",
     joining:499,annual:499,waiver:100000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Amazon/BookMyShow/Cleartrip/Lenskart/Netmeds/Swiggy",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"Other Online",rate:1.25,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
+    rewards:[[
+      {cat:"10X Partners: Apollo 24x7, BookMyShow, Cleartrip, EazyDiner, Lenskart, Netmeds",rate:2.5,cap:0,unit:"SBI Reward Points",note:"10 RP/Rs100 = 2.5% at Rs0.25/pt"},
+      {cat:"Amazon.in, All Other Online (5X)",rate:1.25,cap:0,unit:"SBI Reward Points",note:"5 RP/Rs100 = 1.25%. Amazon was 10X but reduced to 5X Jan 2023."},
+      {cat:"All Offline Spends (1X)",rate:0.25,cap:0,unit:"SBI Reward Points"}
+    ]],
     excluded:"Fuel,Wallet,Cash,Insurance,Jewellery",
     lounge:{domestic:0,intl:0,criteria:"N/A"},
     partners:"None",portal:"sbicard.com rewards",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
-    notes:"5X on 6 online partners (2.5% effective). Max value: redeem at ₹0.25/pt = 0.625% base, 1.25% on partners. 10X on Amazon via offer periods."
+    notes:"Partners for 10X (2.5% effective): Apollo 24x7, BookMyShow, Cleartrip, EazyDiner, Lenskart, Netmeds. Amazon reduced to 5X (1.25%) from Jan 2023. Swiggy NO LONGER 10X partner - reduced Jan 2023. All others online: 5X (1.25%). Offline: 1X (0.25%). Fee waiver Rs1L/yr. Milestone: Rs2K Cleartrip/Yatra voucher at Rs1L and Rs2L annual spend."
   },
   {
     id:"sbi-simply-save",bank:"SBI Card",name:"SBI SimplySAVE",network:"Visa",type:"Rewards",
@@ -1056,17 +1068,16 @@ const CARDS = [
     joining:1000,annual:1000,waiver:100000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"CashPoints",pointVal:1,
-    rewards:[
-      {cat:"Amazon/Flipkart/Myntra/Swiggy/Zomato/Uber/Cult/BMS/SonyLIV/T",rate:5,cap:1000,unit:"CashPoints"},
-      {cat:"Other Online",rate:1,cap:1000,unit:"CashPoints"},
-      {cat:"Offline",rate:1,cap:0,unit:"CashPoints"}
-    ],
+    rewards:[[
+      {cat:"Amazon, BookMyShow, Cult.fit, Flipkart, Myntra, SonyLIV, Swiggy, Tata CLiQ, Uber, Zomato",rate:5,cap:1000,unit:"HDFC CashPoints",note:"Cap 1,000 CashPoints/CALENDAR MONTH (not statement cycle). 1 CashPoint = Rs1 as statement credit."},
+      {cat:"All Other Eligible Spends",rate:1,cap:1000,unit:"HDFC CashPoints",note:"1% uncapped except monthly 1,000 CP redemption cap on cashback. Fuel/rent/EMI earn 1% but NOT eligible for CashBack redemption."}
+    ]],
     excluded:"Fuel,Wallet,EMI,Jewellery,Insurance,Gaming,Govt",
     lounge:{domestic:4,intl:0,criteria:"₹1L/quarter"},
     partners:"None (CashPoints → statement only)",portal:"SmartBuy 5% CB alt",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
-    notes:"1CP=₹1 vs statement. MAX VALUE: Redeem via SmartBuy statement credit at 1:1. Quarterly milestone ₹1K gift voucher on ₹1L spend. May 2026: Lounge now needs ₹1L/quarter."
+    notes:"Partners for 5% cashback: Amazon, BookMyShow, Cult.fit, Flipkart, Myntra, SonyLIV, Swiggy, Tata CLiQ, Uber, Zomato. Cap 1,000 CashPoints/CALENDAR MONTH (not statement cycle). 1 CashPoint = Rs1 as statement credit (NEVER use for flights at Rs0.30/pt). 1,000 welcome CashPoints on fee payment. Quarterly milestone: Rs1,000 voucher or 1 lounge visit on Rs1L quarterly spend. Fee waiver Rs1L/year (check quarterly milestone). 1% fuel waiver Rs400-Rs5,000, max Rs250/cycle. Fuel/rent/EMI earn 1% but NOT eligible for CashBack redemption."
   },
   {
     id:"hdfc-regalia",bank:"HDFC Bank",name:"HDFC Regalia Credit Card",network:"Visa Signature",type:"Rewards",
@@ -1105,16 +1116,17 @@ const CARDS = [
     joining:12500,annual:12500,waiver:1000000,ltf:false,
     forex:2,interest:1.99,
     rewardUnit:"Reward Points",pointVal:1,
-    rewards:[
-      {cat:"SmartBuy (10x)",rate:6.67,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:3.33,cap:0,unit:"Reward Points"}
-    ],
+    rewards:[[
+      {cat:"SmartBuy Portal (Flights/Hotels/Apple/Tanishq/Vouchers)",rate:10,cap:0,unit:"HDFC Reward Points",note:"3X SmartBuy = 15 pts/Rs150 = 10% at Rs1/pt. Cap 15,000 pts/month. Devalued from 5X (16.67%) on Jan 16 2026."},
+      {cat:"All Retail Spends (excl. fuel)",rate:3.33,cap:0,unit:"HDFC Reward Points",note:"5 pts/Rs150 = 3.33% at Rs1/pt. Insurance cap 10,000 pts/mo. Utility/grocery/telecom cap 2,000 pts/mo."},
+      {cat:"Fuel Transactions",rate:0,cap:0,unit:"HDFC Reward Points",note:"0 RP on fuel. 1% surcharge waiver on Rs400-Rs1,00,000 txns."}
+    ]],
     excluded:"Fuel,Wallet,Cash",
     lounge:{domestic:999,intl:999,criteria:"Unlimited"},
     partners:"Air India,IndiGo,Singapore Airlines,Krisflyer,Marriott,Aeroplan,United,Etihad",portal:"SmartBuy (10x flights/hotels/vouchers)",
-    status:"✅ Verified",devalued:false,isNew:false,
+    status:"✅ Verified",devalued:true,isNew:false,
     isTravel:false,isCashback:false,isPremium:true,
-    notes:"BEST HDFC CARD. 5pts/₹150=3.33% at ₹1/pt. SmartBuy 10x=6.67%. Apple products (1 per quarter). Tanishq (50K pts/quarter). Unlimited lounge globally. MAX: Book flights/hotels via SmartBuy for 10x, redeem at ₹1/pt = 6.67% return."
+    notes:"Invite-only super-premium. IMPORTANT Jan 16 2026: SmartBuy multiplier cut 5X->3X (40% devaluation). Now 15 pts/Rs150 on SmartBuy = 10% at Rs1/pt (was 16.67%). Base: 5 pts/Rs150 = 3.33%. SmartBuy cap 15,000 pts/month. Insurance cap 10,000/month. Grocery/utility/telecom cap 2,000/month. Redeem ONLY via SmartBuy at Rs1/pt (never statement credit Rs0.30/pt). Apple: 1 product/quarter. Tanishq vouchers: 50,000 pts/quarter. Unlimited global lounge. TRANSFER PARTNERS: 1:1 SpiceJet/AirAsia/Finnair/Flying Blue/IHG/Wyndham; 1:0.5 Club ITC/Accor ALL/BA Avios/Etihad/Turkish/United. Mark devalued Jan 2026."
   },
   {
     id:"hdfc-diners-black",bank:"HDFC Bank",name:"HDFC Diners Black Metal",network:"Diners Club",type:"Premium",
@@ -1130,7 +1142,7 @@ const CARDS = [
     partners:"Airlines/hotels via SmartBuy",portal:"SmartBuy",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:true,
-    notes:"Same as Infinia. Diners Black offers broader merchant acceptance now. Limited Diners acceptance at small merchants is the only caveat."
+    notes:"Same as Infinia. Jan 16 2026: SmartBuy cut 5X->3X. Now 10% on SmartBuy (was 16.67%). Base 3.33%. Diners Club network has limited acceptance in India - keep Visa/Mastercard backup. Same caps as Infinia. NEVER redeem as statement credit (Rs0.30/pt) - always SmartBuy (Rs1/pt)."
   },
   {
     id:"hdfc-swiggy",bank:"HDFC Bank",name:"HDFC Swiggy Credit Card",network:"Visa",type:"Cashback",
@@ -1253,12 +1265,12 @@ const CARDS = [
     joining:499,annual:499,waiver:200000,ltf:false,
     forex:3.5,interest:3.6,
     rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Utility Bills/Recharges via Google Pay",rate:5,cap:500,unit:"Cashback ₹"},
-      {cat:"Swiggy/Zomato/Ola",rate:4,cap:500,unit:"Cashback ₹"},
-      {cat:"All others (uncapped)",rate:1.5,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,EMI,Wallet,Cash,Insurance,Gold,Rent",
+    rewards:[[
+      {cat:"Utility Bills via Google Pay ANDROID ONLY (electricity/water/gas/DTH/mobile/broadband)",rate:5,cap:500,unit:"cashback",note:"COMBINED cap Rs500/month covers BOTH this 5% AND the 4% Swiggy/Zomato/Ola below. Android only - iPhone cannot access this."},
+      {cat:"Swiggy, Zomato, Ola",rate:4,cap:500,unit:"cashback",note:"Shared Rs500/month cap with 5% Google Pay category above"},
+      {cat:"All Other Spends (online + offline + supermarkets + medical + POS)",rate:1.5,cap:0,unit:"cashback",note:"1.5% UNCAPPED - no monthly limit. Auto-credited to statement."}
+    ]],
+    excluded:"Fuel,EMI,Wallet Loads,Rent,Gold/Jewellery,Insurance,Education,Govt,Utility (non-Google Pay platforms)",
     lounge:{domestic:4,intl:0,criteria:"₹50K/quarter"},
     partners:"None (direct cashback)",portal:"Google Pay (bill pay)",
     status:"✅ Verified",devalued:false,isNew:false,
@@ -1270,17 +1282,17 @@ const CARDS = [
     joining:12500,annual:12500,waiver:1500000,ltf:false,
     forex:2,interest:3,
     rewardUnit:"EDGE Miles",pointVal:1,
-    rewards:[
-      {cat:"All eligible spends (12 EDGE pts/₹200 up to ₹1.5L/mo)",rate:1.2,cap:0,unit:"EDGE Miles"},
-      {cat:"Travel EDGE portal (flights/hotels)",rate:3,cap:0,unit:"EDGE Miles"},
-      {cat:"Above ₹1.5L/mo (35 EDGE pts/₹200)",rate:3.5,cap:0,unit:"EDGE Miles"}
-    ],
+    rewards:[[
+      {cat:"All Eligible Spends (base - 12 EDGE pts/Rs200)",rate:1.2,cap:0,unit:"EDGE Miles",note:"12 pts/Rs200 = 6% in EDGE Miles at Rs0.20/pt catalog. Transfer 5 pts -> 2 partner miles (5:2 ratio). Group A/B annual caps apply."},
+      {cat:"Spends above Rs1.5L/month (35 EDGE pts/Rs200)",rate:3.5,cap:0,unit:"EDGE Miles",note:"35 pts/Rs200 on incremental spend above Rs1.5L threshold. 3.5% in EDGE Miles at catalog rate."},
+      {cat:"Travel via Travel EDGE Portal",rate:5.0,cap:0,unit:"EDGE Miles",note:"Booking via axisbank travel portal gives accelerated Miles. Use for flights/hotels booked through portal."}
+    ]],
     excluded:"Wallet,Fuel,Govt,Insurance,Jewellery,Cash,Rent",
     lounge:{domestic:8,intl:999,criteria:"PP Unlimited (no DL visits via PP)"},
-    partners:"Air India,IndiGo,Singapore KrisFlyer,Etihad,Turkish,United,ITC Hotels,Wyndham,Shangri-La,IHG,Radisson,Club Vistara (CLOSED)",portal:"TRAVEL EDGE (traveledge.axis.bank.in)",
+    partners:"Group A (2L pts/yr cap, 5:2 ratio): Singapore KrisFlyer, JAL Japan, Air Canada Aeroplan | Group B (8L pts/yr cap, 5:2 ratio): Air India, Flying Blue, ITC Hotels, IHG One Rewards | REMOVED Apr 2026: Accor ALL, Marriott Bonvoy, Qatar Airways | NEW (5:1 ratio worse): British Airways Avios, Finnair Plus, Vietnam Lotusmiles",portal:"TRAVEL EDGE (traveledge.axis.bank.in)",
     status:"❌ Devalued",devalued:true,isNew:false,
     isTravel:true,isCashback:false,isPremium:false,
-    notes:"Apr 2026: Accor,Marriott,Qatar REMOVED. ₹199+GST transfer fee per partner. 5L EDGE pts annual cap. Priority Pass intl unlimited (domestic PP visits charged). MAX: Transfer to IndiGo/SIA/Turkish. Redemption: 5 EDGE pts = 2 partner miles (Magnus). Above ₹1.5L: 35pts/₹200 = very high earn rate."
+    notes:"TWO DEVALUATIONS in 2024-2026. Fee raised Rs10K->Rs12,500. Fee waiver now Rs25L (was Rs15L). Monthly milestone bonus removed. 5:4 transfer ratio changed to 5:2 (effectively halved value). Apr 2026: Accor/Marriott/Qatar removed - replaced with BA/Finnair/Vietnam at worse 5:1 ratio. Remaining good partners: Singapore KrisFlyer (Group A, 5:2), ITC Hotels (Group B, 5:2). Unlimited domestic lounge requires Rs50K previous 3-month spend. Annual cap: 2L pts to Group A, 8L pts to Group B. Still best card if you can hit Rs1.5L/month threshold and use KrisFlyer for premium cabin."
   },
   {
     id:"axis-atlas",bank:"Axis Bank",name:"Axis Atlas Credit Card",network:"Visa",type:"Travel/Miles",
@@ -1323,7 +1335,7 @@ const CARDS = [
       {cat:"Zomato/BigBasket/Swiggy",rate:10,cap:500,unit:"Cashback ₹"},
       {cat:"All others",rate:1,cap:0,unit:"Cashback ₹"}
     ],
-    excluded:"Fuel,Wallet,Cash,EMI,Govt",
+    excluded:"Fuel, Swiggy (REMOVED Apr 2026), BigBasket (REMOVED Apr 2026), EMI, Cash, Wallet loads, Govt, Jewellery",
     lounge:{domestic:0,intl:0,criteria:"REMOVED Apr 2026"},
     partners:"None",portal:"Airtel Thanks app",
     status:"❌ Devalued",devalued:true,isNew:false,
@@ -1421,7 +1433,7 @@ const CARDS = [
       {cat:"Amazon Pay partners (100+ incl Swiggy/Cleartrip/etc)",rate:2,cap:0,unit:"Amazon Pay Balance"},
       {cat:"All Other Spends",rate:1,cap:0,unit:"Amazon Pay Balance"}
     ],
-    excluded:"Fuel,Rent,Tax,Education,Utilities (1% base only)",
+    excluded:"Gold/Silver on Amazon, Rent, Tax/Govt payments, Fuel, Education fees, International txns (non-Amazon), EMI txns, Amazon Business, Utility bills outside Amazon Pay (1% fee if above Rs50K), Wallet loads above Rs5K (1% fee from Jan 2026), Gaming (2% fee from Jan 2026)",
     lounge:{domestic:0,intl:0,criteria:"N/A"},
     partners:"Amazon Pay ecosystem",portal:"Amazon.in",
     status:"✅ Verified",devalued:false,isNew:false,
@@ -1464,15 +1476,15 @@ const CARDS = [
     id:"icici-sapphiro",bank:"ICICI Bank",name:"ICICI Sapphiro Credit Card",network:"Visa Signature",type:"Rewards",
     joining:6500,annual:3500,waiver:600000,ltf:false,
     forex:2,interest:3.75,
-    rewardUnit:"PAYBACK Points",pointVal:0.25,
+    rewardUnit:"ICICI Reward Points",pointVal:0.25,
     rewards:[
-      {cat:"Intl Spends",rate:2,cap:0,unit:"PAYBACK Points"},
-      {cat:"Dining/Entertainment",rate:1.5,cap:0,unit:"PAYBACK Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"PAYBACK Points"}
+      {cat:"Intl Spends",rate:2,cap:0,unit:"ICICI Reward Points"},
+      {cat:"Dining/Entertainment",rate:1.5,cap:0,unit:"ICICI Reward Points"},
+      {cat:"All Other Spends",rate:0.5,cap:0,unit:"ICICI Reward Points"}
     ],
     excluded:"Fuel,Wallet,Cash,Govt",
     lounge:{domestic:4,intl:2,criteria:"None"},
-    partners:"PAYBACK",portal:"payback.in",
+    partners:"ICICI Reward Points",portal:"payback.in",
     status:"⚠️ Devalued Apr 2026",devalued:true,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
     notes:"DEVALUED Apr 2026: Domestic lounge now requires ₹75K quarterly spend (was unconditional). BMS movie offer needs ₹25K/quarter spend. Amex variant cashback revoked Jan 2025. Dual network Visa+Amex. 4 dom + 2 intl lounges/yr when spend criteria met. ₹3Cr air accident insurance. Concierge."
@@ -2039,6 +2051,183 @@ const CARDS = [
     isTravel:false,isCashback:false,isPremium:false,
     notes:"15% effective at EazyDiner restaurants — exceptional for dining-heavy users. Complimentary EazyDiner Prime membership. 25% instant discount at 2,000+ partner restaurants. HSBC Live+ 10% is higher rate but EazyDiner has instant table discounts on top. Good second card for foodies."}
 
+  ,{id:"au-lit",bank:"AU Small Finance Bank",name:"AU LIT Credit Card",network:"Visa",type:"Cashback/Customisable",
+    joining:0,annual:0,waiver:0,ltf:true,forex:3.5,interest:3.49,
+    rewardUnit:"cashback",pointVal:1,
+    rewards:[
+      {cat:"Chosen Feature Category (dining/grocery/travel/shopping - pick 1 every 90 days)",rate:5,cap:500,unit:"cashback",note:"5% on chosen category, cap Rs500/month. Switch via AU 0101 app every 90 days."},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"cashback"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI",
+    lounge:{domestic:8,intl:0,criteria:"Unconditional (2/quarter)"},
+    partners:"None",portal:"AU 0101 App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"India's first customisable credit card. LTF. Switch your 5% category every 90 days via AU 0101 app - match to your highest spend (dining in restaurants season, Amazon during sales, travel during holidays). 8 domestic lounges free. Rs500/month cap on 5% category = Rs10,000 max eligible spend. 1% unlimited on all else."}
+  ,{id:"hsbc-cashback-rupay",bank:"HSBC India",name:"HSBC RuPay Cashback Credit Card",network:"RuPay",type:"Cashback",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0,interest:3.75,
+    rewardUnit:"cashback",pointVal:1,
+    rewards:[
+      {cat:"All Online Spends + UPI transactions",rate:1.5,cap:0,unit:"cashback",note:"1.5% cashback on online and UPI credit card transactions. 0% forex via RuPay."},
+      {cat:"All Offline Spends",rate:1.0,cap:0,unit:"cashback"}
+    ],
+    excluded:"Fuel,Wallet,Govt,Utilities",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"LTF RuPay card from HSBC. 0% forex. Works on UPI credit card transactions. 1.5% on all online including UPI. Pair with HSBC Live+ for dining/grocery to build HSBC relationship."}
+  ,{id:"hsbc-premier-cc",bank:"HSBC India",name:"HSBC Premier Credit Card",network:"Mastercard World Elite",type:"Super Premium",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0.99,interest:3.75,
+    rewardUnit:"HSBC Reward Points",pointVal:0.5,
+    rewards:[
+      {cat:"Hotels/Flights via Travel with Points (Hopper) portal",rate:6.0,cap:0,unit:"HSBC Reward Points",note:"12x on travel portal. 1 pt = Rs0.50 base x 12x = 6% return"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"HSBC Reward Points",note:"2 pts/Rs100 = 1% at Rs0.50/pt"}
+    ],
+    excluded:"Fuel,EMI",
+    lounge:{domestic:999,intl:999,criteria:"Unlimited globally via Priority Pass. No spend criteria."},
+    partners:"Instant transfer to 20+ airlines+hotels: Singapore KrisFlyer (1:1), Air India, IndiGo, British Airways, Turkish, Etihad, Qatar, Air France/KLM, ANA, JAL, Cathay, Lufthansa, Qantas, Accor ALL, Marriott Bonvoy, IHG, Shangri-La, Wyndham",
+    portal:"HSBC India App (instant same-day transfer)",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:true,
+    notes:"Requires HSBC Premier relationship (Rs50L TRB or Rs3L/month salary). LOWEST forex in India at 0.99%. Points NEVER expire. Unlimited global lounge. UNIQUE: Instant same-day transfer to 20+ partners (other banks take 2-3 days). 12x on Travel with Points (Hopper) portal = 6% on hotels/flights. Accor ALL still available (unlike Axis which removed Apr 2026). Apple products via portal. Best international travel card in India if you qualify."}
+  ,{id:"hsbc-travelone",bank:"HSBC India",name:"HSBC TravelOne Credit Card",network:"Visa",type:"Travel/Miles",
+    joining:4999,annual:4999,waiver:0,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"HSBC Reward Points",pointVal:0.5,
+    rewards:[
+      {cat:"Flights, Travel Aggregators, Foreign Currency Transactions",rate:2.0,cap:0,unit:"HSBC Reward Points",note:"4 pts/Rs100 = 2% at Rs0.50/pt. Higher value via instant partner transfer."},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"HSBC Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,EMI",
+    lounge:{domestic:6,intl:4,criteria:"Unconditional"},
+    partners:"Instant transfer (same-day) to 20+ partners - same as Premier: Singapore KrisFlyer, Air India, IndiGo, British Airways, Turkish, Etihad, Qatar, Air France/KLM, Accor ALL, Marriott Bonvoy, IHG, Shangri-La, Wyndham",
+    portal:"HSBC India App (instant transfer)",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"UNIQUE: Instant same-day transfer to 20+ airline+hotel partners. No other Indian bank offers same-day transfers. 6 domestic + 4 intl lounges free. 3,000 welcome pts on Rs1L in first 90 days. 10,000 bonus pts on Rs12L annual spend. 15% discount on select travel. Accor ALL still available (Axis removed it Apr 2026). Transfer to SIA KrisFlyer for international premium cabin. Rs4,999 annual fee - no waiver."}
+  ,{id:"idfc-ashva-metal",bank:"IDFC FIRST Bank",name:"IDFC FIRST Ashva Metal Credit Card",network:"Visa Infinite",type:"Premium",
+    joining:2999,annual:2999,waiver:0,ltf:false,forex:1.5,interest:3.5,
+    rewardUnit:"IDFC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Spends above Rs20,000/month (10X)",rate:2.5,cap:0,unit:"IDFC Reward Points",note:"10X above Rs20K/month = 2.5% effective"},
+      {cat:"Rent, Wallet, Education, Govt (3X)",rate:0.75,cap:0,unit:"IDFC Reward Points",note:"Earns on categories most cards exclude"},
+      {cat:"All Other Spends (5X up to Rs20K)",rate:1.25,cap:0,unit:"IDFC Reward Points"}
+    ],
+    excluded:"Nothing - earns on all categories including rent/utility/govt",
+    lounge:{domestic:8,intl:4,criteria:"Requires Rs20,000 spend in previous month"},
+    partners:"None",portal:"IDFC FIRST App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"Metal card at Rs2,999 fee. 1.5% forex. 10X above Rs20K/month. Earns RP on rent/wallet/education/govt (3X) - categories most cards exclude. 8 domestic + 4 intl lounges with Rs20K previous month spend. 2 free BookMyShow tickets/month. Points never expire. Golf access."}
+  ,{id:"idfc-mayura",bank:"IDFC FIRST Bank",name:"IDFC FIRST Mayura Credit Card",network:"Mastercard",type:"Super Premium",
+    joining:5999,annual:5999,waiver:0,ltf:false,forex:1.5,interest:3.5,
+    rewardUnit:"IDFC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Spends above Rs20,000/month (10X)",rate:2.5,cap:0,unit:"IDFC Reward Points"},
+      {cat:"Rent, Wallet, Education, Govt (3X)",rate:0.75,cap:0,unit:"IDFC Reward Points"},
+      {cat:"All Other Spends (5X)",rate:1.25,cap:0,unit:"IDFC Reward Points"}
+    ],
+    excluded:"Nothing - earns on all",
+    lounge:{domestic:999,intl:12,criteria:"Unlimited domestic, 12 intl/yr"},
+    partners:"None",portal:"IDFC FIRST App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"IDFC FIRST flagship metal card. Rs5,999 fee. Same reward structure as Ashva but better lounge (unlimited domestic, 12 intl). 1.5% forex. Earns on rent/utility/wallet. 12,000 welcome RP. Golf, concierge. Points never expire."}
+  ,{id:"idfc-select",bank:"IDFC FIRST Bank",name:"IDFC FIRST Select Credit Card",network:"Visa Signature",type:"Rewards",
+    joining:0,annual:0,waiver:0,ltf:true,forex:1.99,interest:0.75,
+    rewardUnit:"IDFC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Spends above Rs20,000/month (10X)",rate:2.5,cap:0,unit:"IDFC Reward Points"},
+      {cat:"Utility/Insurance (1X only)",rate:0.25,cap:0,unit:"IDFC Reward Points"},
+      {cat:"All Other Spends (3X up to Rs20K)",rate:0.75,cap:0,unit:"IDFC Reward Points"}
+    ],
+    excluded:"Nothing material - broad earning",
+    lounge:{domestic:4,intl:0,criteria:"Requires Rs20,000 monthly spend"},
+    partners:"None",portal:"IDFC FIRST App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"LTF entry to IDFC FIRST ecosystem. 1.99% forex. Points never expire. 4 domestic lounges on Rs20K/month spend. Interest from 0.75%/month (lowest floor in India). Earns on rent/wallet. B1G1 BookMyShow twice/month. Good first step - upgrade to Wealth for better benefits."}
+  ,{id:"idfc-wealth",bank:"IDFC FIRST Bank",name:"IDFC FIRST Wealth Credit Card",network:"Visa Infinite",type:"Rewards/Premium",
+    joining:0,annual:0,waiver:0,ltf:true,forex:1.5,interest:0.75,
+    rewardUnit:"IDFC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"All Spends above Rs20,000/month (10X)",rate:2.5,cap:0,unit:"IDFC Reward Points"},
+      {cat:"Birthday Spends",rate:2.5,cap:0,unit:"IDFC Reward Points",note:"10X on birthday"},
+      {cat:"All Spends up to Rs20,000/month (3X)",rate:0.75,cap:0,unit:"IDFC Reward Points"}
+    ],
+    excluded:"Nothing - earns on ALL: rent, utility, wallet, insurance, govt, education",
+    lounge:{domestic:8,intl:8,criteria:"Requires Rs20,000 spend in previous month"},
+    partners:"None",portal:"IDFC FIRST App",
+    status:"⚠️ Benefits revised Apr 2026",devalued:true,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"Best LTF premium card in India. 1.5% forex. Points NEVER expire. Earns RP on rent/utility/wallet/insurance - categories most cards exclude. 8 domestic + 8 intl lounges on Rs20K/month. Interest from 0.75%/month lowest in India. Apr 2026: lounge criteria revised. Jun 2026: more revisions coming - check idfcfirstbank.com for latest. 2 free movies/month. Rs1Cr accident insurance."}
+  ,{id:"ixigo-au",bank:"AU Small Finance Bank",name:"ixigo AU Credit Card",network:"RuPay",type:"Travel/Co-branded",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0,interest:3.49,
+    rewardUnit:"ixigo reward coins",pointVal:0.20,
+    rewards:[
+      {cat:"ixigo Travel Bookings (flights/trains/buses/hotels)",rate:5,cap:0,unit:"ixigo coins",note:"20 coins/Rs100 = 5%. Coins redeemable for ixigo travel only."},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"ixigo coins"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:0,criteria:"RuPay lounge program, unconditional"},
+    partners:"ixigo",portal:"ixigo App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"LTF + 0% forex via RuPay. Best for budget travellers who book via ixigo. 5% on ixigo bookings (coins redeemable on ixigo only). 0% forex = great for international trips. 4 domestic lounges free. Railway lounge access. Coins stack up for future ixigo bookings."}
+  ,{id:"kotak-811",bank:"Kotak Mahindra Bank",name:"Kotak 811 #DreamDifferent Credit Card",network:"Visa/RuPay",type:"Entry/LTF",
+    joining:0,annual:0,waiver:0,ltf:true,forex:3.5,interest:3.5,
+    rewardUnit:"Kotak Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Online Spends",rate:2.0,cap:0,unit:"Kotak Reward Points"},
+      {cat:"Offline Spends",rate:0.5,cap:0,unit:"Kotak Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"LTF entry card from Kotak. Can be opened with savings account. 2% on online. Good first credit card for beginners. RuPay variant for UPI credit card. No lounge access."}
+  ,{id:"phonepe-sbi-black",bank:"SBI Card",name:"PhonePe SBI Card SELECT BLACK",network:"Visa",type:"Cashback/Co-branded",
+    joining:1499,annual:1499,waiver:200000,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"SBI Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"PhonePe App (utility/recharge/insurance payments) - 10 RP/Rs100",rate:2.5,cap:2000,unit:"SBI Reward Points",note:"Jul 1 2026 change: insurance sub-capped at 500 RP/month. Non-insurance PhonePe: 1,500 RP/month. Total combined: 2,000 RP/month max."},
+      {cat:"Online Spends (5 RP/Rs100)",rate:1.25,cap:0,unit:"SBI Reward Points"},
+      {cat:"All Other (1 RP/Rs100)",rate:0.25,cap:0,unit:"SBI Reward Points"}
+    ],
+    excluded:"Fuel,Gaming,Jewellery,Wallet,Govt,EMI",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional + Priority Pass membership"},
+    partners:"None",portal:"PhonePe App",
+    status:"🚨 Devalued Jul 2026 (2nd time)",devalued:true,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"DEVALUATION Jul 1 2026 (2nd time in 3 months): Insurance payments now sub-capped at 500 RP/month (was part of combined 2,000 cap). Non-insurance PhonePe: 1,500 RP/month. Total still 2,000/month but insurance now ring-fenced. PREVIOUS devaluation Apr 2026: 60K pts/month statement credit redemption cap. Original: 10 RP/Rs100 on all PhonePe (utility/recharge/insurance/travel) cap 2,000/month. 4 domestic lounges + Priority Pass. ₹2,499 joining gift. Fee waiver Rs2L/yr. Rapidly losing value."}
+  ,{id:"rbl-iocl-xtra",bank:"RBL Bank",name:"RBL IndianOil XTRA Credit Card",network:"Visa",type:"Fuel/Co-branded",
+    joining:500,annual:500,waiver:150000,ltf:false,forex:3.5,interest:3.99,
+    rewardUnit:"IOCL XTRA Points",pointVal:0.50,
+    rewards:[
+      {cat:"IndianOil (IOCL) Fuel Pumps",rate:7.5,cap:0,unit:"IOCL XTRA Points",note:"15 XTRA pts/Rs100. 1 pt = Rs0.50 at IOCL pump. 7.5% effective + 1% surcharge waiver = 8.5% total at IOCL."},
+      {cat:"Grocery/Supermarkets",rate:2.0,cap:0,unit:"IOCL XTRA Points"},
+      {cat:"All Other Spends",rate:0.5,cap:0,unit:"IOCL XTRA Points"}
+    ],
+    excluded:"Non-IOCL fuel,Wallet,Govt",
+    lounge:{domestic:2,intl:0,criteria:"Unconditional"},
+    partners:"IOCL XTRA loyalty program",portal:"IOCL XTRA",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"BEST FUEL CARD IN INDIA at IOCL pumps. 8.5% effective (7.5% XTRA pts + 1% surcharge waiver). Redeem XTRA pts at IOCL pump terminal - swipe card to discount fuel directly. Only at IndianOil/IOCL stations. Rs500 fee waived Rs1.5L/yr. 2 domestic lounges free. Pair with SBI BPCL Octane for BPCL pumps."}
+  ,{id:"standard-chartered-ultimate",bank:"Standard Chartered",name:"SC Ultimate Credit Card",network:"Visa Infinite",type:"Premium",
+    joining:5000,annual:5000,waiver:0,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"SC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"ALL Spends incl. Fuel/Utility/Wallet/Insurance/Rent/Govt (3 RP/Rs100)",rate:2.67,cap:0,unit:"SC Reward Points",note:"Unique - earns on categories most cards exclude. 3 RP/Rs100 at Rs0.25/pt = 0.75%. Via 360 portal at Rs0.33/pt = 1%."}
+    ],
+    excluded:"EMI,Cash Advances",
+    lounge:{domestic:16,intl:4,criteria:"Unconditional (4/quarter domestic, 1/quarter Priority Pass intl)"},
+    partners:"None",portal:"SC 360 Rewards",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"Most inclusive earning card in India. Earns on fuel, rent, wallet loads, insurance, utility, govt - categories most others exclude. 16 domestic + 4 intl lounges. Rs5K fee with no waiver. 3 RP/Rs100 everywhere. Redeem via SC 360 portal for 1% effective on travel. Use specifically for spends where other cards earn nothing."}
+
 ];
 
 
@@ -2079,15 +2268,15 @@ const REWARD_MAP = {
     "axis-cashback":5,"sbi-elite":2.5
   },
   travel_flight: {
-    "axis-magnus":17.5,"axis-magnus-burgundy":17.5,"hdfc-infinia":6.67,
-    "hdfc-diners-black":6.67,"hsbc-premier-cc":6.0,"hsbc-travelone":4.0,
+    "axis-magnus":17.5,"axis-magnus-burgundy":17.5,"hdfc-infinia":10.0,
+    "hdfc-diners-black":10.0,"hsbc-premier-cc":6.0,"hsbc-travelone":4.0,
     "axis-reserve":3.0,"axis-atlas":2.0,"sbi-miles-elite":2.0,
     "amex-platinum-charge":5,"amex-platinum-travel":2,"scapia":4,
     "standard-chartered-ultimate":2.67,"hdfc-regalia-gold":3.33,
     "yes-first-exclusive":3,"axis-cashback":5,"sbi-elite":2.5
   },
   travel_hotel: {
-    "hdfc-infinia":6.67,"axis-magnus":17.5,"hsbc-premier-cc":12.0,
+    "hdfc-infinia":10.0,"axis-magnus":17.5,"hsbc-premier-cc":12.0,
     "hsbc-travelone":4.0,"hdfc-marriott-bonvoy":3.33,"scapia":4,
     "hdfc-tata-neu-infinity":5,"axis-magnus-burgundy":17.5,
     "standard-chartered-ultimate":2.67,"idfc-wealth":3
