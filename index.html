@@ -1575,630 +1575,299 @@ const CARDS = [
     notes:"Charge card (pay in full). Monthly bonus MR on ₹5K spend. Good for MR accumulation + airline transfers."
   },
   {
-    id:"hsbc-live-plus",bank:"HSBC India",name:"HSBC Live+ Credit Card",network:"Visa",type:"Cashback",
-    joining:0,annual:0,waiver:0,ltf:true,
+    id:"hsbc-live-plus",bank:"HSBC India",name:"HSBC Live+ Credit Card",network:"Visa Signature",type:"Cashback",
+    joining:999,annual:999,waiver:200000,ltf:false,
     forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
+    rewardUnit:"cashback",pointVal:1,
     rewards:[
-      {cat:"Dining/Food Delivery (restaurants+Swiggy/Zomato)",rate:10,cap:1000,unit:"Cashback ₹"},
-      {cat:"Grocery/Supermarkets",rate:5,cap:500,unit:"Cashback ₹"},
-      {cat:"All others",rate:1.5,cap:0,unit:"Cashback ₹"}
+      {cat:"Dining, Food Delivery (Swiggy/Zomato), Groceries — COMBINED",rate:10,cap:1000,unit:"cashback",note:"10% COMBINED cap ₹1,000/month across ALL THREE categories. Not separate caps."},
+      {cat:"All Other Spends (hotels, shopping, entertainment, medicine)",rate:1.5,cap:0,unit:"cashback",note:"1.5% unlimited — no cap"}
     ],
-    excluded:"Fuel,Wallet,Cash,EMI,Govt,Insurance",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"None (direct cashback)",portal:"—",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"LIFETIME FREE. 10% dining is best in class for LTF card. ₹1K cap/mo on dining. 2 domestic lounges/yr. MAX: Use for all restaurant bills + grocery. Pair with HSBC TravelOne for flights."
-  },
-  {
-    id:"hsbc-travelone",bank:"HSBC India",name:"HSBC TravelOne Credit Card",network:"Visa",type:"Travel/Miles",
-    joining:4999,annual:4999,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.5,
-    rewards:[
-      {cat:"Flights/Travel aggregators/Foreign currency",rate:4,cap:0,unit:"Reward Points"},
-      {cat:"All other spends",rate:2,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI",
-    lounge:{domestic:6,intl:4,criteria:"None (Dreamfolks)"},
-    partners:"20+ airlines: Air India,IndiGo,SIA KrisFlyer,British Airways,Turkish,Etihad,Qatar,ANA,JAL,Air France,KLM,Lufthansa,Cathay. Hotels: Accor ALL,Marriott Bonvoy,IHG,Shangri-La Circle,Wyndham (added May 2025)",portal:"HSBC India App (instant transfer)",
-    status:"🆕 New Addition",devalued:false,isNew:true,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"4pts/₹100 on travel (4% at ₹0.50/pt cash, or higher via transfer). INSTANT transfer via HSBC app (unique in India). 1:1 to airlines. Accor added May 2025. Points valid 3 years. 10K bonus pts on ₹12L annual spend. MAX: Transfer to SIA/Turkish for intl business awards."
-  },
-  {
-    id:"hsbc-premier-cc",bank:"HSBC India",name:"HSBC Premier Credit Card",network:"Mastercard",type:"Super Premium",
-    joining:12000,annual:20000,waiver:0,ltf:false,
-    forex:0.99,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.5,
-    rewards:[
-      {cat:"Hotels/Flights/Car rentals via Travel with Points (12x)",rate:12,cap:0,unit:"Reward Points"},
-      {cat:"Other spends",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:1,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI",
-    lounge:{domestic:999,intl:999,criteria:"Unlimited (Priority Pass + Dreamfolks)"},
-    partners:"Same 20+ airlines+hotels as TravelOne. Points NEVER EXPIRE (Premier only)",portal:"HSBC App + Travel with Points (Hopper)",
-    status:"🆕 New Addition",devalued:false,isNew:true,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"REQUIRE HSBC Premier relationship (₹50L TRB or ₹3L salary/month). Fee waived for Premier customers. 0.99% FOREX (lowest in India). NEVER-EXPIRING points. 12x on travel portal = 12% effective. 20K welcome pts. Unlimited global lounge. Apple: 1:1 redemption. MAX: Book via Travel with Points (Hopper) f"
-  },
-  {
-    id:"hsbc-cashback-rupay",bank:"HSBC India",name:"HSBC RuPay Cashback Credit Card",network:"RuPay",type:"Cashback",
-    joining:499,annual:499,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Online Spends",rate:3.5,cap:0,unit:"Cashback ₹"},
-      {cat:"UPI (RuPay UPI)",rate:1.5,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
+    excluded:"Fuel (MCC 5541/5983/5172),Utilities/Electricity/Gas/Water (MCC 4900),Wallets (MCC 6540),Insurance (MCC 6300),Jewellery (MCC 5944/5094),Govt/Education (MCC 9399/8299),Gambling (MCC 7995),Tolls (MCC 4784),Rent (MCC 6513),Cash/Forex",
+    lounge:{domestic:4,intl:0,criteria:"1 per quarter (unconditional)"},
     partners:"None",portal:"—",
-    status:"✅ Verified",devalued:false,isNew:false,
+    status:"✅ Verified May 2026 (hsbc.co.in)",devalued:false,isNew:false,
     isTravel:false,isCashback:true,isPremium:false,
-    notes:"RuPay: 0% forex on intl transactions. UPI credit card use enabled. Good for UPI-based spends."
-  },
-  {
-    id:"idfc-select",bank:"IDFC FIRST Bank",name:"IDFC FIRST Select Credit Card",network:"Visa",type:"Rewards",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:1.5,interest:0.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online Spends",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"Offline (up to ₹20K/mo)",rate:1.5,cap:0,unit:"Reward Points"},
-      {cat:"Offline (above ₹20K/mo)",rate:0.75,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Jewellery,Govt",
-    lounge:{domestic:4,intl:0,criteria:"None"},
-    partners:"None",portal:"idfcfirstbank.com rewards",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Interest rate as low as 0.75%/month (9% pa) — LOWEST in India. 10x on birthday. Lifetime free. 4 dom lounges/yr. MAX VALUE: Best card for those who occasionally carry balance."
-  },
-  {
-    id:"idfc-wealth",bank:"IDFC FIRST Bank",name:"IDFC First Wealth Credit Card",network:"Visa Signature",type:"Premium",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:1.5,interest:0.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online Spends",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"Offline (up to ₹20K)",rate:1.5,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.75,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Jewellery",
-    lounge:{domestic:999,intl:4,criteria:"Unlimited domestic"},
-    partners:"None",portal:"idfcfirstbank.com rewards",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"LIFETIME FREE + UNLIMITED DOMESTIC LOUNGE. Rare combination. Movie BOGO. 10x on birthday. 4 intl lounge visits. Best premium LTF card in India."
-  },
-  {
-    id:"idfc-ashva-metal",bank:"IDFC FIRST Bank",name:"IDFC First Ashva Metal Card",network:"Visa Infinite",type:"Premium",
-    joining:2999,annual:2999,waiver:0,ltf:false,
-    forex:1.5,interest:0.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Travel/Online",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.75,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI",
-    lounge:{domestic:8,intl:4,criteria:"None"},
-    partners:"None",portal:"idfcfirstbank.com",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"Metal card. 2 Boarding Edge spa/dining/transfer benefits/quarter (boarding pass upload). BOGO movies. 8 dom + 4 intl lounges."
-  },
-  {
-    id:"idfc-mayura",bank:"IDFC FIRST Bank",name:"IDFC First Bank Mayura Credit Card",network:"Visa Infinite",type:"Super Premium",
-    joining:5999,annual:5999,waiver:0,ltf:false,
-    forex:1.5,interest:0.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Travel/Online",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.75,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI",
-    lounge:{domestic:16,intl:8,criteria:"None"},
-    partners:"None",portal:"idfcfirstbank.com",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"Apr 2026: Movie BOGO benefit now requires ₹20K prev month spend. 16 dom + 8 intl lounges. Golf access. Concierge."
-  },
-  {
-    id:"rbl-iocl",bank:"RBL Bank",name:"RBL IndianOil Credit Card",network:"Visa",type:"Fuel",
-    joining:500,annual:500,waiver:175000,ltf:false,
-    forex:3.5,interest:3.99,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"IOCL Fuel",rate:4,cap:0,unit:"Reward Points"},
-      {cat:"Grocery/Online",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"Others",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Wallet,Cash,EMI,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"rblbank.com",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"16pts/₹100 IOCL = 4% at ₹0.25/pt. Verify current IOCL reward structure."
-  },
-  {
-    id:"rbl-iocl-xtra",bank:"RBL Bank",name:"RBL IndianOil XTRA Credit Card",network:"Visa",type:"Fuel",
-    joining:1500,annual:1500,waiver:275000,ltf:false,
-    forex:3.5,interest:3.99,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"IOCL Fuel/Lubricants/Bharat Gas",rate:7.5,cap:0,unit:"Reward Points"},
-      {cat:"Grocery/Online",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"Others",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Wallet,Cash,EMI,Govt",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"None",portal:"rblbank.com",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"30pts/₹100 IOCL = 7.5% effective (best fuel card for IOCL). + 1% surcharge waiver = ~8.5% total. 2 domestic lounges."
-  },
-  {
-    id:"rbl-world-safari",bank:"RBL Bank",name:"RBL World Safari Credit Card",network:"Mastercard",type:"Travel",
-    joining:3000,annual:3000,waiver:0,ltf:false,
-    forex:0,interest:3.99,
-    rewardUnit:"Reward Points",pointVal:0.5,
-    rewards:[
-      {cat:"Travel (flights/hotels)",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:4,intl:2,criteria:"None"},
-    partners:"None",portal:"rblbank.com",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"ZERO forex markup — unique for an RBL card. Good international travel card."
-  },
-  {
-    id:"rbl-nova",bank:"RBL Bank",name:"RBL Nova Credit Card",network:"Visa Infinite",type:"Super Premium",
-    joining:12500,annual:12500,waiver:1000000,ltf:false,
-    forex:2,interest:3.5,
-    rewardUnit:"Reward Points",pointVal:0.5,
-    rewards:[
-      {cat:"International",rate:4,cap:0,unit:"Reward Points"},
-      {cat:"Dining",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:1,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:999,intl:999,criteria:"Unlimited"},
-    partners:"None",portal:"rblbank.com",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"Super premium. Unlimited lounge. Verify current benefit construct."
-  },
-  {
-    id:"kotak-zen",bank:"Kotak Mahindra Bank",name:"Kotak Zen Signature",network:"Visa Signature",type:"Rewards",
-    joining:1500,annual:1500,waiver:200000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Intl/Dining",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt,Jewellery",
-    lounge:{domestic:4,intl:0,criteria:"None"},
-    partners:"None",portal:"kotak.com rewards",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Verify current benefit structure vs Kotak 811."
-  },
-  {
-    id:"kotak-811",bank:"Kotak Mahindra Bank",name:"Kotak 811 #DreamDifferent",network:"Visa",type:"Entry/Digital",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"—",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Digital lifetime free. Zero forex. Good beginner card for online spends."
-  },
-  {
-    id:"kotak-air-plus-prime",bank:"Kotak Mahindra Bank",name:"Kotak Air+ Prime Credit Card",network:"Visa",type:"Travel",
-    joining:499,annual:499,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"IndiGo BluChips",pointVal:0.5,
-    rewards:[
-      {cat:"IndiGo Channels",rate:2,cap:0,unit:"IndiGo BluChips"},
-      {cat:"Grocery/Dining",rate:1,cap:0,unit:"IndiGo BluChips"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"IndiGo BluChips"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"IndiGo BluChips",portal:"IndiGo app",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"IndiGo co-brand. Milestone vouchers. Verify current IndiGo earn rate."
-  },
-  {
-    id:"sc-simply-save",bank:"Standard Chartered",name:"SC Simply Save Credit Card",network:"Mastercard",type:"Rewards",
-    joining:499,annual:499,waiver:100000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online/Dining/Grocery/Entertainment",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.25,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"sc.com/in rewards",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"10X on 4 categories at 2.5% effective. Verify current structure."
-  },
-  {
-    id:"standard-chartered-ultimate",bank:"Standard Chartered",name:"SC Ultimate Credit Card",network:"Mastercard",type:"Travel",
-    joining:5000,annual:5000,waiver:0,ltf:false,
-    forex:2,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:1,
-    rewards:[
-      {cat:"All spends (4pts/₹150 at 1:1 redemption)",rate:2.67,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:1.33,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:4,intl:999,criteria:"PP Unlimited"},
-    partners:"Airlines via SC reward catalogue",portal:"sc.com/in",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"Points value 1:1 (₹1/pt) when redeemed for statement. 4pts/₹150 = 2.67% return. Priority Pass unlimited intl. 4 dom/yr."
-  },
-  {
-    id:"indusind-iconia",bank:"IndusInd Bank",name:"IndusInd Iconia Credit Card",network:"Visa/Amex",type:"Rewards",
-    joining:3000,annual:3000,waiver:300000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.5,
-    rewards:[
-      {cat:"Weekend (Sat/Sun) all spends",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"Weekday all spends",rate:1.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Govt",
-    lounge:{domestic:4,intl:2,criteria:"None"},
-    partners:"None",portal:"indusind.com rewards",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Weekend 2pts/₹100 at ₹0.50/pt = 1% effective weekend (3% via MR transfer). Verify current benefit."
-  },
-  {
-    id:"indusind-legend",bank:"IndusInd Bank",name:"IndusInd Legend Credit Card",network:"Mastercard",type:"Cashback",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Entertainment",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"Online Shopping",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"Others",rate:1,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"None",portal:"—",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"Lifetime free. 2 domestic lounges. Verify current benefits."
-  },
-  {
-    id:"au-lit",bank:"AU Small Finance Bank",name:"AU LIT Card",network:"Visa",type:"Customizable Cashback",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.49,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Choose 3 categories monthly (5% each, ₹500 cap total)",rate:5,cap:500,unit:"Cashback ₹"},
-      {cat:"Others",rate:1,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"AU 0101 app",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"UNIQUE: Choose your 3 cashback categories EVERY MONTH via app. Options include dining, grocery, online, entertainment, etc. ₹500/mo combined cap. Best flexible LTF card."
-  },
-  {
-    id:"au-altura-plus",bank:"AU Small Finance Bank",name:"AU Altura Plus",network:"Visa",type:"Rewards",
-    joining:499,annual:499,waiver:40000,ltf:false,
-    forex:3.5,interest:3.49,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online/Dining/Entertainment",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"aubank.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Low fee entry card. Verify exact current reward rate."
-  },
-  {
-    id:"au-lakshya",bank:"AU Small Finance Bank",name:"AU Lakshya Credit Card",network:"Visa",type:"Rewards",
-    joining:1000,annual:1000,waiver:200000,ltf:false,
-    forex:3.5,interest:3.49,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online/Travel",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"Dining",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI",
-    lounge:{domestic:4,intl:0,criteria:"None"},
-    partners:"None",portal:"aubank.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"4 domestic lounges. Verify current benefit structure post AU-Fincare merger."
-  },
-  {
-    id:"au-tejas",bank:"AU Small Finance Bank",name:"AU Tejas Credit Card",network:"Visa",type:"Rewards",
-    joining:500,annual:500,waiver:150000,ltf:false,
-    forex:3.5,interest:3.49,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online/Travel/Dining",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"None",portal:"aubank.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Mid-tier. 2 domestic lounges. Verify."
-  },
-  {
-    id:"au-prathama",bank:"AU Small Finance Bank",name:"AU Prathama Credit Card",network:"Visa",type:"Entry",
-    joining:100,annual:100,waiver:75000,ltf:false,
-    forex:3.5,interest:3.49,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online",rate:1,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.25,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"aubank.in",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Lowest fee AU card. Entry-level for new credit users."
-  },
-  {
-    id:"ixigo-au",bank:"AU Small Finance Bank",name:"ixigo AU Credit Card",network:"RuPay/Visa",type:"Co-brand/Travel",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:0,interest:3.49,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Flights/Hotels/Bus via ixigo",rate:5,cap:0,unit:"Reward Points"},
-      {cat:"Online",rate:2,cap:0,unit:"Reward Points"},
-      {cat:"Others",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:2,intl:0,criteria:"On request (Priority Pass at $35/visit after free)"},
-    partners:"ixigo booking portal",portal:"ixigo app",
-    status:"🆕 New Addition",devalued:false,isNew:true,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"LIFETIME FREE. Zero forex. ixigo coins earn on travel bookings. 5% on ixigo travel. RuPay variant for UPI. 2 domestic lounges. MAX: Book all travel via ixigo for 5% + coins."
-  },
-  {
-    id:"bob-eterna",bank:"Bank of Baroda",name:"BoB Eterna Credit Card",network:"Visa Signature",type:"Premium",
-    joining:2499,annual:2499,waiver:200000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online Shopping",rate:5,cap:0,unit:"Reward Points"},
-      {cat:"Dining/Entertainment",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"Others",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:4,intl:0,criteria:"None"},
-    partners:"None",portal:"bobcard.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"20pts/₹100 online = 5% at ₹0.25/pt. Verify current benefit structure."
-  },
-  {
-    id:"bobcard-primea",bank:"Bank of Baroda",name:"BOBCARD Primea Credit Card",network:"Mastercard",type:"Rewards",
-    joining:2500,annual:2500,waiver:200000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Dining/Online/Travel",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:4,intl:2,criteria:"None"},
-    partners:"None",portal:"bobcard.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"4 dom + 2 intl lounges. Verify benefits vs Eterna."
-  },
-  {
-    id:"bobcard-eterna-v2",bank:"BOB Financial",name:"BOBCARD ETERNA Credit Card",network:"Visa",type:"Rewards",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online",rate:4,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:1,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"None",portal:"bobcard.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"Lifetime free variant. 2 domestic lounges. Verify."
-  },
-  {
-    id:"onecard",bank:"OneCard (FPL)",name:"OneCard",network:"Visa",type:"Metal/Cashback",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:0,interest:2.5,
-    rewardUnit:"OneCoins",pointVal:0.1,
-    rewards:[
-      {cat:"Top 2 spend categories (auto-detected)",rate:5,cap:1000,unit:"OneCoins"},
-      {cat:"Others",rate:1,cap:0,unit:"OneCoins"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Insurance,Govt,Rent",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None (coin→statement credit)",portal:"OneCard app",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"Metal card. Auto-detects top 2 categories and gives 5x. 10 coins=₹1 (0.1 paise/coin). Zero forex. But reward value is LOW (0.1 paise). Better as secondary card for forex-free use."
-  },
-  {
-    id:"scapia",bank:"Federal Bank",name:"Scapia Credit Card",network:"Visa",type:"Travel/LTF",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:0,interest:3.6,
-    rewardUnit:"Scapia Coins",pointVal:0.2,
-    rewards:[
-      {cat:"Travel (flights/hotels via Scapia)",rate:10,cap:0,unit:"Scapia Coins"},
-      {cat:"Others",rate:2,cap:0,unit:"Scapia Coins"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Rent,Govt",
-    lounge:{domestic:999,intl:0,criteria:"₹20,000/month spend (domestic unlimited)"},
-    partners:"None (Scapia travel booking)",portal:"Scapia app",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:true,isCashback:false,isPremium:false,
-    notes:"LIFETIME FREE + UNLIMITED DOMESTIC LOUNGE + ZERO FOREX. Best LTF travel card. ₹20K/mo spend for unlimited lounge. 10% on Scapia travel portal. 2% all others. MAX: Use for international spends (0% forex) + domestic lounge access."
-  },
-  {
-    id:"yes-first-exclusive",bank:"Yes Bank",name:"Yes First Exclusive",network:"Mastercard",type:"Premium",
-    joining:9999,annual:9999,waiver:0,ltf:false,
-    forex:1.75,interest:3.75,
-    rewardUnit:"Yes Rewardz Points",pointVal:0.25,
-    rewards:[
-      {cat:"Intl/Dining/Travel",rate:3,cap:0,unit:"Yes Rewardz Points"},
-      {cat:"All Other Spends",rate:0.75,cap:0,unit:"Yes Rewardz Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:999,intl:6,criteria:"Unlimited domestic"},
-    partners:"None",portal:"yesbank.in rewards",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"Post-restructuring: verify current validity of benefits. Unlimited domestic lounge + 6 intl."
-  },
-  {
-    id:"yes-ace",bank:"Yes Bank",name:"Yes Ace Credit Card",network:"Mastercard",type:"Cashback",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Google Pay Transactions",rate:5,cap:500,unit:"Cashback ₹"},
-      {cat:"Others",rate:1,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,EMI,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"Google Pay",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"LTF. 5% on Google Pay spends (₹500 cap). Good secondary card."
-  },
-  {
-    id:"yes-uni-card",bank:"YES Bank",name:"YES Bank Uni Credit Card",network:"Visa",type:"Cashback",
-    joining:499,annual:499,waiver:50000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Online/Dining",rate:3,cap:0,unit:"Cashback ₹"},
-      {cat:"All Other Spends",rate:1,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"—",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"Verify current benefit structure."
-  },
-  {
-    id:"federal-imperio",bank:"Federal Bank",name:"Federal Imperio Credit Card",network:"Visa",type:"Premium",
-    joining:3000,annual:3000,waiver:0,ltf:false,
-    forex:2,interest:3.75,
-    rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Online/Travel",rate:3,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.75,cap:0,unit:"Reward Points"}
-    ],
-    excluded:"Fuel,Wallet,Cash",
-    lounge:{domestic:6,intl:2,criteria:"None"},
-    partners:"None",portal:"federalbank.co.in",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:true,
-    notes:"6 dom + 2 intl lounges. Low forex. Verify benefits."
-  },
-  {
-    id:"hsbc-cashback-visa",bank:"HSBC India",name:"HSBC Cashback Credit Card",network:"Visa",type:"Cashback",
-    joining:750,annual:750,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Online Spends",rate:3,cap:1000,unit:"Cashback ₹"},
-      {cat:"Dining (Dine out via EazyDiner)",rate:10,cap:1000,unit:"Cashback ₹"},
-      {cat:"Others",rate:1.5,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"None",portal:"EazyDiner",
-    status:"⚠️ Needs Check",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"Verify exact benefit construct vs Live+."
-  },
-  {
-    id:"pnb-kiwi",bank:"PNB + Kiwi",name:"PNB Kiwi Credit Card",network:"RuPay",type:"Digital/UPI",
-    joining:0,annual:0,waiver:0,ltf:true,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Kiwi Stars",pointVal:0.05,
-    rewards:[
-      {cat:"Google Pay/UPI",rate:5,cap:0,unit:"Kiwi Stars"},
-      {cat:"All Other Spends",rate:1,cap:0,unit:"Kiwi Stars"}
-    ],
-    excluded:"Fuel,Cash",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"Kiwi stars ecosystem",portal:"Kiwi app",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:false,isPremium:false,
-    notes:"UPI credit card for PNB accounts. Kiwi stars = very low value (1 star≈₹0.05). Zero forex. Useful for UPI credit card access."
-  },
-  {
-    id:"sbi-phonePe-purple",bank:"SBI Card",name:"PhonePe SBI Card PURPLE",network:"Visa/RuPay",type:"Cashback",
-    joining:499,annual:499,waiver:100000,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"PhonePe transactions",rate:5,cap:750,unit:"Cashback ₹"},
-      {cat:"Others",rate:0.5,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:0,intl:0,criteria:"N/A"},
-    partners:"PhonePe ecosystem",portal:"PhonePe app",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:false,
-    notes:"5% on all PhonePe payments capped ₹750/mo. Best for PhonePe-heavy users. Apr 2026: redemption cap 60K pts/mo excluded from revision."
-  },
-  {
-    id:"phonepe-sbi-black",bank:"SBI Card",name:"PhonePe SBI SELECT BLACK",network:"Visa",type:"Premium Cashback",
-    joining:0,annual:1499,waiver:0,ltf:false,
-    forex:3.5,interest:3.75,
-    rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"PhonePe transactions",rate:5,cap:1500,unit:"Cashback ₹"},
-      {cat:"Others",rate:1,cap:0,unit:"Cashback ₹"}
-    ],
-    excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:2,intl:0,criteria:"None"},
-    partners:"PhonePe ecosystem",portal:"PhonePe app",
-    status:"✅ Verified",devalued:false,isNew:false,
-    isTravel:false,isCashback:true,isPremium:true,
-    notes:"Higher cap ₹1,500/mo on PhonePe vs PURPLE. 2 domestic lounges. Apr 2026: Statement credit redemption cap of 60K pts/month added (exempted from this rule). PURPLE remains: 3% PhonePe cap ₹1K/mo, 2% online."
+    notes:"Joining ₹999 + annual ₹999 (waived ₹2L spend) — NOT lifetime free. Welcome: ₹1,000 cashback on ₹20K spend in 30 days + ₹750 Zomato/Swiggy/Amazon voucher on activation + ₹250 Amazon eGift on online apply. 10% on dining+food delivery+groceries COMBINED cap ₹1,000/month. 1.5% unlimited on all else. Utilities excluded (MCC 4900). 4 domestic lounges (1/quarter). Times Prime 12-month membership. MakeMyTrip 15% hotel cashback. District Zomato 10% off. 2 free MMT seat selections/year."
   }
+  ,{id:"sc-ultimate",bank:"Standard Chartered",name:"SC Ultimate Credit Card",network:"Visa Infinite",type:"Rewards",
+    joining:5000,annual:5000,waiver:0,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"SC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"All Spends Including Fuel/Utility/Insurance/Rent/Wallet",rate:2.67,cap:0,unit:"SC Reward Points",note:"Unique: earns on categories most cards exclude. 3 RP/₹100 = 2.67% at ₹0.125/RP via travel portal"}
+    ],
+    excluded:"EMI,Cash",
+    lounge:{domestic:16,intl:4,criteria:"Unconditional (4/quarter domestic, 1/quarter intl Priority Pass)"},
+    partners:"None",portal:"SC 360 Rewards",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"Most inclusive earning card — earns on fuel, rent, insurance, wallet, utility that most cards exclude. 16 domestic + 4 intl lounges. ₹5K annual fee with no waiver. 3 RP/₹100 on all categories. Use for spends where other cards earn nothing."}
+  ,{id:"indusind-legend",bank:"IndusInd Bank",name:"IndusInd Legend Credit Card",network:"Visa Signature",type:"Rewards",
+    joining:9999,annual:9999,waiver:800000,ltf:false,forex:1.8,interest:3.5,
+    rewardUnit:"IndusInd Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Weekend Dining",rate:2.5,cap:0,unit:"IndusInd Reward Points"},
+      {cat:"All Other Spends",rate:1.5,cap:0,unit:"IndusInd Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:999,intl:6,criteria:"Unlimited domestic via Dreamfolks"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"₹9,999 fee waived ₹8L spend. Unlimited domestic lounge. 6 intl Priority Pass. 1.8% forex. Golf access. Concierge. Weekend dining multiplier. IndusInd's flagship premium card."}
+  ,{id:"indusind-iconia",bank:"IndusInd Bank",name:"IndusInd Iconia Credit Card",network:"Mastercard World",type:"Rewards",
+    joining:3500,annual:3500,waiver:400000,ltf:false,forex:3.5,interest:3.5,
+    rewardUnit:"IndusInd Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Dining, Entertainment, International",rate:2.0,cap:0,unit:"IndusInd Reward Points"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"IndusInd Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:8,intl:2,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Mid-tier IndusInd. 2X on dining/entertainment/intl. 8 domestic + 2 intl lounges. ₹3,500 fee waived ₹4L. Good for IndusInd relationship customers."}
+  ,{id:"bob-eterna",bank:"Bank of Baroda",name:"BOBCARD Eterna Credit Card",network:"Visa Signature",type:"Rewards",
+    joining:2499,annual:2499,waiver:150000,ltf:false,forex:2.0,interest:3.5,
+    rewardUnit:"BOB Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Dining, Entertainment, Online Shopping",rate:3.75,cap:0,unit:"BOB Reward Points",note:"15 RP/₹100 = 3.75% effective"},
+      {cat:"All Other Spends",rate:0.25,cap:0,unit:"BOB Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:8,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"3.75% on dining/entertainment/online — competitive. 2% forex. 8 domestic lounges. ₹2,499 fee waived ₹1.5L. Good BOB premium card."}
+  ,{id:"bobcard-primea",bank:"Bank of Baroda",name:"BOBCARD Primea Credit Card",network:"Visa Infinite",type:"Premium",
+    joining:2000,annual:2000,waiver:200000,ltf:false,forex:2.0,interest:3.5,
+    rewardUnit:"BOB Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Dining, Online, International",rate:2.5,cap:0,unit:"BOB Reward Points"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"BOB Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:2,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Mid-tier BOBCARD. 4 domestic + 2 intl lounges. 2% forex. ₹2K fee waived ₹2L."}
+  ,{id:"bobcard-eterna-v2",bank:"Bank of Baroda",name:"BOBCARD Eterna+ Credit Card",network:"Visa",type:"Rewards",
+    joining:1500,annual:1500,waiver:100000,ltf:false,forex:3.5,interest:3.5,
+    rewardUnit:"BOB Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Online Shopping, Dining",rate:2.5,cap:0,unit:"BOB Reward Points"},
+      {cat:"All Other Spends",rate:0.5,cap:0,unit:"BOB Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Entry BOBCARD variant. 4 domestic lounges. ₹1,500 fee waived ₹1L."}
+  ,{id:"yes-first-exclusive",bank:"YES Bank",name:"YES First Exclusive Credit Card",network:"Mastercard World Elite",type:"Premium",
+    joining:0,annual:999,waiver:300000,ltf:false,forex:2.5,interest:3.99,
+    rewardUnit:"YES Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Travel, Dining, International",rate:3.0,cap:0,unit:"YES Reward Points",note:"12X = 3% effective"},
+      {cat:"All Other Spends",rate:1.25,cap:0,unit:"YES Reward Points",note:"5X = 1.25%"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:999,intl:6,criteria:"Unlimited domestic via Dreamfolks"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:true,
+    notes:"Best YES Bank premium card. Unlimited domestic lounge + 6 intl. 2.5% forex. ₹12,500 welcome bonus first year. 12X on travel/dining = 3%. Good for YES Bank relationship."}
+  ,{id:"federal-imperio",bank:"Federal Bank",name:"Federal Imperio Credit Card",network:"Visa Infinite",type:"Premium",
+    joining:3000,annual:3000,waiver:300000,ltf:false,forex:2.0,interest:3.5,
+    rewardUnit:"Federal Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"International + Travel",rate:3.0,cap:0,unit:"Federal Reward Points"},
+      {cat:"All Other Spends",rate:2.0,cap:0,unit:"Federal Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:999,intl:6,criteria:"Unlimited domestic"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:true,
+    notes:"Federal Bank's premium card. Unlimited domestic lounge. 6 intl Priority Pass. 2% forex. Golf access. Concierge. ₹3K fee waived ₹3L."}
+  ,{id:"onecard",bank:"OneCard (FPL Technologies)",name:"OneCard Metal Credit Card",network:"Visa/Mastercard",type:"Cashback/Metal",
+    joining:0,annual:0,waiver:0,ltf:true,forex:1,interest:2.5,
+    rewardUnit:"OneCard Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Top 2 Spending Categories (auto-detected monthly)",rate:5,cap:0,unit:"OneCard Reward Points",note:"App detects your top 2 spend categories and gives 5X automatically"},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"OneCard Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"LTF metal card with 1% forex markup (lowest among LTF cards; Scapia/ixigo-AU are 0% but have restrictions). App auto-detects top 2 spend categories each month and gives 5X automatically. 1 RP/Rs50 = 0.2%, 5X top 2 = 1%. Points = Rs0.10 each, redeem as statement credit, never expire. Apr 2026: BBPS bill payment fee REMOVED - pay utility bills free in OneCard app. Enable International Pass in app before travelling for 1% rewards on intl transactions."}
+  ,{id:"scapia",bank:"Federal Bank",name:"Scapia Credit Card",network:"Visa",type:"Travel/LTF",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0,interest:3.5,
+    rewardUnit:"Scapia Coins",pointVal:0.20,
+    rewards:[
+      {cat:"Travel Bookings via Scapia App (flights/hotels)",rate:4,cap:0,unit:"Scapia Coins",note:"20 coins/₹100. 5 coins = ₹1 redeemable on Scapia travel"},
+      {cat:"All Other Spends",rate:2,cap:0,unit:"Scapia Coins"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI,Rent,Cash",
+    lounge:{domestic:999,intl:0,criteria:"Requires ₹20,000 monthly spend for unlimited domestic lounge"},
+    partners:"None",portal:"Scapia App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"LTF + 0% forex = unique combination. Unlimited domestic lounge on ₹20K/month spend. Coins redeemable only on Scapia travel bookings. 0% forex via Visa. Best for international travellers who book via Scapia. Pair with IDFC First for rent/utility earning."}
+  ,{id:"rbl-bms",bank:"RBL Bank",name:"RBL BookMyShow Credit Card",network:"Visa",type:"Entertainment",
+    joining:500,annual:500,waiver:150000,ltf:false,forex:3.5,interest:3.99,
+    rewardUnit:"RBL Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"BookMyShow Movie Bookings",rate:10,cap:0,unit:"RBL Reward Points"},
+      {cat:"Dining",rate:5,cap:0,unit:"RBL Reward Points"},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"RBL Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"BookMyShow",portal:"BookMyShow",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"2 free BookMyShow tickets/month = ₹600-1,000 value. 10X on BMS. ₹500 fee waived ₹1.5L. Primary value is the free monthly movie tickets."}
+  ,{id:"rbl-world-safari",bank:"RBL Bank",name:"RBL World Safari Credit Card",network:"Visa Infinite",type:"Travel",
+    joining:3000,annual:3000,waiver:0,ltf:false,forex:0,interest:3.5,
+    rewardUnit:"RBL Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"International Spends",rate:2.0,cap:0,unit:"RBL Reward Points"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"RBL Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:4,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"0% forex — one of few 0% forex paid cards. 4 domestic + 4 intl lounges. ₹3K annual fee with no waiver. Good for frequent international travellers."}
+  ,{id:"rbl-nova",bank:"RBL Bank",name:"RBL Bank ICON Credit Card",network:"Mastercard",type:"Rewards",
+    joining:500,annual:500,waiver:150000,ltf:false,forex:3.5,interest:3.99,
+    rewardUnit:"RBL Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Dining, Entertainment",rate:2.5,cap:0,unit:"RBL Reward Points"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"RBL Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:2,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Entry RBL card. 2.5% on dining. 2 domestic lounges. ₹500 fee waived ₹1.5L."}
+  ,{id:"rbl-iocl",bank:"RBL Bank",name:"RBL IOCL Credit Card",network:"Visa",type:"Fuel",
+    joining:500,annual:500,waiver:150000,ltf:false,forex:3.5,interest:3.99,
+    rewardUnit:"IOCL Fuel Points",pointVal:0.50,
+    rewards:[
+      {cat:"IOCL (IndianOil) Fuel Pumps",rate:4,cap:0,unit:"IOCL Fuel Points",note:"4% + 1% waiver = 5% at IOCL"},
+      {cat:"All Other",rate:0.5,cap:0,unit:"IOCL Fuel Points"}
+    ],
+    excluded:"Non-IOCL fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"IOCL XTRA",portal:"IOCL XTRA",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"5% effective at IOCL pumps. RBL IOCL XTRA is better (8.5%) — use that as primary."}
+  ,{id:"au-lakshya",bank:"AU Small Finance Bank",name:"AU Lakshya Credit Card",network:"Visa",type:"Rewards",
+    joining:0,annual:0,waiver:0,ltf:true,forex:3.5,interest:3.49,
+    rewardUnit:"AU Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Online Spends, Travel",rate:2.5,cap:0,unit:"AU Reward Points"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"AU Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"LTF card from AU. 4 domestic lounges. 2.5% online. Good no-fee card."}
+  ,{id:"au-tejas",bank:"AU Small Finance Bank",name:"AU Tejas Credit Card",network:"Visa",type:"Rewards",
+    joining:199,annual:199,waiver:50000,ltf:false,forex:3.5,interest:3.49,
+    rewardUnit:"AU Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Online Spends",rate:2.0,cap:0,unit:"AU Reward Points"},
+      {cat:"All Other Spends",rate:0.5,cap:0,unit:"AU Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Entry AU card. ₹199 fee waived ₹50K. 2% online. Very accessible entry card."}
+  ,{id:"au-prathama",bank:"AU Small Finance Bank",name:"AU Prathama Credit Card",network:"RuPay",type:"Entry",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0,interest:3.49,
+    rewardUnit:"AU Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"All Spends",rate:0.5,cap:0,unit:"AU Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Entry-level RuPay LTF card from AU. 0% forex via RuPay. Good first credit card."}
+  ,{id:"sc-simply-save",bank:"Standard Chartered",name:"SC Simply Save Credit Card",network:"Visa",type:"Cashback",
+    joining:499,annual:499,waiver:100000,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"cashback",pointVal:1,
+    rewards:[
+      {cat:"Dining, Movies, Grocery, Departmental Stores",rate:5,cap:0,unit:"cashback"},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"cashback"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"5% on dining/movies/grocery. ₹499 fee waived ₹1L. Simple flat cashback card from SC."}
+  ,{id:"kotak-zen",bank:"Kotak Mahindra Bank",name:"Kotak Zen Signature Credit Card",network:"Visa Signature",type:"Rewards",
+    joining:1500,annual:1500,waiver:100000,ltf:false,forex:3.5,interest:3.5,
+    rewardUnit:"Kotak Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Dining",rate:6.0,cap:0,unit:"Kotak Reward Points"},
+      {cat:"All Other Spends",rate:2.0,cap:0,unit:"Kotak Reward Points"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"6% on dining is the standout. 4 domestic lounges. ₹1,500 fee waived ₹1L. Good Kotak card for dining spends."}
+  ,{id:"kotak-air-plus-prime",bank:"Kotak Mahindra Bank",name:"Kotak Air+ Prime Credit Card",network:"Visa",type:"Travel",
+    joining:3000,annual:3000,waiver:0,ltf:false,forex:3.5,interest:3.5,
+    rewardUnit:"Air Miles",pointVal:0.50,
+    rewards:[
+      {cat:"Airlines, Travel",rate:4.0,cap:0,unit:"Air Miles"},
+      {cat:"All Other Spends",rate:1.0,cap:0,unit:"Air Miles"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:2,criteria:"Unconditional"},
+    partners:"IndiGo,SpiceJet",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"Kotak travel card. Air Miles redeemable for flights. 4 domestic + 2 intl lounges. ₹3K fee no waiver."}
+
   ,{id:"kotak-league",bank:"Kotak Mahindra Bank",name:"Kotak League Platinum",network:"Visa/RuPay",type:"Rewards",joining:500,annual:499,waiver:50000,ltf:false,forex:3.5,interest:3.5,rewardUnit:"Kotak Reward Points",pointVal:0.10,rewards:[{cat:"Airlines, Travel, Dept Stores, Electronics (above ₹2L/yr)",rate:0.53,cap:0,unit:"Kotak Reward Points"},{cat:"All Other Spends (up to ₹2L/yr)",rate:0.26,cap:0,unit:"Kotak Reward Points"}],excluded:"Fuel,Wallet,Gaming,Insurance,Govt,Rent,Education",lounge:{domestic:0,intl:0,criteria:"None"},partners:"None",portal:"—",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:false,isCashback:false,isPremium:false,notes:"Low reward value (1 RP = ₹0.10). Waiver at ₹50K/yr. 4 PVR tickets on ₹1.25L every 6 months. Entry-level card — better alternatives exist at same fee."}
   ,{id:"rbl-shoprite",bank:"RBL Bank",name:"RBL ShopRite Credit Card",network:"Visa",type:"Cashback/Grocery",joining:500,annual:500,waiver:150000,ltf:false,forex:3.5,interest:3.99,rewardUnit:"RBL Reward Points",pointVal:0.25,rewards:[{cat:"Grocery Stores / Supermarkets",rate:5,cap:0,unit:"RBL Reward Points"},{cat:"All Other Retail Spends",rate:1,cap:0,unit:"RBL Reward Points"}],excluded:"Fuel,Wallet,Govt,EMI",lounge:{domestic:0,intl:0,criteria:"None"},partners:"None",portal:"—",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:false,isCashback:true,isPremium:false,notes:"5% on groceries. 10% discount on BookMyShow × 15 times/year (max ₹100/booking = ₹1,500 annual BMS value). 2,000 bonus RP on first transaction. Entry-level grocery card."}
   ,{id:"sc-smart",bank:"Standard Chartered",name:"SC Smart Credit Card",network:"Visa",type:"Cashback",joining:499,annual:499,waiver:120000,ltf:false,forex:3.5,interest:3.75,rewardUnit:"cashback",pointVal:1,rewards:[{cat:"All Online Spends",rate:2,cap:0,unit:"cashback"},{cat:"Offline Spends",rate:1,cap:0,unit:"cashback"}],excluded:"Fuel,Wallet,Govt,EMI",lounge:{domestic:0,intl:0,criteria:"None"},partners:"None",portal:"—",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:false,isCashback:true,isPremium:false,notes:"Simple 2% online / 1% offline cashback. Fee waiver ₹1.2L. SBI Cashback 5% is better but SC Smart works if you have existing SC relationship."}
-  ,{id:"sc-easemytrip",bank:"Standard Chartered",name:"SC EaseMyTrip Credit Card",network:"Visa",type:"Travel/Co-branded",joining:350,annual:350,waiver:50000,ltf:false,forex:3.5,interest:3.75,rewardUnit:"EaseMyTrip Credits",pointVal:1,rewards:[{cat:"EaseMyTrip Flight Bookings",rate:25,cap:0,unit:"EaseMyTrip Credits",note:"25% via coupon code SCEMTFLIGHT"},{cat:"EaseMyTrip Hotels/Bus/Train",rate:10,cap:0,unit:"EaseMyTrip Credits"},{cat:"All Other Spends",rate:1,cap:0,unit:"EaseMyTrip Credits"}],excluded:"Fuel,Wallet,Govt",lounge:{domestic:4,intl:0,criteria:"Unconditional"},partners:"EaseMyTrip",portal:"EaseMyTrip App",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:true,isCashback:false,isPremium:false,notes:"25% on EMT flights via coupon code SCEMTFLIGHT. Best value for EaseMyTrip loyal users. Very low ₹350 fee waived at ₹50K. 4 domestic lounges. Credits redeemable only on EMT platform."}
+  ,{id:"sc-easemytrip",bank:"Standard Chartered",name:"SC EaseMyTrip Credit Card",network:"Visa",type:"Travel/Co-branded",
+    joining:350,annual:350,waiver:50000,ltf:false,
+    forex:3.5,interest:3.75,
+    rewardUnit:"SC Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"EaseMyTrip Hotels + Airline Direct Websites (10X RP)",rate:1.25,cap:0,unit:"SC Reward Points",note:"10 RP/₹100 = 1.25% effective (1 RP = ₹0.125 on travel). Best value via EMT discount, not RP."},
+      {cat:"All Other Retail Spends (2X RP)",rate:0.50,cap:0,unit:"SC Reward Points",note:"2 RP/₹100 = 0.50% effective"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI,Cash",
+    lounge:{domestic:2,intl:0,criteria:"2/year unconditional. Intl lounge DISCONTINUED Oct 15 2024."},
+    partners:"EaseMyTrip",portal:"EaseMyTrip (code EMTSCB)",
+    status:"✅ Verified May 2026 (sc.com/in)",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"PRIMARY VALUE: Flat discount codes on EMT (use code EMTSCB): 20% off hotels (max ₹5K domestic / ₹10K international), 10% off flights (max ₹1K domestic / ₹5K international), ₹125 off buses. These are instant DISCOUNTS not cashback. 10X RP on standalone airline/hotel sites. 2X on everything else. 2 domestic lounges/year. Intl lounge discontinued Oct 2024. Annual fee ₹350 waived ₹50K spend. Low RP value — the discount codes are the real reason to own this card."
+  }
   ,{id:"yes-marquee",bank:"YES Bank",name:"YES Marquee Credit Card",network:"Mastercard World Elite",type:"Super Premium",joining:9999,annual:9999,waiver:0,ltf:false,forex:2.25,interest:3.5,rewardUnit:"YES Reward Points",pointVal:0.45,rewards:[{cat:"Travel, Dining, International Spends",rate:4.5,cap:0,unit:"YES Reward Points",note:"10X = 4.5% at ₹0.45/pt"},{cat:"All Other Spends",rate:2.25,cap:0,unit:"YES Reward Points",note:"5X = 2.25%"}],excluded:"Fuel,Wallet,Govt",lounge:{domestic:999,intl:12,criteria:"Unlimited domestic, 12 intl/yr"},partners:"None",portal:"—",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:true,isCashback:false,isPremium:true,notes:"YES Bank flagship premium. ₹5,900 joining bonus. 10X on travel/dining/intl = 4.5%. Unlimited domestic lounge + 12 intl. 2.25% forex. Golf, concierge. No airline/hotel transfer partners. Points → statement credit or YES travel portal."}
   ,{id:"indusind-pinnacle",bank:"IndusInd Bank",name:"IndusInd Pinnacle Credit Card",network:"Visa Infinite",type:"Premium",joining:0,annual:0,waiver:0,ltf:true,forex:1.8,interest:3.5,rewardUnit:"IndusInd Reward Points",pointVal:0.25,rewards:[{cat:"Travel Agencies, Airlines (6X)",rate:1.5,cap:0,unit:"IndusInd Reward Points"},{cat:"All Other Spends",rate:0.25,cap:0,unit:"IndusInd Reward Points"}],excluded:"Fuel,Wallet,Govt,EMI",lounge:{domestic:999,intl:6,criteria:"Unlimited domestic via Dreamfolks"},partners:"None",portal:"—",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:false,isCashback:false,isPremium:true,notes:"Rare LTF premium card. Unlimited domestic lounge, 6 intl visits, 1.8% forex. Low reward rate but zero annual fee. Good for lounge access seekers on budget."}
   ,{id:"hdfc-tata-neu-plus",bank:"HDFC Bank",name:"Tata Neu Plus HDFC Bank",network:"RuPay",type:"Co-branded/Cashback",joining:499,annual:499,waiver:100000,ltf:false,forex:3.5,interest:3.75,rewardUnit:"NeuCoins",pointVal:1,rewards:[{cat:"Tata Ecosystem (BigBasket/1mg/Croma/Westside/Air India/IHCL)",rate:2,cap:0,unit:"NeuCoins"},{cat:"Non-Tata EMI",rate:1,cap:0,unit:"NeuCoins"},{cat:"All Other Spends",rate:0.5,cap:0,unit:"NeuCoins"}],excluded:"Fuel,Wallet,Govt,Jewellery",lounge:{domestic:0,intl:0,criteria:"None"},partners:"Tata Neu",portal:"Tata Neu App",status:"✅ Verified May 2026",devalued:false,isNew:false,isTravel:false,isCashback:true,isPremium:false,notes:"Entry Tata Neu card. 2% NeuCoins on all Tata brands (1 NeuCoin=₹1). RuPay = UPI credit card. Fee waiver ₹1L. Cheaper than Infinity. Good for occasional Tata ecosystem shoppers."}
@@ -2424,7 +2093,7 @@ const REWARD_MAP = {
     "standard-chartered-ultimate":2.67,"idfc-wealth":3
   },
   utility: {
-    "axis-ace":5,"hdfc-millennia":5,"au-lit":5,"axis-cashback":5,"axis-cashback-cc":7,
+    "axis-ace":5,"hdfc-millennia":5,"au-lit":5,"axis-cashback":5,
     "airtel-axis":2,"sbi-cashback":1,
     "standard-chartered-ultimate":2.67,"idfc-wealth":3,"idfc-select":3
   },
@@ -2464,7 +2133,7 @@ const REWARD_MAP = {
     "idfc-wealth":0.75,"axis-cashback":5
   },
   international_forex: {
-    "hsbc-premier-cc":0.99,"scapia":0,"onecard":0,"kotak-811":0,
+    "hsbc-premier-cc":0.99,"scapia":0,"onecard":1,"kotak-811":0,
     "rbl-world-safari":0,"hsbc-cashback-rupay":0,"ixigo-au":0,
     "idfc-wealth":1.5,"idfc-select":1.5,"idfc-ashva-metal":1.5,
     "idfc-mayura":1.5,"sbi-miles-elite":1.99,"sbi-elite":1.99,
@@ -2902,6 +2571,7 @@ const AFFILIATE_LINKS = {
   "standard-chartered-ultimate":"https://bitli.in/7j45rsZ",
   "sc-easemytrip":"https://bitli.in/tKgXXDQ",
   "sc-smart":"https://bitli.in/qzIa7d8",
+  "sc-ultimate":"https://bitli.in/7j45rsZ",
   "indusind-legend":"https://bitli.in/qlz6n1F",
   "indusind-iconia":"https://bitli.in/8j8fh0G",
   "indusind-pinnacle":"https://bitli.in/2seICiQ",
