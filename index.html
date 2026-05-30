@@ -373,6 +373,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="nav" onclick="sw('database',this)"><span class="material-icons">credit_card</span><span>Card Database</span><span class="nbadge" id="nc">0</span></div>
   <div class="nav" onclick="sw('portals',this)"><span class="material-icons">open_in_new</span><span>Portals & Miles</span></div>
   <div class="nav" onclick="sw('partners',this)"><span class="material-icons">compare_arrows</span><span>Transfer Matrix</span></div>
+  <div class="nav" onclick="sw('lounge',this)"><span class="material-icons">local_bar</span><span>Lounge Access</span></div>
+  <div class="nav" onclick="sw('finplan',this)"><span class="material-icons">savings</span><span>Financial Planner</span></div>
   <div class="nav" onclick="sw('score',this)"><span class="material-icons">monitoring</span><span>Credit Score</span></div>
 </nav>
 <div class="main">
@@ -737,6 +739,124 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+<!-- LOUNGE ACCESS TAB -->
+<div class="tab" id="tab-lounge">
+<div style="padding:20px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <h2 style="font-size:16px">Airport Lounge Access Guide</h2>
+    <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap">
+      <div class="chip active" id="lf-all" onclick="filterLounge('all',this)">All Cards</div>
+      <div class="chip" id="lf-free" onclick="filterLounge('free',this)">✅ No Criteria</div>
+      <div class="chip" id="lf-spend" onclick="filterLounge('spend',this)">💳 Spend Required</div>
+      <div class="chip" id="lf-unlimited" onclick="filterLounge('unlimited',this)">♾ Unlimited</div>
+    </div>
+  </div>
+  <div style="background:var(--wl);border:1px solid #ffe082;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:14px;color:var(--warn)">
+    ⚠️ <strong>2026 changes:</strong> ICICI Sapphiro, HPCL Super Saver — lounge now requires ₹75K/quarter. HDFC Regalia Gold — requires ₹60K/quarter. Always verify at bank website before visiting.
+  </div>
+  <div id="lounge-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+</div>
+</div>
+
+<!-- FINANCIAL PLANNER TAB -->
+<div class="tab" id="tab-finplan">
+<div style="padding:20px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+    <h2 style="font-size:16px">Financial Planner</h2>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button class="btn btn-g" onclick="runFinPlan()" style="font-size:12px">⚡ Generate Plan</button>
+      <button class="btn btn-o" onclick="saveFinPlan()" style="font-size:12px">💾 Save</button>
+      <button class="btn btn-o" onclick="clearFinPlan()" style="font-size:12px">Clear</button>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--mut);margin-bottom:16px">Enter your financial details. We'll plan your credit card strategy, savings, and goal timelines — all free, all local, no data leaves your device.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="finplan-grid">
+    <!-- INCOME -->
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px">💰 Income & Savings</div>
+      <table class="etbl" id="finplan-income-table">
+        <thead><tr><th>Item</th><th>Monthly ₹</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px">Take-home Salary / Income</td><td><input type="number" id="fp-salary" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Other Income (rent, freelance)</td><td><input type="number" id="fp-other-income" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Current Monthly Savings</td><td><input type="number" id="fp-savings" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Mutual Fund SIP / Investments</td><td><input type="number" id="fp-sip" placeholder="0" min="0"></td></tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:14px 0 10px">📋 Monthly Expenses</div>
+      <table class="etbl">
+        <thead><tr><th>Category</th><th>Monthly ₹</th></tr></thead>
+        <tbody id="fp-expense-rows"></tbody>
+      </table>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:14px 0 10px">📅 Annual / One-time Expenses</div>
+      <table class="etbl">
+        <thead><tr><th>Expense</th><th>Total ₹</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px">Vacation / Travel (per year)</td><td><input type="number" id="fp-vacation" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Festivals / Gifts / Shopping</td><td><input type="number" id="fp-festivals" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Medical / Emergency (per year)</td><td><input type="number" id="fp-medical" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Insurance Premiums (per year)</td><td><input type="number" id="fp-insurance-annual" placeholder="0" min="0"></td></tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:14px 0 10px">🏦 Loans & EMIs</div>
+      <table class="etbl">
+        <thead><tr><th>Loan Type</th><th>EMI ₹/mo</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px">Home Loan EMI</td><td><input type="number" id="fp-homeloan" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Car Loan EMI</td><td><input type="number" id="fp-carloan" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Personal Loan EMI</td><td><input type="number" id="fp-personalloan" placeholder="0" min="0"></td></tr>
+          <tr><td style="font-size:12px">Education Loan EMI</td><td><input type="number" id="fp-edloan" placeholder="0" min="0"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GOALS + RESULTS -->
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px">🎯 Financial Goals</div>
+      <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div id="fp-goals-list"></div>
+        <button class="btn btn-o" onclick="addGoal()" style="font-size:11px;margin-top:8px">+ Add Goal</button>
+      </div>
+
+      <!-- RESULTS PANEL -->
+      <div id="fp-results" style="display:none">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px">📊 Your Financial Plan</div>
+
+        <!-- SUMMARY CARDS -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div class="stat"><div class="stat-n" id="fp-net-monthly" style="font-size:22px">₹0</div><div class="stat-l">Net monthly surplus</div></div>
+          <div class="stat"><div class="stat-n" id="fp-savings-rate" style="font-size:22px;color:var(--g)">0%</div><div class="stat-l">Savings rate</div></div>
+          <div class="stat"><div class="stat-n" id="fp-emi-ratio" style="font-size:22px">0%</div><div class="stat-l">EMI-to-income ratio</div></div>
+          <div class="stat"><div class="stat-n" id="fp-cc-rewards" style="font-size:22px;color:var(--gold)">₹0</div><div class="stat-l">Est. monthly CC rewards</div></div>
+        </div>
+
+        <!-- HEALTH INDICATOR -->
+        <div id="fp-health-box" style="border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px"></div>
+
+        <!-- GOAL TIMELINES -->
+        <div id="fp-goal-timelines" style="margin-bottom:12px"></div>
+
+        <!-- CREDIT CARD STRATEGY -->
+        <div style="background:var(--gl);border-radius:10px;padding:12px 14px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--g);margin-bottom:8px">💳 Best credit card strategy for your spending</div>
+          <div id="fp-cc-strategy" style="font-size:12px;color:var(--txt);line-height:1.8"></div>
+        </div>
+
+        <!-- ACTIONABLE TIPS -->
+        <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px">📌 Priority action items</div>
+          <div id="fp-tips" style="font-size:12px;color:var(--txt);line-height:2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- MOBILE NAV -->
 <nav class="mobile-nav" id="mob-nav">
   <div class="mnav-item active" onclick="sw('home',null);mnavActive(this)"><span class="material-icons">home</span>Home</div>
@@ -744,6 +864,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="mnav-item" onclick="sw('planner',null);mnavActive(this)"><span class="material-icons">calculate</span>Planner</div>
   <div class="mnav-item" onclick="sw('portals',null);mnavActive(this)"><span class="material-icons">open_in_new</span>Portals</div>
   <div class="mnav-item" onclick="sw('milestone',null);mnavActive(this)"><span class="material-icons">flag</span>Track</div>
+  <div class="mnav-item" onclick="sw('finplan',null);mnavActive(this)"><span class="material-icons">savings</span>Planner</div>
 </nav>
 </div>
 </div>
@@ -2146,6 +2267,76 @@ const CARDS = [
     isTravel:false,isCashback:false,isPremium:false,
     notes:"Co-branded with Manchester United FC. Top 18 spenders each year win a fully paid trip to Old Trafford. Limited edition card numbers with MU branding. 2X on online. 2 domestic lounges. Entry-level ₹499 fee. Good for MU fans — reward value otherwise mediocre."}
 
+
+  ,{id:"axis-horizon",bank:"Axis Bank",name:"Axis Bank Horizon Credit Card",network:"Visa Signature/Mastercard World",type:"Travel/Miles",
+    joining:3000,annual:3000,waiver:0,ltf:false,forex:3.5,interest:3.6,
+    rewardUnit:"EDGE Miles",pointVal:1.0,
+    rewards:[
+      {cat:"Axis Travel Edge Portal + Direct Airline Spends",rate:5,cap:0,unit:"EDGE Miles",note:"5 EDGE Miles/₹100. At ₹1/Mile = 5%"},
+      {cat:"All Other Spends",rate:2,cap:0,unit:"EDGE Miles",note:"2 EDGE Miles/₹100 = 2%"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI",
+    lounge:{domestic:32,intl:8,criteria:"Unconditional — 8/quarter domestic (Visa), 2/quarter intl"},
+    partners:"Singapore KrisFlyer (1:1), Air India (1:1), Turkish Miles&Smiles (1:1), IndiGo (1:1), ITC Hotels, IHG, Shangri-La",
+    portal:"Axis Travel Edge",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:false,
+    notes:"32 domestic lounge visits/year — most generous in ₹3K fee bracket. 5% on travel/airlines via Travel Edge. Same transfer partners as Magnus/Atlas (minus removed Accor/Marriott). No spend-based fee waiver. 5,000 welcome EDGE Miles + 1,500 renewal miles. ₹8K annual value from lounge alone. Succeeded Citi PremierMiles. Jewellery earns 2 EDGE Miles (not excluded unlike most cards). Transfer cap: 5L EDGE Miles/year."}
+  ,{id:"sbi-pulse",bank:"SBI Card",name:"SBI Card PULSE",network:"Visa",type:"Rewards/Health",
+    joining:1499,annual:1499,waiver:200000,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"SBI Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"Pharmacy/Chemist, Dining, Movies, Sports (MCC 5912/5812/7832)",rate:2.5,cap:7500,unit:"SBI Reward Points",note:"10 RP/₹100 = 2.5%. Cap 7,500 RP/month accelerated"},
+      {cat:"All Other Spends",rate:0.5,cap:0,unit:"SBI Reward Points",note:"2 RP/₹100 = 0.5%"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI,Insurance",
+    lounge:{domestic:8,intl:0,criteria:"Unconditional (2/quarter)"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"Welcome: Noise ColorFit Pulse 4 Pro smartwatch (₹7,999 value) on joining — effectively offsets fee. Complimentary FITPASS PRO + Netmeds First memberships renewed yearly. ₹1,500 Netmeds voucher on ₹4L annual spend. 8 domestic lounges free. Apollo 24x7 free doctor consultations. Good for health-conscious users with pharmacy/gym spends."}
+  ,{id:"icici-times-black",bank:"ICICI Bank",name:"Times Black ICICI Bank Credit Card",network:"Visa Infinite",type:"Super Premium",
+    joining:20000,annual:20000,waiver:2500000,ltf:false,forex:1.49,interest:3.5,
+    rewardUnit:"ICICI Reward Points",pointVal:0.25,
+    rewards:[
+      {cat:"International Spends",rate:2.5,cap:0,unit:"ICICI Reward Points",note:"2.5% on international"},
+      {cat:"All Domestic Spends",rate:2.0,cap:5000,unit:"ICICI Reward Points",note:"2% domestic. Cap 5,000 RP/month on utilities/insurance/edu/govt"}
+    ],
+    excluded:"Fuel (only waiver)",
+    lounge:{domestic:999,intl:999,criteria:"Unlimited globally — 1,300+ lounges via Priority Pass. Both primary and add-on."},
+    partners:"None currently (accelerated travel coming soon per bank)",portal:"iShop (ICICI)",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:true,isCashback:false,isPremium:true,
+    notes:"India's most premium ICICI card. ₹20K fee (waived ₹25L spend). Unlimited global lounge (primary + add-on). 1.49% forex. Welcome: ₹12K Lohono/₹10K EaseMyTrip voucher + Atlys visa fee waiver + Zomato Gold. Milestone: up to ₹70K benefits at ₹25L spend. CribLife concierge (6 free requests). ET Awards exclusive access. Helicopter/cab airport transfer on ₹5L spend. Monthly cap 5,000 RP on utilities/insurance/edu/govt."}
+  ,{id:"axis-cashback-cc",bank:"Axis Bank",name:"Axis Bank Cashback Credit Card",network:"Visa",type:"Cashback",
+    joining:1000,annual:1000,waiver:200000,ltf:false,forex:3.5,interest:3.75,
+    rewardUnit:"cashback",pointVal:1,
+    rewards:[
+      {cat:"Online Purchases (all merchants)",rate:7,cap:0,unit:"cashback",note:"7% on online — highest flat online cashback among paid cards"},
+      {cat:"Offline/POS Spends",rate:0.75,cap:0,unit:"cashback"},
+      {cat:"Utility Payments",rate:0.5,cap:0,unit:"cashback"}
+    ],
+    excluded:"Fuel,Wallet,Govt,EMI,Insurance",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional"},
+    partners:"None",portal:"—",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"7% flat on ALL online spends — no merchant restriction, higher than SBI Cashback (5%). 5,000 welcome EDGE RP on first txn. 4 domestic lounges. Fee waiver ₹2L/yr. KEY: Cashback auto-credited to account, no redemption needed. BEST for heavy online shoppers who want flat rate above 5%."}
+  ,{id:"indusind-eazydinersedge",bank:"IndusInd Bank",name:"IndusInd EazyDiner Edge Credit Card",network:"Visa",type:"Dining/Rewards",
+    joining:499,annual:499,waiver:150000,ltf:false,forex:3.5,interest:3.5,
+    rewardUnit:"EazyPoints",pointVal:0.30,
+    rewards:[
+      {cat:"Dining at EazyDiner Partner Restaurants",rate:15,cap:0,unit:"EazyPoints",note:"5 EazyPts/₹33 = 15%. 1 EazyPt = ₹0.30"},
+      {cat:"Dining at Non-EazyDiner Restaurants",rate:5,cap:0,unit:"EazyPoints"},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"EazyPoints"}
+    ],
+    excluded:"Fuel,Wallet,Govt",
+    lounge:{domestic:4,intl:0,criteria:"Unconditional"},
+    partners:"EazyDiner platform",portal:"EazyDiner App",
+    status:"✅ Verified May 2026",devalued:false,isNew:false,
+    isTravel:false,isCashback:false,isPremium:false,
+    notes:"15% effective at EazyDiner restaurants — exceptional for dining-heavy users. Complimentary EazyDiner Prime membership. 25% instant discount at 2,000+ partner restaurants. HSBC Live+ 10% is higher rate but EazyDiner has instant table discounts on top. Good second card for foodies."}
+
 ];
 
 
@@ -2200,7 +2391,7 @@ const REWARD_MAP = {
     "standard-chartered-ultimate":2.67,"idfc-wealth":3
   },
   utility: {
-    "axis-ace":5,"hdfc-millennia":5,"au-lit":5,"axis-cashback":5,
+    "axis-ace":5,"hdfc-millennia":5,"au-lit":5,"axis-cashback":5,"axis-cashback-cc":7,
     "airtel-axis":2,"sbi-cashback":1,
     "standard-chartered-ultimate":2.67,"idfc-wealth":3,"idfc-select":3
   },
@@ -2923,6 +3114,8 @@ function sw(id,el) {
   if(id==='partners') rMatrix();
   if(id==='home') updatePortfolioSummary();
   // Update document title for SEO/browser tab
+  if(id==='lounge') { renderLounge(); }
+  if(id==='finplan') { initFinPlan(); }
   const pageTitles = {
     home:'CardSaathi — Best Credit Card Optimizer India 2026',
     database:'Compare '+CARDS.length+' Credit Cards India 2026 | CardSaathi',
@@ -2931,6 +3124,8 @@ function sw(id,el) {
     milestone:'Credit Card Fee Waiver Tracker | CardSaathi',
     portals:'HDFC SmartBuy, Axis Travel Edge, HSBC Miles Transfer | CardSaathi',
     partners:'Credit Card Transfer Partners India 2026 | CardSaathi',
+    lounge:'Lounge Access Guide India 2026 | CardSaathi',
+    finplan:'Financial Planner — Salary Goals Savings | CardSaathi',
     score:'Credit Score Guide CIBIL India | CardSaathi'
   };
   document.title = pageTitles[id] || 'CardSaathi — India Credit Card Optimizer';
@@ -3072,7 +3267,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   ['cnt-total','nc','dcb'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});
   rDB();rHomeBest();rMCC();iExpRows();uMSel();rMS();updatePortfolioSummary();
   updateProfileUI();
-  setTimeout(()=>{loadSavedExpenses();updatePlannerCounts();},400);
+  setTimeout(()=>{loadSavedExpenses();updatePlannerCounts();initFinPlan();},400);
 });
 
 </script>
