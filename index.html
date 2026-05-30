@@ -709,6 +709,39 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </div>
 
 
+
+<!-- EARNKARO AFFILIATE WARNING MODAL -->
+<div class="modal-backdrop" id="affiliate-modal" style="display:none" onclick="if(event.target===this)closeAffModal()">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">📋 Before You Apply</div>
+        <div style="font-size:11px;color:var(--mut)">Read these rules to ensure your application is tracked</div>
+      </div>
+      <button class="close-btn" onclick="closeAffModal()">✕</button>
+    </div>
+    <div id="aff-card-name" style="background:var(--gl);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;font-weight:600;color:var(--g)"></div>
+    <div style="font-size:12px;line-height:2;margin-bottom:14px">
+      <div>✅ Complete the application <strong>in one session</strong> — don't close or switch tabs</div>
+      <div>✅ Use your <strong>Aadhaar-linked mobile number</strong> for OTP</div>
+      <div>✅ Do <strong>NOT visit any other deal/coupon site</strong> after clicking Apply</div>
+      <div>✅ Make a transaction of <strong>at least ₹100 within 30 days</strong> of getting card</div>
+      <div>✅ Complete VKYC <strong>within 50km of your Aadhaar address</strong></div>
+      <div>❌ If you <strong>already hold this card</strong>, commission won't apply</div>
+      <div>❌ <strong>Don't use any referral code</strong> during application</div>
+    </div>
+    <div style="background:var(--rl);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--red);margin-bottom:14px">
+      ⚠️ Commission is confirmed within 75 days of card activation. Tracked within 72 hours of application.
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-g" id="aff-proceed-btn" onclick="proceedToApply()" style="flex:1;font-size:13px;padding:10px">
+        I understand — Apply Now →
+      </button>
+      <button class="btn btn-o" onclick="closeAffModal()" style="font-size:12px">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- COMPARE MODAL -->
 <div class="modal-backdrop" id="compare-modal" style="display:none" onclick="if(event.target===this)document.getElementById('compare-modal').style.display='none'">
   <div class="modal-box">
@@ -731,7 +764,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div style="font-size:12px;color:var(--mut)" id="detail-bank"></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-apply" id="detail-apply-btn" onclick="window.open(document.getElementById('detail-apply-btn').dataset.link,'_blank')" style="display:none;font-size:12px;padding:7px 14px">Apply Now →</button>
+        <button class="btn btn-apply" id="detail-apply-btn" onclick="applyWithWarning(document.getElementById('detail-apply-btn').dataset.cardid, document.getElementById('detail-name').textContent)" style="display:none;font-size:12px;padding:7px 14px">Apply Now →</button>
         <button class="close-btn" onclick="document.getElementById('detail-modal').style.display='none'">✕</button>
       </div>
     </div>
@@ -2798,7 +2831,7 @@ function rMatrix() {
 // (DOMContentLoaded moved to bottom)
 
 const AFFILIATE_LINKS = {
-  "sbi-cashback":"https://bitli.in/B6oWQK0",
+  "sbi-cashback":"https://bitli.in/gRtsbFw",
   "sbi-simply-click":"https://bitli.in/lvzcx49",
   "sbi-simply-save":"https://bitli.in/fOCx921",
   "sbi-prime":"https://bitli.in/dAstmvT",
@@ -2963,6 +2996,7 @@ function openCardDetail(cardId) {
   const applyBtn = document.getElementById('detail-apply-btn');
   applyBtn.style.display = applyLink ? 'block' : 'none';
   applyBtn.dataset.link = applyLink || '';
+  applyBtn.dataset.cardid = cardId;
   
   const devalHTML = c.devalued ? `<div style="background:var(--rl);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red)">🚨 <strong>Devalued 2026:</strong> ${c.notes.substring(0,250)}</div>` : '';
   
@@ -3136,7 +3170,7 @@ function rCard(c) {
     <div class="cc-btns" style="flex-wrap:wrap">
       <button class="btn ${isMine?'btn-gld':'btn-o'}" onclick="tMyCard('${c.id}',this)">${isMine?'⭐ My Card':'+ Add'}</button>
       <button class="btn btn-o" onclick="openCardDetail('${c.id}')" style="font-size:10px">🔍 Details</button>
-      ${hasLink?`<button class="btn btn-apply" onclick="window.open(AFFILIATE_LINKS['${c.id}'],'_blank')" style="font-size:10px">Apply →</button>`:''}
+      ${hasLink?`<button class="btn btn-apply" onclick="applyWithWarning('${c.id}','${c.name}')" style="font-size:10px">Apply →</button>`:''}
       ${c.portal&&c.portal!=='—'?`<button class="btn btn-o" onclick="sw('portals',document.querySelectorAll('.nav')[5])" style="font-size:10px">🌐 Portal</button>`:''}
     </div>
   </div>`;
@@ -3173,6 +3207,26 @@ function sw(id,el) {
     score:'Credit Score Guide CIBIL India | CardSaathi'
   };
   document.title = pageTitles[id] || 'CardSaathi — India Credit Card Optimizer';
+}
+
+
+// ── AFFILIATE WARNING MODAL ───────────────────────────────────
+let _pendingApplyUrl = null;
+
+function applyWithWarning(cardId, cardName) {
+  const link = AFFILIATE_LINKS[cardId];
+  if (!link) { window.open('https://cardsaathi.in', '_blank'); return; }
+  _pendingApplyUrl = link;
+  document.getElementById('aff-card-name').textContent = '💳 Applying for: ' + cardName;
+  document.getElementById('affiliate-modal').style.display = 'flex';
+}
+function proceedToApply() {
+  if (_pendingApplyUrl) window.open(_pendingApplyUrl, '_blank');
+  closeAffModal();
+}
+function closeAffModal() {
+  document.getElementById('affiliate-modal').style.display = 'none';
+  _pendingApplyUrl = null;
 }
 
 // ── SAVE/LOAD EXPENSES ────────────────────────────────────────
@@ -3314,6 +3368,176 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{loadSavedExpenses();updatePlannerCounts();initFinPlan();},400);
 });
 
+
+function filterLounge(type,el){
+  document.querySelectorAll('#tab-lounge .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderLounge(type);
+}
+function renderLounge(type){
+  type=type||'all';
+  var cards=CARDS.filter(c=>{
+    if(!c.lounge.domestic&&!c.lounge.intl)return false;
+    var crit=(c.lounge.criteria||'').toLowerCase();
+    var hasSpend=crit.includes('spend')||crit.includes('quarter')||c.lounge.criteria?.includes('₹');
+    if(type==='free')return !hasSpend;
+    if(type==='spend')return !!hasSpend;
+    if(type==='unlimited')return c.lounge.domestic===999||c.lounge.intl===999;
+    return true;
+  }).sort((a,b)=>{
+    var aD=a.lounge.domestic===999?9999:(a.lounge.domestic||0);
+    var bD=b.lounge.domestic===999?9999:(b.lounge.domestic||0);
+    return(bD+(b.lounge.intl||0))-(aD+(a.lounge.intl||0));
+  });
+  var grid=document.getElementById('lounge-grid');
+  if(!grid)return;
+  grid.innerHTML=cards.map(c=>{
+    var dom=c.lounge.domestic,intl=c.lounge.intl||0;
+    var crit=c.lounge.criteria||'Unconditional';
+    var hasSpend=crit.toLowerCase().includes('spend')||crit.toLowerCase().includes('quarter')||crit.includes('₹');
+    var isUnlim=dom===999||intl===999;
+    var badge=isUnlim?
+      '<span style="background:var(--gl);color:var(--g);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Unlimited</span>':
+      hasSpend?'<span style="background:var(--wl);color:var(--warn);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Spend req.</span>':
+      '<span style="background:#e3f2fd;color:var(--blue);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Free</span>';
+    return '<div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'+
+      '<div><div style="font-size:13px;font-weight:600">'+c.name+'</div>'+
+      '<div style="font-size:11px;color:var(--mut)">'+c.bank+'</div></div>'+badge+'</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">'+
+      '<div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center">'+
+      '<div style="font-size:18px;font-weight:700;color:var(--blue)">'+(dom===999?'Unlim':dom)+'</div>'+
+      '<div style="font-size:10px;color:var(--mut)">Domestic/yr</div></div>'+
+      '<div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center">'+
+      '<div style="font-size:18px;font-weight:700;color:var(--g)">'+(intl===999?'Unlim':intl)+'</div>'+
+      '<div style="font-size:10px;color:var(--mut)">Intl/yr</div></div></div>'+
+      '<div style="font-size:11px;color:'+(hasSpend?'var(--warn)':'var(--mut)')+';">'+
+      (hasSpend?'Required: ':'')+crit+'</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">'+
+      '<span style="font-size:11px;color:var(--mut)">'+c.annual.toLocaleString('en-IN')+'/yr</span>'+
+      '<button class="btn btn-o" onclick="openCardDetail(\''+c.id+'\')" style="font-size:10px;padding:3px 8px">Details</button>'+
+      '</div></div>';
+  }).join('');
+}
+var FP_CATS=[
+  {id:'fp-rent',label:'Rent/Home Loan'},{id:'fp-grocery',label:'Groceries'},
+  {id:'fp-dining',label:'Dining/Food Delivery'},{id:'fp-fuel',label:'Fuel/Transport'},
+  {id:'fp-utility',label:'Utility Bills'},{id:'fp-telecom',label:'Mobile/Internet'},
+  {id:'fp-online-shop',label:'Online Shopping'},{id:'fp-entertainment',label:'OTT/Entertainment'},
+  {id:'fp-kids',label:'Children Education'},{id:'fp-domestic-travel',label:'Domestic Travel'},
+  {id:'fp-health-expenses',label:'Health/Pharmacy'},{id:'fp-misc',label:'Miscellaneous'}
+];
+var FP_GOAL_TYPES=['Foreign Trip','Child Education Fund','Buy a Car','Buy a Home','Retirement Corpus','Emergency Fund','Mutual Fund Investment','Wedding','Other'];
+var fpGoals=[];
+function initFinPlan(){
+  var tbody=document.getElementById('fp-expense-rows');
+  if(!tbody)return;
+  tbody.innerHTML=FP_CATS.map(c=>'<tr><td style="font-size:12px">'+c.label+'</td><td><input type="number" id="'+c.id+'" placeholder="0" min="0" style="width:120px"></td></tr>').join('');
+  var saved=JSON.parse(localStorage.getItem('cs_finplan')||'null');
+  if(saved){
+    Object.entries({...saved.income,...saved.expenses,...saved.oneTime,...saved.loans}).forEach(([id,v])=>{
+      var el=document.getElementById(id);if(el)el.value=v;
+    });
+    fpGoals=saved.goals||[];
+    renderGoals();
+  }
+}
+function renderGoals(){
+  var el=document.getElementById('fp-goals-list');
+  if(!el)return;
+  if(!fpGoals.length){el.innerHTML='<div style="font-size:12px;color:var(--mut)">No goals yet</div>';return;}
+  el.innerHTML=fpGoals.map((g,i)=>'<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:12px">'+
+    '<span style="flex:1"><strong>'+g.type+'</strong> - Rs'+parseInt(g.amount).toLocaleString('en-IN')+' in '+g.years+'yr</span>'+
+    '<button onclick="removeGoal('+i+')" style="background:none;border:none;cursor:pointer;color:var(--red)">x</button></div>').join('');
+}
+function addGoal(){
+  var type=prompt('Goal:\n'+FP_GOAL_TYPES.map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\nEnter number:');
+  if(!type)return;
+  var typeName=FP_GOAL_TYPES[parseInt(type)-1]||type;
+  var amount=prompt('Target amount (Rs):');if(!amount)return;
+  var years=prompt('In how many years?');if(!years)return;
+  fpGoals.push({type:typeName,amount:parseFloat(amount)||0,years:parseFloat(years)||1});
+  renderGoals();
+}
+function removeGoal(i){fpGoals.splice(i,1);renderGoals();}
+function getVal(id){return parseFloat((document.getElementById(id)||{}).value)||0;}
+function runFinPlan(){
+  var salary=getVal('fp-salary'),other=getVal('fp-other-income'),total=salary+other;
+  if(!total){showToast('Enter your monthly income first');return;}
+  var sip=getVal('fp-sip');
+  var exp=FP_CATS.reduce((s,c)=>s+getVal(c.id),0);
+  var emis=getVal('fp-homeloan')+getVal('fp-carloan')+getVal('fp-personalloan')+getVal('fp-edloan');
+  var one=(getVal('fp-vacation')+getVal('fp-festivals')+getVal('fp-medical')+getVal('fp-insurance-annual'))/12;
+  var surplus=total-(exp+emis+one+sip);
+  var savR=Math.round(surplus/total*100), emiR=Math.round(emis/total*100);
+  var ccR=0;
+  [['grocery',getVal('fp-grocery')],['dining',getVal('fp-dining')],['fuel',getVal('fp-fuel')],
+   ['utility',getVal('fp-utility')],['amazon_flipkart',getVal('fp-online-shop')],['health',getVal('fp-health-expenses')]
+  ].forEach(([cat,spend])=>{
+    var best=Math.max(0,...Object.values(REWARD_MAP[cat]||{}));ccR+=spend*(best/100);
+  });
+  var nm=document.getElementById('fp-net-monthly');
+  nm.textContent=(surplus<0?'-':'')+'Rs'+Math.abs(Math.round(surplus)).toLocaleString('en-IN')+(surplus<0?' deficit':'');
+  nm.style.color=surplus>=0?'var(--g)':'var(--red)';
+  var sr=document.getElementById('fp-savings-rate');
+  sr.textContent=savR+'%';sr.style.color=savR>=20?'var(--g)':savR>=10?'var(--warn)':'var(--red)';
+  var er=document.getElementById('fp-emi-ratio');
+  er.textContent=emiR+'%';er.style.color=emiR<=30?'var(--g)':emiR<=50?'var(--warn)':'var(--red)';
+  document.getElementById('fp-cc-rewards').textContent='Rs'+Math.round(ccR).toLocaleString('en-IN');
+  var hEl=document.getElementById('fp-health-box');
+  var hText,hMsg,hCol;
+  if(surplus<0){hText='Over budget';hMsg='Spending more than earning. Cut expenses now.';hCol='var(--rl)';}
+  else if(savR<10){hText='Tight finances';hMsg='Savings below 10%. Target 20% minimum.';hCol='var(--wl)';}
+  else if(savR>=30&&emiR<=30){hText='Excellent financial health';hMsg='Strong savings, manageable EMIs. Increase SIP contributions.';hCol='var(--gl)';}
+  else{hText='Healthy finances';hMsg='Good position. Push savings above 30%.';hCol='var(--gl)';}
+  hEl.style.background=hCol;
+  hEl.innerHTML='<strong>'+hText+'</strong><br><span style="font-size:12px">'+hMsg+'</span>';
+  var gEl=document.getElementById('fp-goal-timelines');
+  gEl.innerHTML=fpGoals.length?fpGoals.map(g=>{
+    var need=g.amount/(g.years*12),ok=surplus>0&&surplus*0.6>=need;
+    var pct=Math.min(100,surplus>0?Math.round(Math.min(surplus*0.6,need)/need*100):0);
+    return '<div style="background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:10px;margin-bottom:8px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">'+
+      '<strong>'+g.type+'</strong><span>'+(ok?'On track':'Need Rs'+Math.round(need).toLocaleString('en-IN')+'/mo')+'</span></div>'+
+      '<div style="background:#e0e0e0;border-radius:4px;height:6px"><div style="background:'+(ok?'var(--g)':'var(--warn)')+';width:'+pct+'%;height:100%;border-radius:4px"></div></div>'+
+      '<div style="font-size:10px;color:var(--mut);margin-top:3px">Rs'+parseInt(g.amount).toLocaleString('en-IN')+' in '+g.years+'yr - Rs'+Math.round(need).toLocaleString('en-IN')+'/month needed</div></div>';
+  }).join(''):'';
+  var cc=[];
+  if(getVal('fp-grocery')>3000)cc.push('Groceries: HSBC Live+ (5% LTF)');
+  if(getVal('fp-dining')>2000)cc.push('Dining: HSBC Live+ (10% LTF)');
+  if(getVal('fp-fuel')>3000)cc.push('Fuel: RBL IOCL XTRA (8.5%) or SBI BPCL Octane (7.25%)');
+  if(getVal('fp-utility')>2000)cc.push('Utility: Axis ACE (5% via Google Pay Android)');
+  if(getVal('fp-online-shop')>5000)cc.push('Online: Axis Cashback CC (7%) or SBI Cashback (5%)');
+  if(total>100000)cc.push('Travel: Axis Magnus (17.5% on Travel Edge)');
+  document.getElementById('fp-cc-strategy').innerHTML=cc.length?cc.join('<br>'):'Enter expenses for card recommendations.';
+  var tips=[];
+  if(!sip)tips.push('Start a SIP - even Rs500/month in Nifty 50 index fund beats cash');
+  if(emiR>40)tips.push('EMI ratio '+emiR+'% is too high. Prepay highest interest loan first.');
+  if(savR<20)tips.push('Target 20% savings rate. Currently '+savR+'%.');
+  if(!fpGoals.length)tips.push('Add financial goals using the + Add Goal button above.');
+  if(ccR>500)tips.push('You could earn Rs'+Math.round(ccR).toLocaleString('en-IN')+'/month in CC rewards - use right cards.');
+  if(!myCards.length)tips.push('Add your cards in Card Database to use My Cards mode in Expense Planner.');
+  document.getElementById('fp-tips').innerHTML=tips.map(t=>'* '+t).join('<br>');
+  document.getElementById('fp-results').style.display='block';
+  document.getElementById('fp-results').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function saveFinPlan(){
+  localStorage.setItem('cs_finplan',JSON.stringify({
+    income:{'fp-salary':getVal('fp-salary'),'fp-other-income':getVal('fp-other-income'),'fp-savings':getVal('fp-savings'),'fp-sip':getVal('fp-sip')},
+    expenses:Object.fromEntries(FP_CATS.map(c=>[c.id,getVal(c.id)])),
+    oneTime:{'fp-vacation':getVal('fp-vacation'),'fp-festivals':getVal('fp-festivals'),'fp-medical':getVal('fp-medical'),'fp-insurance-annual':getVal('fp-insurance-annual')},
+    loans:{'fp-homeloan':getVal('fp-homeloan'),'fp-carloan':getVal('fp-carloan'),'fp-personalloan':getVal('fp-personalloan'),'fp-edloan':getVal('fp-edloan')},
+    goals:fpGoals
+  }));
+  showToast('Saved! Loads automatically next visit.');
+}
+function clearFinPlan(){
+  [...document.querySelectorAll('#tab-finplan input[type=number]')].forEach(el=>el.value='');
+  fpGoals=[];renderGoals();
+  document.getElementById('fp-results').style.display='none';
+  localStorage.removeItem('cs_finplan');
+  showToast('Cleared.');
+}
 </script>
 </body>
 </html>
