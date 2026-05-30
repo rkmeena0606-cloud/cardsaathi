@@ -2424,10 +2424,29 @@ function sw(id,el) {
   if(el) el.classList.add('active');
   const ttl={home:'🇮🇳 CardSaathi',planner:'💰 Expense Planner',mcc:'📊 MCC Guide',
     milestone:'🎯 Milestones',database:'💳 Card Database',portals:'✈️ Portals & Miles',
-    partners:'🔀 Transfer Matrix',score:'📈 Credit Score'};
+    partners:'🔀 Transfer Matrix',lounge:'🛫 Lounge Access',
+    finplan:'💰 Financial Planner',score:'📈 Credit Score'};
   document.getElementById('tt').textContent=ttl[id]||id;
-  if(id==='portals') setTimeout(rBestByCat,100);
-  if(id==='partners') rMatrix();
+  if(id==='database') { rDB(); }
+  if(id==='portals') { rBestByCat(); }
+  if(id==='partners') { rMatrix(); }
+  if(id==='lounge') { renderLounge(); }
+  if(id==='finplan') { initFinPlan(); }
+  if(id==='home') { updatePortfolioSummary(); }
+  // Update document title for SEO
+  const pageTitles = {
+    home:'CardSaathi — Best Credit Card Optimizer India 2026',
+    database:'Compare '+CARDS.length+' Credit Cards India 2026 | CardSaathi',
+    planner:'Credit Card Rewards Calculator India | CardSaathi',
+    mcc:'MCC Code Guide India | CardSaathi',
+    milestone:'Credit Card Fee Waiver Tracker | CardSaathi',
+    portals:'HDFC SmartBuy, Axis Travel Edge, HSBC Miles | CardSaathi',
+    partners:'Credit Card Transfer Partners India 2026 | CardSaathi',
+    lounge:'Airport Lounge Access Guide India 2026 | CardSaathi',
+    finplan:'Financial Planner — Goals & Savings | CardSaathi',
+    score:'Credit Score Guide CIBIL India | CardSaathi'
+  };
+  document.title = pageTitles[id] || 'CardSaathi — India Credit Card Optimizer';
 }
 
 function bBadges(c) {
