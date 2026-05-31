@@ -533,7 +533,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- CARD DATABASE -->
 <div class="tab" id="tab-database">
-  <div class="fbar">
+  <div class="fbar" id="type-fbar">
     <div class="srch"><span class="material-icons" style="color:var(--mut);font-size:16px">search</span><input type="text" id="dbs" placeholder="Search by name, bank, type..." oninput="rDB()"></div>
     <div class="chip active" onclick="fDB('all',this)">All</div>
     <div class="chip" onclick="fDB('ltf',this)">🆓 LTF</div>
@@ -543,7 +543,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="chip" onclick="fDB('premium',this)">👑 Premium</div>
     <div class="chip" onclick="fMine(this)">⭐ My Cards</div>
   </div>
-  <div class="fbar" style="gap:5px">
+  <div class="fbar" id="bank-fbar" style="gap:5px">
     <div class="chip active" onclick="fBnk('all',this)">All Banks</div>
     <div class="chip" onclick="fBnk('SBI Card',this)">SBI</div>
     <div class="chip" onclick="fBnk('HDFC Bank',this)">HDFC</div>
@@ -2728,31 +2728,32 @@ function doCompare() {
 }
 
 function fDB(t,el) {
-  // Toggle: clicking active type filter → deselect it, go back to all
+  const fbar = document.getElementById('type-fbar');
+  if(!fbar) return;
+  const chips = fbar.querySelectorAll('.chip');
+  // Toggle: clicking active type filter → deselect, go back to All
   if(el && el.classList.contains('active') && t !== 'all') {
-    document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
-    // Re-activate 'All' chip
-    const allChip = [...document.querySelectorAll('#tab-database .fbar:first-child .chip')]
-      .find(c=>c.getAttribute('onclick')?.includes("'all'"));
-    if(allChip) allChip.classList.add('active');
+    chips.forEach(c=>c.classList.remove('active'));
+    fbar.querySelector('.chip')?.classList.add('active'); // first chip = All
     dbF.type = 'all'; rDB(); return;
   }
-  document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
+  chips.forEach(c=>c.classList.remove('active'));
   if(el) el.classList.add('active');
-  dbF.type=t; rDB();
+  dbF.type = t; rDB();
 }
 function fBnk(b,el) {
-  // Toggle: clicking active bank filter → deselect it, go back to all banks
+  const fbar = document.getElementById('bank-fbar');
+  if(!fbar) return;
+  const chips = fbar.querySelectorAll('.chip');
+  // Toggle: clicking active bank → deselect, go back to All Banks
   if(el.classList.contains('active') && b !== 'all') {
-    document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
-    // Re-activate All Banks chip
-    const allChip = [...document.querySelectorAll('#tab-database .fbar:last-of-type .chip')]
-      .find(c=>c.getAttribute('onclick')?.includes("'all'"));
-    if(allChip) allChip.classList.add('active');
+    chips.forEach(c=>c.classList.remove('active'));
+    fbar.querySelector('.chip')?.classList.add('active'); // first chip = All Banks
     dbF.bank = 'all'; rDB(); return;
   }
-  document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active'); dbF.bank=b; rDB();
+  chips.forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  dbF.bank = b; rDB();
 }
 function fMine(el) {el.classList.toggle('active');dbF.mine=!dbF.mine;rDB();}
 function rDB() {
