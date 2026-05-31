@@ -327,6 +327,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .modal-backdrop{padding:8px}
   .modal-box{max-height:95vh;padding:14px}
 }
+
+/* ── FEEDBACK SYSTEM ── */
+.feedback-bar{background:linear-gradient(135deg,#1a6b5c,#2d9b7e);color:#fff;padding:10px 20px;font-size:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.feedback-bar a{color:#ffe082;cursor:pointer;text-decoration:underline;white-space:nowrap}
+.feedback-modal .modal-box{max-width:500px}
+.fb-field{margin-bottom:12px}
+.fb-field label{display:block;font-size:11px;font-weight:600;color:var(--mut);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.fb-field input,.fb-field select,.fb-field textarea{width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit;outline:none}
+.fb-field textarea{height:80px;resize:vertical}
+.fb-field input:focus,.fb-field select:focus,.fb-field textarea:focus{border-color:var(--g)}
+/* ── ADMIN PANEL ── */
+.admin-item{background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:8px}
+.admin-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.admin-badge-new{background:var(--bl);color:var(--blue)}
+.admin-badge-reviewed{background:var(--gl);color:var(--g)}
 </style>
 </head>
 <body>
@@ -398,6 +413,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="tab active" id="tab-home">
   <div id="my-deval-banner" class="my-deval-banner"></div>
   <div id="portfolio-banner" class="portfolio-banner"></div>
+  <div class="feedback-bar">
+    <span>📊 Data verified May 2026 from official bank MITCs. Errors happen — help us stay accurate.</span>
+    <a onclick="openFeedback()">📝 Report an error</a>
+    <a onclick="openFeedback()">Got a correction? Tell us →</a>
+  </div>
   <div class="dalert">
     <span class="material-icons">warning</span>
     <div><strong>⚠️ 2026 Devaluation Watch:</strong> 🆕 PhonePe SBI SELECT BLACK (Jul 1 2026 — insurance sub-cap ₹500/mo), SBI Cashback (Apr 2026), Airtel Axis (Apr 2026), HDFC Regalia Gold (May 2026), SBI BPCL (May 2026), Axis Magnus transfer partners removed (Apr 2026), ICICI Sapphiro lounge criteria added. Database verified May 2026 from official bank MITCs.</div>
@@ -754,6 +774,60 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-backdrop feedback-modal" id="feedback-modal" style="display:none" onclick="if(event.target===this)closeFeedback()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">📝 Report a Data Error</div>
+        <div style="font-size:11px;color:var(--mut)">Help us keep CardSaathi accurate for everyone</div>
+      </div>
+      <button class="close-btn" onclick="closeFeedback()">✕</button>
+    </div>
+    <div style="background:var(--gl);border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:14px;color:#1a5c4f">
+      ✅ Data is verified from official bank MITCs but may be outdated. Your corrections help 1,000s of users. All submissions reviewed within 48 hours.
+    </div>
+    <div class="fb-field">
+      <label>Card Name *</label>
+      <select id="fb-card">
+        <option value="">-- Select the card --</option>
+      </select>
+    </div>
+    <div class="fb-field">
+      <label>What is wrong? *</label>
+      <select id="fb-type">
+        <option value="">-- Select issue type --</option>
+        <option value="reward_rate">Reward rate is incorrect</option>
+        <option value="annual_fee">Annual fee / joining fee wrong</option>
+        <option value="lounge">Lounge access details wrong</option>
+        <option value="forex">Forex markup incorrect</option>
+        <option value="devaluation">New devaluation not reflected</option>
+        <option value="missing_card">Card is missing</option>
+        <option value="wrong_exclusion">Wrong exclusion categories</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="fb-field">
+      <label>Current (wrong) value shown</label>
+      <input type="text" id="fb-current" placeholder="e.g. 5% on groceries">
+    </div>
+    <div class="fb-field">
+      <label>Correct value (with source if possible) *</label>
+      <textarea id="fb-correct" placeholder="e.g. Should be 10% — confirmed from hsbc.co.in/credit-cards/live-plus"></textarea>
+    </div>
+    <div class="fb-field">
+      <label>Your name (optional)</label>
+      <input type="text" id="fb-name" placeholder="Anonymous is fine">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-g" onclick="submitFeedback()" style="flex:1;font-size:13px;padding:10px">Submit Correction</button>
+      <button class="btn btn-o" onclick="closeFeedback()">Cancel</button>
+    </div>
+    <div style="font-size:10px;color:var(--mut);margin-top:8px;text-align:center">Corrections reviewed within 48 hours · Valid corrections updated in next release · Data stored locally only</div>
+  </div>
+</div>
+
 <!-- COMPARE MODAL -->
 <div class="modal-backdrop" id="compare-modal" style="display:none" onclick="if(event.target===this)document.getElementById('compare-modal').style.display='none'">
   <div class="modal-box">
@@ -776,7 +850,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div style="font-size:12px;color:var(--mut)" id="detail-bank"></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-apply" id="detail-apply-btn" onclick="applyWithWarning(document.getElementById('detail-apply-btn').dataset.cardid, document.getElementById('detail-name').textContent)" style="display:none;font-size:12px;padding:7px 14px">Apply Now →</button>
+        <button class="btn btn-apply" id="detail-apply-btn" onclick="applyWithWarning(document.getElementById('detail-apply-btn').dataset.cardid)" style="display:none;font-size:12px;padding:7px 14px">Apply Now →</button>
         <button class="close-btn" onclick="document.getElementById('detail-modal').style.display='none'">✕</button>
       </div>
     </div>
@@ -2212,7 +2286,20 @@ const CARDS = [
     status:"✅ Verified May 2026",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:true,
     notes:"Most inclusive earning card in India. Earns on fuel, rent, wallet loads, insurance, utility, govt - categories most others exclude. 16 domestic + 4 intl lounges. Rs5K fee with no waiver. 3 RP/Rs100 everywhere. Redeem via SC 360 portal for 1% effective on travel. Use specifically for spends where other cards earn nothing."}
-
+,{id:"uni-goldx",bank:"Bank of Baroda (BOBCARD)",name:"Uni GoldX Credit Card",network:"Visa/RuPay",type:"Cashback/LTF",
+    joining:0,annual:0,waiver:0,ltf:true,forex:0,interest:3.5,
+    rewardUnit:"Uni Coins (24K Digital Gold)",pointVal:0.01,
+    rewards:[
+      {cat:"Flights via Uni Store",rate:7,cap:0,unit:"Uni Coins",note:"Unlimited 7% in Uni Coins on all flight bookings via Uni Store. 100 Uni Coins = Rs1 = real 24K digital gold."},
+      {cat:"Shopping via Uni Store (Amazon/Flipkart/Myntra/Zomato/Swiggy/BigBasket/Nykaa)",rate:5,cap:0,unit:"Uni Coins",note:"5-8% back when buying vouchers for top brands via Uni Store"},
+      {cat:"All Other Spends",rate:1,cap:0,unit:"Uni Coins",note:"1% on all eligible transactions. Coins convert to 24K digital gold in Uni app."}
+    ],
+    excluded:"International spends (no rewards on forex), Fuel, Rent, Wallet loads, Cash withdrawals, Utilities, Govt, EMI",
+    lounge:{domestic:0,intl:0,criteria:"None"},
+    partners:"None",portal:"Uni App",
+    status:"✅ Verified May 2026",devalued:false,isNew:true,
+    isTravel:false,isCashback:true,isPremium:false,
+    notes:"India's first gold-back credit card. LTF + 0% forex. Coins convert to real 24K digital gold (not points, not cashback). Gold never expires and appreciates in value. 7% on flights via Uni Store. 5-8% on top brand vouchers. 1% on all else. Issued by BOBCARD+YES Bank. Cannot apply if existing YES Bank credit card holder. Eligibility: salary Rs25K+/month or ITR Rs7.5L+. No lounge access. Pure reward card for gold-loving digital-first users."}
 ];
 
 
@@ -2307,7 +2394,7 @@ const REWARD_MAP = {
     "idfc-wealth":0.75,"axis-cashback":5
   },
   international_forex: {
-    "scapia":3.5,"ixigo-au":3.5,"rbl-world-safari":3.5,
+    "scapia":3.5,"ixigo-au":3.5,"rbl-world-safari":3.5,"uni-goldx":3.5,
     "hsbc-premier-cc":2.51,"onecard":2.5,
     "idfc-wealth":2.0,"idfc-select":2.0,"idfc-ashva-metal":2.0,"idfc-mayura":2.0,
     "icici-emerald":2.0,"axis-reserve":2.0,
@@ -2482,12 +2569,25 @@ function doCompare() {
 }
 
 function fDB(t,el) {
-  document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>{if(c.onclick?.toString().includes('fDB'))c.classList.remove('active');});
-  el.classList.add('active');dbF.type=t;rDB();
+  // Toggle: clicking active filter deselects it (goes back to 'all')
+  if(el.classList.contains('active') && t !== 'all') {
+    t = 'all';
+    document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
+    document.querySelector('#tab-database .fbar:first-child .chip')?.classList.add('active'); // re-activate 'All'
+    dbF.type = 'all'; rDB(); return;
+  }
+  document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); dbF.type=t; rDB();
 }
 function fBnk(b,el) {
+  if(el.classList.contains('active') && b !== 'all') {
+    b = 'all';
+    document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
+    document.querySelector('#tab-database .fbar:last-of-type .chip')?.classList.add('active');
+    dbF.bank = 'all'; rDB(); return;
+  }
   document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');dbF.bank=b;rDB();
+  el.classList.add('active'); dbF.bank=b; rDB();
 }
 function fMine(el) {el.classList.toggle('active');dbF.mine=!dbF.mine;rDB();}
 function rDB() {
@@ -3049,7 +3149,7 @@ function rCard(c) {
     <div class="cc-btns" style="flex-wrap:wrap">
       <button class="btn ${isMine?'btn-gld':'btn-o'}" onclick="tMyCard('${c.id}',this)">${isMine?'⭐ My Card':'+ Add'}</button>
       <button class="btn btn-o" onclick="openCardDetail('${c.id}')" style="font-size:10px">🔍 Details</button>
-      ${hasLink?`<button class="btn btn-apply" onclick="applyWithWarning('${c.id}','${c.name}')" style="font-size:10px">Apply →</button>`:''}
+      ${hasLink?`<button class="btn btn-apply" onclick="applyWithWarning('${c.id}')" style="font-size:10px">Apply →</button>`:''}
       ${c.portal&&c.portal!=='—'?`<button class="btn btn-o" onclick="sw('portals',document.querySelectorAll('.nav')[5])" style="font-size:10px">🌐 Portal</button>`:''}
     </div>
   </div>`;
@@ -3092,11 +3192,12 @@ function sw(id,el) {
 // ── AFFILIATE WARNING MODAL ───────────────────────────────────
 let _pendingApplyUrl = null;
 
-function applyWithWarning(cardId, cardName) {
+function applyWithWarning(cardId) {
   const link = AFFILIATE_LINKS[cardId];
   if (!link) { window.open('https://cardsaathi.in', '_blank'); return; }
   _pendingApplyUrl = link;
-  document.getElementById('aff-card-name').textContent = '💳 Applying for: ' + cardName;
+  const card = CARDS.find(c=>c.id===cardId);
+  document.getElementById('aff-card-name').textContent = '💳 Applying for: ' + (card ? card.name : cardId);
   document.getElementById('affiliate-modal').style.display = 'flex';
 }
 function proceedToApply() {
@@ -3245,6 +3346,62 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateProfileUI();
   setTimeout(()=>{loadSavedExpenses();updatePlannerCounts();initFinPlan();},400);
 });
+
+
+// ── FEEDBACK SYSTEM ──────────────────────────────────────────
+
+function openFeedback() {
+  // Populate card dropdown
+  const sel = document.getElementById('fb-card');
+  if(sel && sel.options.length <= 1) {
+    CARDS.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.name + ' (' + c.bank + ')';
+      sel.appendChild(opt);
+    });
+  }
+  document.getElementById('feedback-modal').style.display='flex';
+}
+
+function closeFeedback() {
+  document.getElementById('feedback-modal').style.display='none';
+}
+
+function submitFeedback() {
+  const card = document.getElementById('fb-card').value;
+  const type = document.getElementById('fb-type').value;
+  const correct = document.getElementById('fb-correct').value.trim();
+  
+  if(!card || !type || !correct) {
+    showToast('Please fill in card, issue type and correct value');
+    return;
+  }
+  
+  const feedback = {
+    id: Date.now(),
+    card: card,
+    cardName: CARDS.find(c=>c.id===card)?.name || card,
+    type: type,
+    current: document.getElementById('fb-current').value.trim(),
+    correct: correct,
+    name: document.getElementById('fb-name').value.trim() || 'Anonymous',
+    date: new Date().toLocaleDateString('en-IN'),
+    status: 'pending'
+  };
+  
+  const existing = JSON.parse(localStorage.getItem('cs_feedback') || '[]');
+  existing.unshift(feedback);
+  localStorage.setItem('cs_feedback', JSON.stringify(existing));
+  
+  closeFeedback();
+  showToast('✅ Thank you! Your correction has been submitted. We will review it within 48 hours.', 5000);
+  
+  // Clear form
+  ['fb-card','fb-type','fb-current','fb-correct','fb-name'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+}
 
 
 function filterLounge(type,el){

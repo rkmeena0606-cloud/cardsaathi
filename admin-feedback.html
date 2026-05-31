@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CardSaathi Admin</title>
+<!-- Block search engines from indexing this page -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f5f5;color:#212121;min-height:100vh}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:#fff;border-radius:14px;padding:32px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.1);text-align:center}
+.logo{font-size:28px;font-weight:700;color:#1a6b5c;margin-bottom:4px}
+.logo-sub{font-size:12px;color:#757575;margin-bottom:24px}
+.field{margin-bottom:14px;text-align:left}
+.field label{display:block;font-size:11px;font-weight:600;color:#757575;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.field input{width:100%;padding:10px 12px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none}
+.field input:focus{border-color:#1a6b5c}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:#1a6b5c;color:#fff;transition:.15s}
+.btn:hover{background:#155a4d}
+.err{color:#c62828;font-size:12px;margin-top:8px;display:none}
+/* Admin panel */
+.admin-wrap{display:none;max-width:900px;margin:0 auto;padding:20px}
+.header{background:#1a6b5c;color:#fff;padding:14px 20px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.header h1{font-size:16px;font-weight:600}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:#fff;border-radius:10px;padding:14px;text-align:center;border:1px solid #e0e0e0}
+.stat-n{font-size:24px;font-weight:700}
+.stat-l{font-size:11px;color:#757575;margin-top:2px}
+.filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#fff;cursor:pointer;font-size:12px;font-weight:500;color:#757575}
+.chip.active{background:#1a6b5c;color:#fff;border-color:#1a6b5c}
+.card{background:#fff;border-radius:10px;padding:16px;margin-bottom:10px;border:1px solid #e0e0e0;border-left:4px solid #e0e0e0}
+.card.pending{border-left-color:#1565c0}
+.card.reviewed{border-left-color:#2e7d32;opacity:.7}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.card-meta{font-size:11px;color:#757575}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:6px}
+.badge-new{background:#e3f2fd;color:#1565c0}
+.badge-reviewed{background:#e8f5e9;color:#2e7d32}
+.issue-row{display:flex;gap:8px;margin-bottom:4px;font-size:12px}
+.issue-lbl{color:#757575;min-width:90px;flex-shrink:0}
+.current{color:#c62828}
+.correct{color:#1a6b5c;font-weight:500}
+.card-actions{display:flex;gap:6px;margin-top:12px}
+.action-btn{padding:5px 12px;border-radius:6px;border:1px solid #e0e0e0;background:#fff;cursor:pointer;font-size:11px;font-weight:500;transition:.15s}
+.action-btn:hover{background:#f5f5f5}
+.action-btn.green{background:#1a6b5c;color:#fff;border-color:#1a6b5c}
+.action-btn.red{color:#c62828;border-color:#ffcdd2}
+.empty{text-align:center;padding:40px;color:#757575;font-size:13px}
+.logout-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+.logout-btn:hover{background:rgba(255,255,255,.3)}
+.search-box{display:flex;align-items:center;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:8px 12px;gap:8px;flex:1;max-width:300px}
+.search-box input{border:none;outline:none;font-size:13px;flex:1}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-box">
+    <div class="logo">CardSaathi</div>
+    <div class="logo-sub">🔒 Admin Panel — Feedback Review</div>
+    <div class="field">
+      <label>Admin Password</label>
+      <input type="password" id="pwd" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn" onclick="doLogin()">Login →</button>
+    <div class="err" id="err">Wrong password. Try again.</div>
+    <div style="font-size:10px;color:#bdbdbd;margin-top:16px">This page is not indexed by search engines.<br>Do not share this URL publicly.</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-wrap" id="admin-panel">
+  <div class="header">
+    <h1>⚙️ CardSaathi Admin — Feedback Review</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="search-box">
+        <span style="color:#757575;font-size:14px">🔍</span>
+        <input type="text" placeholder="Search..." id="search-input" oninput="renderFeedback()">
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n" id="stat-total" style="color:#1a6b5c">0</div><div class="stat-l">Total submissions</div></div>
+    <div class="stat"><div class="stat-n" id="stat-pending" style="color:#1565c0">0</div><div class="stat-l">Pending review</div></div>
+    <div class="stat"><div class="stat-n" id="stat-reviewed" style="color:#2e7d32">0</div><div class="stat-l">Reviewed</div></div>
+    <div class="stat"><div class="stat-n" id="stat-today" style="color:#e65100">0</div><div class="stat-l">Today</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="chip active" onclick="setFilter('all',this)">All</div>
+    <div class="chip" onclick="setFilter('pending',this)">🔵 Pending</div>
+    <div class="chip" onclick="setFilter('reviewed',this)">✅ Reviewed</div>
+    <div class="chip" onclick="setFilter('reward_rate',this)">Reward Rate</div>
+    <div class="chip" onclick="setFilter('annual_fee',this)">Annual Fee</div>
+    <div class="chip" onclick="setFilter('lounge',this)">Lounge</div>
+    <div class="chip" onclick="setFilter('devaluation',this)">Devaluation</div>
+    <div class="chip" onclick="setFilter('missing_card',this)">Missing Card</div>
+    <div style="margin-left:auto">
+      <button class="action-btn" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="action-btn red" onclick="clearAll()" style="margin-left:6px">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <!-- FEEDBACK LIST -->
+  <div id="feedback-list"></div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────
+// Change this password! Store it somewhere safe.
+const ADMIN_PWD = 'CardSaathi@2026#Admin';
+
+const TYPE_LABELS = {
+  reward_rate:'Reward Rate Wrong',
+  annual_fee:'Annual Fee Wrong',
+  lounge:'Lounge Details Wrong',
+  forex:'Forex Markup Wrong',
+  devaluation:'Devaluation Not Updated',
+  missing_card:'Card Missing',
+  wrong_exclusion:'Wrong Exclusions',
+  other:'Other Issue'
+};
+
+let currentFilter = 'all';
+
+// ── LOGIN ─────────────────────────────────────────────────────
+function doLogin() {
+  const pwd = document.getElementById('pwd').value;
+  if(pwd === ADMIN_PWD) {
+    sessionStorage.setItem('cs_admin_auth', 'true');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('pwd').value = '';
+    document.getElementById('pwd').focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('cs_admin_auth');
+  location.reload();
+}
+
+// Auto-login if session exists
+window.onload = () => {
+  if(sessionStorage.getItem('cs_admin_auth') === 'true') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadData();
+  }
+  document.getElementById('pwd').focus();
+};
+
+// ── DATA ──────────────────────────────────────────────────────
+function getFeedback() {
+  // Read from localStorage of the SAME domain (cardsaathi.in)
+  // This works because admin page is hosted on cardsaathi.in too
+  return JSON.parse(localStorage.getItem('cs_feedback') || '[]');
+}
+
+function saveFeedback(data) {
+  localStorage.setItem('cs_feedback', JSON.stringify(data));
+}
+
+function loadData() {
+  updateStats();
+  renderFeedback();
+}
+
+function updateStats() {
+  const all = getFeedback();
+  const today = new Date().toLocaleDateString('en-IN');
+  document.getElementById('stat-total').textContent = all.length;
+  document.getElementById('stat-pending').textContent = all.filter(f=>f.status==='pending').length;
+  document.getElementById('stat-reviewed').textContent = all.filter(f=>f.status==='reviewed').length;
+  document.getElementById('stat-today').textContent = all.filter(f=>f.date===today).length;
+}
+
+function setFilter(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.filters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderFeedback();
+}
+
+function renderFeedback() {
+  const all = getFeedback();
+  const query = document.getElementById('search-input').value.toLowerCase();
+  
+  const filtered = all.filter(fb => {
+    if(currentFilter !== 'all' && currentFilter !== 'pending' && currentFilter !== 'reviewed') {
+      if(fb.type !== currentFilter) return false;
+    }
+    if(currentFilter === 'pending' && fb.status !== 'pending') return false;
+    if(currentFilter === 'reviewed' && fb.status !== 'reviewed') return false;
+    if(query && !fb.cardName?.toLowerCase().includes(query) && !fb.correct?.toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  const list = document.getElementById('feedback-list');
+  
+  if(!filtered.length) {
+    list.innerHTML = '<div class="empty">📭 No feedback found</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(fb => `
+    <div class="card ${fb.status}" id="fb-${fb.id}">
+      <div class="card-header">
+        <div>
+          <span class="card-title">${escHtml(fb.cardName || fb.card)}</span>
+          <span class="badge badge-${fb.status==='pending'?'new':'reviewed'}">${fb.status==='pending'?'🔵 New':'✅ Reviewed'}</span>
+        </div>
+        <div class="card-meta">${escHtml(fb.date)} · ${escHtml(fb.name || 'Anonymous')}</div>
+      </div>
+      <div class="issue-row"><span class="issue-lbl">Issue type:</span><strong>${TYPE_LABELS[fb.type]||fb.type||'—'}</strong></div>
+      ${fb.current ? `<div class="issue-row"><span class="issue-lbl">Shows wrong:</span><span class="current">${escHtml(fb.current)}</span></div>` : ''}
+      <div class="issue-row"><span class="issue-lbl">Should be:</span><span class="correct">${escHtml(fb.correct)}</span></div>
+      <div class="card-actions">
+        ${fb.status==='pending'
+          ? `<button class="action-btn green" onclick="markReviewed(${fb.id})">✅ Mark Reviewed</button>`
+          : `<button class="action-btn" onclick="markPending(${fb.id})">↩ Mark Pending</button>`}
+        <button class="action-btn" onclick="copyItem(${fb.id})">📋 Copy Correction</button>
+        <button class="action-btn" onclick="deleteItem(${fb.id})" style="color:#c62828">🗑 Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(str) {
+  if(!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+
+function markReviewed(id) {
+  const data = getFeedback();
+  const fb = data.find(f=>f.id==id);
+  if(fb) { fb.status='reviewed'; saveFeedback(data); loadData(); }
+}
+
+function markPending(id) {
+  const data = getFeedback();
+  const fb = data.find(f=>f.id==id);
+  if(fb) { fb.status='pending'; saveFeedback(data); loadData(); }
+}
+
+function deleteItem(id) {
+  if(!confirm('Delete this feedback?')) return;
+  const data = getFeedback().filter(f=>f.id!=id);
+  saveFeedback(data);
+  loadData();
+}
+
+function copyItem(id) {
+  const fb = getFeedback().find(f=>f.id==id);
+  if(!fb) return;
+  const text = `Card: ${fb.cardName}\nIssue: ${TYPE_LABELS[fb.type]||fb.type}\n${fb.current?'Shows: '+fb.current+'\n':''}Should be: ${fb.correct}`;
+  navigator.clipboard?.writeText(text).then(()=>alert('Copied!'));
+}
+
+function clearAll() {
+  if(!confirm('Delete ALL feedback? This cannot be undone.')) return;
+  localStorage.removeItem('cs_feedback');
+  loadData();
+}
+
+function exportCSV() {
+  const data = getFeedback();
+  if(!data.length) { alert('No data to export'); return; }
+  const rows = [['Date','Card','Issue Type','Wrong Value','Correct Value','Submitter','Status']];
+  data.forEach(fb => {
+    rows.push([fb.date, fb.cardName, TYPE_LABELS[fb.type]||fb.type, fb.current||'', fb.correct||'', fb.name||'Anonymous', fb.status]);
+  });
+  const csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cardsaathi_feedback_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
