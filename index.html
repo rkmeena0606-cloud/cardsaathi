@@ -2,6 +2,23 @@
 <html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
+  <!-- Google Analytics GA4 — replace G-78B00FNJTE with your Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-78B00FNJTE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-78B00FNJTE');
+    // Custom events — track card clicks, tab switches, apply clicks
+    function trackEvent(action, category, label) {
+      if(typeof gtag !== 'undefined') {
+        gtag('event', action, {'event_category': category, 'event_label': label});
+      }
+    }
+  </script>
+  <!-- Google AdSense pub-1183669942092812 -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1183669942092812"
+     crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <!-- ═══ PRIMARY SEO TAGS ═══ -->
@@ -392,6 +409,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="nav" onclick="sw('lounge',this)"><span class="material-icons">local_bar</span><span>Lounge Access</span></div>
   <div class="nav" onclick="sw('finplan',this)"><span class="material-icons">savings</span><span>Financial Planner</span></div>
   <div class="nav" onclick="sw('score',this)"><span class="material-icons">monitoring</span><span>Credit Score</span></div>
+  <!-- AdSense: Sidebar Ad -->
+  <div id="sidebar-ad-slot" style="padding:8px 6px;margin-top:auto">
+    <ins class="adsbygoogle"
+         style="display:block;min-height:100px"
+         data-ad-client="ca-pub-1183669942092812"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 </nav>
 <div class="main">
 <div class="topbar">
@@ -441,7 +467,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="stat-l">15 LTF Cards ↗</div>
     </div>
   </div>
-  <h3 style="margin-bottom:10px;font-size:14px">🏆 Best Card By Category (May 2026)</h3>
+  <h3 style="margin-bottom:10px;font-size:14px">
+  <!-- AdSense: Home Page Mid -->
+  <div style="margin:12px 0;text-align:center" id="home-ad-slot">
+    <ins class="adsbygoogle" style="display:block"
+         data-ad-client="ca-pub-1183669942092812"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  🏆 Best Card By Category (May 2026)</h3>
   <div id="home-best" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:20px"></div>
   <h3 style="margin-bottom:10px;font-size:14px">📊 Recent Devaluations</h3>
   <div id="home-devals" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px"></div>
@@ -874,7 +910,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
     <div id="detail-content"></div>
+  
+  <!-- AdSense: Below Card Grid -->
+  <div style="margin:16px 0;text-align:center" id="db-ad-slot">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1183669942092812"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
+</div>
 </div>
 
 <!-- EXPENSE TRACKER TAB -->
@@ -3453,14 +3500,17 @@ function sw(id,el) {
     score:'Credit Score Guide CIBIL India | CardSaathi'
   };
   document.title = pageTitles[id] || 'CardSaathi — India Credit Card Optimizer';
+  trackEvent('tab_view', 'Navigation', id);
 }
 
 
 // ── AFFILIATE WARNING MODAL ───────────────────────────────────
 function applyWithWarning(cardId) {
+  const applyCard = CARDS.find(c=>c.id===cardId);
+  trackEvent('apply_click', 'Affiliate', applyCard ? applyCard.name : cardId);
   const link = AFFILIATE_LINKS[cardId];
   if(link) { window.open(link, '_blank'); return; }
-  const card = CARDS.find(c=>c.id===cardId);
+  const card = applyCard;
   const bankUrls = {
     'SBI Card':'https://www.sbicard.com/en/personal/credit-cards.page',
     'HDFC Bank':'https://www.hdfcbank.com/personal/pay/cards/credit-cards',
