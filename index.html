@@ -432,11 +432,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="stat-n" style="color:var(--blue)">33+</div>
       <div class="stat-l">MCC Codes ↗</div>
     </div>
-    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{fDB('deval',document.querySelector('#tab-database .chip:nth-child(3)'))},200)" style="cursor:pointer" title="See devalued cards">
+    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('Deval')||c.textContent.includes('deval'));if(chip)fDB('deval',chip);},250)" style="cursor:pointer" title="See devalued cards">
       <div class="stat-n" style="color:var(--red)">12</div>
       <div class="stat-l">2026 Devaluations ↗</div>
     </div>
-    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{fDB('ltf',document.querySelector('#tab-database .chip:nth-child(2)'))},200)" style="cursor:pointer" title="See lifetime free cards">
+    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},250)" style="cursor:pointer" title="See lifetime free cards">
       <div class="stat-n" style="color:var(--gold)">Free</div>
       <div class="stat-l">15 LTF Cards ↗</div>
     </div>
@@ -2728,21 +2728,27 @@ function doCompare() {
 }
 
 function fDB(t,el) {
-  // Toggle: clicking active filter deselects it (goes back to 'all')
-  if(el.classList.contains('active') && t !== 'all') {
-    t = 'all';
+  // Toggle: clicking active type filter → deselect it, go back to all
+  if(el && el.classList.contains('active') && t !== 'all') {
     document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
-    document.querySelector('#tab-database .fbar:first-child .chip')?.classList.add('active'); // re-activate 'All'
+    // Re-activate 'All' chip
+    const allChip = [...document.querySelectorAll('#tab-database .fbar:first-child .chip')]
+      .find(c=>c.getAttribute('onclick')?.includes("'all'"));
+    if(allChip) allChip.classList.add('active');
     dbF.type = 'all'; rDB(); return;
   }
   document.querySelectorAll('#tab-database .fbar:first-child .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active'); dbF.type=t; rDB();
+  if(el) el.classList.add('active');
+  dbF.type=t; rDB();
 }
 function fBnk(b,el) {
+  // Toggle: clicking active bank filter → deselect it, go back to all banks
   if(el.classList.contains('active') && b !== 'all') {
-    b = 'all';
     document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
-    document.querySelector('#tab-database .fbar:last-of-type .chip')?.classList.add('active');
+    // Re-activate All Banks chip
+    const allChip = [...document.querySelectorAll('#tab-database .fbar:last-of-type .chip')]
+      .find(c=>c.getAttribute('onclick')?.includes("'all'"));
+    if(allChip) allChip.classList.add('active');
     dbF.bank = 'all'; rDB(); return;
   }
   document.querySelectorAll('#tab-database .fbar:last-of-type .chip').forEach(c=>c.classList.remove('active'));
@@ -2925,11 +2931,17 @@ function rHomeBest() {
     const [cid,rate]=s[0];
     const c=CARDS.find(cc=>cc.id===cid);
     if(!c)return '';
-    return `<div style="background:#fff;border-radius:9px;padding:11px;border:1px solid var(--bdr)">
+    return `<div style="background:#fff;border-radius:9px;padding:11px;border:1px solid var(--bdr);cursor:pointer" 
+        onclick="openCardDetail('${c.id}')" title="Click to see full card details">
       <div style="font-size:11px;color:var(--mut)">${cat.lbl}</div>
       <div style="font-size:18px;font-weight:700;color:var(--g);margin:2px 0">${rate}%</div>
       <div style="font-size:12px;font-weight:600">${c.name}</div>
-      ${c.ltf?'<div style="font-size:10px;color:var(--g)">🆓 LTF</div>':''}
+      <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap">
+        ${c.ltf?`<span onclick="event.stopPropagation();sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},250)" 
+          style="font-size:10px;background:var(--gl);color:var(--g);padding:1px 7px;border-radius:10px;cursor:pointer;font-weight:600">🆓 LTF</span>`:''}
+        <span onclick="event.stopPropagation();openCardDetail('${c.id}')" 
+          style="font-size:10px;background:var(--bl);color:var(--blue);padding:1px 7px;border-radius:10px;cursor:pointer">Details →</span>
+      </div>
     </div>`;
   }).join('');
   // Devaluations
