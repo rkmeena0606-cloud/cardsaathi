@@ -2246,7 +2246,7 @@ const REWARD_MAP = {
     "idfc-select":3,"au-lit":5,"onecard":5,"standard-chartered-ultimate":2.67
   },
   groceries: {
-    "hsbc-live-plus":5,"hdfc-swiggy":5,"sbi-cashback":5,"hdfc-millennia":5,
+    "hsbc-live-plus":10,"hdfc-swiggy":5,"sbi-cashback":5,"hdfc-millennia":5,
     "sbi-prime":2.5,"sbi-simply-save":2.5,"hdfc-tata-neu-infinity":5,
     "axis-cashback":5,"au-lit":5,"idfc-wealth":3,"idfc-select":3,
     "standard-chartered-ultimate":2.67,"axis-ace":1.5,"flipkart-axis":4
@@ -2322,12 +2322,13 @@ const REWARD_MAP = {
     "idfc-wealth":0.75,"axis-cashback":5
   },
   international_forex: {
-    "hsbc-premier-cc":0.99,"scapia":0,"onecard":1,"kotak-811":0,
-    "rbl-world-safari":0,"hsbc-cashback-rupay":0,"ixigo-au":0,
-    "idfc-wealth":1.5,"idfc-select":1.5,"idfc-ashva-metal":1.5,
-    "idfc-mayura":1.5,"sbi-miles-elite":1.99,"sbi-elite":1.99,
-    "icici-emerald":1.5,"axis-magnus":2,"hdfc-infinia":2,"axis-reserve":1.5,
-    "yes-first-exclusive":1.75,"indusind-legend":1.75
+    "scapia":3.5,"ixigo-au":3.5,"rbl-world-safari":3.5,
+    "hsbc-premier-cc":2.51,"onecard":2.5,
+    "idfc-wealth":2.0,"idfc-select":2.0,"idfc-ashva-metal":2.0,"idfc-mayura":2.0,
+    "icici-emerald":2.0,"axis-reserve":2.0,
+    "yes-first-exclusive":1.75,"indusind-legend":1.75,
+    "sbi-miles-elite":1.51,"sbi-elite":1.51,
+    "axis-magnus":1.5,"hdfc-infinia":1.5,"axis-magnus-burgundy":1.5
   }
 };
 
@@ -2616,7 +2617,7 @@ function rHomeBest() {
     {id:'amazon_flipkart',lbl:'Online Shopping 🛒'},{id:'swiggy_zomato',lbl:'Food Delivery 🍕'},
     {id:'groceries',lbl:'Groceries 🛍️'},{id:'fuel',lbl:'Fuel ⛽'},
     {id:'dining',lbl:'Dining 🍽️'},{id:'travel_flight',lbl:'Flights ✈️'},
-    {id:'utility',lbl:'Utility 💡'},{id:'international_forex',lbl:'International 🌍'},
+    {id:'utility',lbl:'Utility 💡'},{id:'international_forex',lbl:'International (0% Forex) 🌍'},
   ];
   const el=document.getElementById('home-best');
   el.innerHTML=cats.map(cat=>{
@@ -2650,7 +2651,7 @@ function rBestByCat() {
     {id:'dining',lbl:'Dining Out 🍽️'},{id:'travel_flight',lbl:'Flights ✈️'},
     {id:'travel_hotel',lbl:'Hotels 🏨'},{id:'utility',lbl:'Utility Bills 💡'},
     {id:'telecom',lbl:'Mobile/Telecom 📱'},{id:'rent',lbl:'Rent 🏠'},
-    {id:'international_forex',lbl:'International/Forex 🌍'},
+    {id:'international_forex',lbl:'Zero Forex 🌍'},
   ];
   const el=document.getElementById('best-by-cat');
   if(!el)return;
@@ -3225,7 +3226,6 @@ function tMyCard(id,btn){
 if(typeof REWARD_MAP!=='undefined'){
   if(REWARD_MAP.groceries)REWARD_MAP.groceries['rbl-shoprite']=5;
   if(REWARD_MAP.fuel){REWARD_MAP.fuel['icici-hpcl-coral']=6.5;REWARD_MAP.fuel['axis-indianoil']=5;}
-  if(REWARD_MAP.travel_flight)REWARD_MAP.travel_flight['sc-easemytrip']=25;
   if(REWARD_MAP.amazon_flipkart)REWARD_MAP.amazon_flipkart['sbi-cashback-rupay']=5;
   if(REWARD_MAP.swiggy_zomato)REWARD_MAP.swiggy_zomato['sbi-cashback-rupay']=5;
 }
