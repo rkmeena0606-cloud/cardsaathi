@@ -970,16 +970,13 @@ const CARDS = [
     joining:2999,annual:2999,waiver:300000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Dining/Movies/Grocery/Dept Stores/BigBasket",rate:2.5,cap:0,unit:"Reward Points"},
-      {cat:"All Other Spends",rate:0.5,cap:0,unit:"Reward Points"}
-    ],
+    rewards:[{cat:"Dining, Groceries, Departmental Stores, Movies (10 RP/Rs100)",rate:2.5,cap:7500,unit:"SBI Reward Points",note:"10 RP/Rs100 = 2.5% effective at Rs0.25/pt. Cap 7,500 RP/month."},{cat:"Birthday Spends (20 RP/Rs100)",rate:5,cap:0,unit:"SBI Reward Points",note:"20 RP/Rs100 on birthday (1 day before + on + 1 day after). Cap 2,000 RP/year."},{cat:"All Other Spends (2 RP/Rs100)",rate:0.5,cap:0,unit:"SBI Reward Points"}],
     excluded:"Fuel,Wallet,Cash,Insurance",
     lounge:{domestic:8,intl:0,criteria:"None"},
     partners:"None",portal:"sbicard.com rewards",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
-    notes:"8 domestic lounges/yr. Golf access (4 rounds). Birthday 20X points. Lalit Hotels 15% off. Amex variant offers EazyDiner benefits."
+    notes:"Annual fee Rs2,999 waived Rs3L spend. 10 RP/Rs100 dining+grocery+movies+dept stores = 2.5%. 20 RP/Rs100 birthday (cap 2,000/yr). 2 RP/Rs100 all else = 0.5%. 8 domestic lounges (2/quarter) + 4 Priority Pass intl (2/quarter). Rs3,000 welcome gift voucher. Rs1,000 Pizza Hut voucher on Rs50K quarterly spend. Rs7,000 Yatra/Pantaloons voucher on Rs5L annual spend. Club ITC Silver Membership (from Sep 2025). Club Vistara Silver (discontinued with Vistara-Air India merger). Points expire 24 months after accrual."
   },
   {
     id:"sbi-elite",bank:"SBI Card",name:"SBI ELITE",network:"Visa/Mastercard/Amex",type:"Premium",
@@ -1105,7 +1102,7 @@ const CARDS = [
       {cat:"All Other Spends",rate:1.25,cap:0,unit:"Reward Points"}
     ],
     excluded:"Fuel,Wallet,Cash,EMI,Insurance",
-    lounge:{domestic:12,intl:6,criteria:"₹60K/quarter (May 2026)"},
+    lounge:{domestic:12,intl:6,criteria:"Requires Rs60,000 spend in previous quarter (devalued May 2026)"},
     partners:"Airmiles via SmartBuy",portal:"SmartBuy",
     status:"❌ Devalued",devalued:true,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
@@ -1149,11 +1146,7 @@ const CARDS = [
     joining:500,annual:500,waiver:200000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Swiggy (food/Instamart/Genie/Dineout)",rate:10,cap:1500,unit:"Cashback ₹"},
-      {cat:"Other Online",rate:5,cap:1500,unit:"Cashback ₹"},
-      {cat:"Offline",rate:1,cap:0,unit:"Cashback ₹"}
-    ],
+    rewards:[{cat:"Swiggy App (food delivery, Instamart, Dineout, Genie)",rate:10,cap:1500,unit:"Swiggy Money",note:"10% cashback credited as Swiggy Money. Cap Rs1,500/month. Only on Swiggy app transactions."},{cat:"Online Shopping, Groceries (excl. Swiggy Instamart if via Swiggy app)",rate:5,cap:500,unit:"Swiggy Money",note:"5% on all online + physical grocery stores. Cap Rs500/month separate from Swiggy cap."},{cat:"All Other Spends",rate:1,cap:0,unit:"Swiggy Money",note:"1% uncapped. Credited as Swiggy Money in 2 days of statement."}],
     excluded:"Fuel,Wallet,EMI,Jewellery,Cash,Govt",
     lounge:{domestic:0,intl:0,criteria:"N/A"},
     partners:"None",portal:"Swiggy app directly",
@@ -1347,17 +1340,13 @@ const CARDS = [
     joining:500,annual:500,waiver:350000,ltf:false,
     forex:3.5,interest:3.6,
     rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[
-      {cat:"Flipkart/Myntra",rate:5,cap:0,unit:"Cashback ₹"},
-      {cat:"Swiggy/PVR/Cleartrip/Uber/Ola",rate:4,cap:0,unit:"Cashback ₹"},
-      {cat:"All others",rate:1.5,cap:0,unit:"Cashback ₹"}
-    ],
+    rewards:[{cat:"Myntra",rate:7.5,cap:4000,unit:"cashback",note:"Cap Rs4,000 per QUARTER (not per month). Excludes gift cards/gold/jewellery."},{cat:"Flipkart + Cleartrip",rate:5,cap:4000,unit:"cashback",note:"Cap Rs4,000 per quarter each"},{cat:"Swiggy, Uber, PVR INOX, Cult.fit",rate:4,cap:0,unit:"cashback",note:"Unlimited - no cap on 4% partners"},{cat:"All Other Spends",rate:1,cap:0,unit:"cashback"}],
     excluded:"Fuel,Wallet,Cash,EMI,Jewellery",
     lounge:{domestic:4,intl:0,criteria:"None"},
     partners:"None (direct cashback)",portal:"Flipkart/Myntra",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:true,isPremium:false,
-    notes:"No cap on 5% Flipkart or 4% partner cashback — significant advantage. MAX: Buy gift cards on Flipkart during sale + pay via this card = 5%+sale discount stacked."
+    notes:"Fee Rs500, waived Rs3.5L annual spend. 7.5% Myntra (cap Rs4K/quarter), 5% Flipkart+Cleartrip (cap Rs4K/quarter each), 4% Swiggy/Uber/PVR INOX/Cult.fit (unlimited), 1% all else. LOUNGE ACCESS REMOVED June 2025. Welcome: Rs250 Flipkart voucher. Exclusions: fuel, EMI, wallet loads, rent, govt, utility, insurance, gift cards on Flipkart/Myntra. Annual fee waiver Rs3.5L."
   },
   {
     id:"axis-select",bank:"Axis Bank",name:"Axis Select Credit Card",network:"Visa",type:"Rewards",
@@ -1466,7 +1455,7 @@ const CARDS = [
       {cat:"All Other Spends",rate:0.5,cap:0,unit:"PAYBACK Points"}
     ],
     excluded:"Fuel,Wallet,Cash,Govt",
-    lounge:{domestic:1,intl:0,criteria:"None"},
+    lounge:{domestic:2,intl:0,criteria:"None"},
     partners:"PAYBACK",portal:"payback.in",
     status:"✅ Verified",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
@@ -1726,7 +1715,7 @@ const CARDS = [
       {cat:"All Other Spends",rate:2,cap:0,unit:"Scapia Coins"}
     ],
     excluded:"Fuel,Wallet,Govt,EMI,Rent,Cash",
-    lounge:{domestic:999,intl:0,criteria:"Requires ₹20,000 monthly spend for unlimited domestic lounge"},
+    lounge:{domestic:999,intl:0,criteria:"Unlimited domestic BUT requires Rs20,000 spend in that month. No spend = no lounge that month."},
     partners:"None",portal:"Scapia App",
     status:"✅ Verified May 2026",devalued:false,isNew:false,
     isTravel:true,isCashback:false,isPremium:false,
@@ -2059,7 +2048,7 @@ const CARDS = [
       {cat:"All Other Spends",rate:1,cap:0,unit:"cashback"}
     ],
     excluded:"Fuel,Wallet,Govt,EMI",
-    lounge:{domestic:8,intl:0,criteria:"Unconditional (2/quarter)"},
+    lounge:{domestic:8,intl:0,criteria:"2 visits/quarter = 8/year. Unconditional."},
     partners:"None",portal:"AU 0101 App",
     status:"✅ Verified May 2026",devalued:false,isNew:false,
     isTravel:false,isCashback:true,isPremium:false,
@@ -2136,17 +2125,13 @@ const CARDS = [
   ,{id:"idfc-select",bank:"IDFC FIRST Bank",name:"IDFC FIRST Select Credit Card",network:"Visa Signature",type:"Rewards",
     joining:0,annual:0,waiver:0,ltf:true,forex:1.99,interest:0.75,
     rewardUnit:"IDFC Reward Points",pointVal:0.25,
-    rewards:[
-      {cat:"Spends above Rs20,000/month (10X)",rate:2.5,cap:0,unit:"IDFC Reward Points"},
-      {cat:"Utility/Insurance (1X only)",rate:0.25,cap:0,unit:"IDFC Reward Points"},
-      {cat:"All Other Spends (3X up to Rs20K)",rate:0.75,cap:0,unit:"IDFC Reward Points"}
-    ],
+    rewards:[{cat:"All Spends above Rs20,000/month (10 RP/Rs200)",rate:1.25,cap:0,unit:"IDFC Reward Points",note:"10 RP/Rs200 = 1.25% at Rs0.25/pt. No cap, no expiry."},{cat:"Insurance, Utility (1 RP/Rs200)",rate:0.125,cap:0,unit:"IDFC Reward Points",note:"1 RP/Rs200 on insurance + utility. 1% surcharge on utility > Rs20K/cycle."},{cat:"All Other Spends up to Rs20K/month (3 RP/Rs200)",rate:0.375,cap:0,unit:"IDFC Reward Points",note:"3 RP/Rs200 = 0.375% at Rs0.25/pt"}],
     excluded:"Nothing material - broad earning",
     lounge:{domestic:4,intl:0,criteria:"Requires Rs20,000 monthly spend"},
     partners:"None",portal:"IDFC FIRST App",
     status:"✅ Verified May 2026",devalued:false,isNew:false,
     isTravel:false,isCashback:false,isPremium:false,
-    notes:"LTF entry to IDFC FIRST ecosystem. 1.99% forex. Points never expire. 4 domestic lounges on Rs20K/month spend. Interest from 0.75%/month (lowest floor in India). Earns on rent/wallet. B1G1 BookMyShow twice/month. Good first step - upgrade to Wealth for better benefits."}
+    notes:"LTF card from IDFC FIRST. May 2024 devaluation: lounge now needs Rs20K previous month spend. Jun 2026: BMS movie offer also needs Rs20K prev month. 3 RP/Rs200 up to Rs20K/month (0.375%), 10 RP/Rs200 above Rs20K (1.25%). Insurance/utility: 1 RP/Rs200 only (0.125%). 1.99% forex. 4 domestic lounges/year (1/quarter) on Rs20K/month spend. 4 railway lounges/quarter free. BMS B1G1 movie (up to Rs125) twice/month (needs Rs20K spend from Jun 2026). Points never expire (but from Jul 2026: points earned after that expire in 24 months). Rs99+tax per redemption."}
   ,{id:"idfc-wealth",bank:"IDFC FIRST Bank",name:"IDFC FIRST Wealth Credit Card",network:"Visa Infinite",type:"Rewards/Premium",
     joining:0,annual:0,waiver:0,ltf:true,forex:1.5,interest:0.75,
     rewardUnit:"IDFC Reward Points",pointVal:0.25,
@@ -2156,7 +2141,7 @@ const CARDS = [
       {cat:"All Spends up to Rs20,000/month (3X)",rate:0.75,cap:0,unit:"IDFC Reward Points"}
     ],
     excluded:"Nothing - earns on ALL: rent, utility, wallet, insurance, govt, education",
-    lounge:{domestic:8,intl:8,criteria:"Requires Rs20,000 spend in previous month"},
+    lounge:{domestic:8,intl:8,criteria:"8 dom + 8 intl/year (2/quarter each) — requires Rs20,000 in previous calendar month. Railway: 4/quarter."},
     partners:"None",portal:"IDFC FIRST App",
     status:"⚠️ Benefits revised Apr 2026",devalued:true,isNew:false,
     isTravel:false,isCashback:false,isPremium:true,
