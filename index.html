@@ -829,6 +829,49 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+
+<!-- LOGIN / ACCOUNT MODAL -->
+<div class="modal-backdrop" id="login-modal" style="display:none" onclick="if(event.target===this)closeLoginModal()">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">🔐 Save Your Data</div>
+        <div style="font-size:11px;color:var(--mut)">Create a free account to sync across devices</div>
+      </div>
+      <button class="close-btn" onclick="closeLoginModal()">✕</button>
+    </div>
+
+    <div style="background:var(--gl);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#1a5c4f">
+      <strong>What gets saved:</strong><br>
+      ✅ Expense tracker transactions<br>
+      ✅ Financial planner data (salary, goals, loans)<br>
+      ✅ My Cards list<br>
+      ✅ Access from any device
+    </div>
+
+    <div style="text-align:center;padding:10px 0 6px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px">Coming Soon 🚀</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:14px">
+        Account sync is being built. For now, use <strong>Export CSV</strong> to save your data locally.
+        Enter your email to get notified when accounts go live.
+      </div>
+      <input type="email" id="notify-email" placeholder="your@email.com"
+        style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;margin-bottom:8px">
+      <button class="btn btn-g" onclick="submitNotifyEmail()" style="width:100%;padding:10px">Notify me when ready</button>
+    </div>
+
+    <div style="border-top:1px solid var(--bdr);margin-top:14px;padding-top:12px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px">Meanwhile — keep your data safe:</div>
+      <button class="btn btn-o" onclick="exportTrackerCSV();closeLoginModal()" style="width:100%;margin-bottom:6px;font-size:12px">
+        📤 Export Expense Tracker as CSV
+      </button>
+      <button class="btn btn-o" onclick="exportFinPlan();closeLoginModal()" style="width:100%;font-size:12px">
+        📤 Export Financial Plan as JSON
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- COMPARE MODAL -->
 <div class="modal-backdrop" id="compare-modal" style="display:none" onclick="if(event.target===this)document.getElementById('compare-modal').style.display='none'">
   <div class="modal-box">
@@ -872,7 +915,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <button class="btn btn-o" onclick="exportTrackerCSV()" style="font-size:11px">📤 Export</button>
     </div>
   </div>
-  <p style="font-size:11px;color:var(--mut);margin-bottom:14px">All data stored only on your device. Never sent anywhere. 🔒</p>
+  <!-- Privacy + Save options -->
+  <div id="trk-privacy-bar" style="background:var(--wl);border:1px solid #ffe082;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="flex:1">⚠️ <strong>Your data clears when you close/refresh this tab.</strong> It is stored only in your browser's memory — never sent to any server.</span>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button class="btn btn-o" onclick="exportTrackerCSV()" style="font-size:11px;padding:5px 10px">📤 Export CSV now</button>
+      <button class="btn btn-o" onclick="showLoginPrompt()" style="font-size:11px;padding:5px 10px">🔐 Login to save</button>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:14px">🔒 Privacy: No data leaves your device. All calculations happen locally in your browser.</p>
 
   <!-- QUICK ADD FORM -->
   <div id="trk-add-panel" style="background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:14px">
@@ -895,9 +946,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div id="trk-cats" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
     <input type="hidden" id="trk-cat-val">
 
-    <!-- Card picker -->
-    <div style="font-size:11px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Card Used</div>
-    <div id="trk-cards-picker" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+    <!-- Card picker with search and sort -->
+    <div style="font-size:11px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Payment Method</div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+      <input type="text" id="trk-card-search" placeholder="🔍 Search card..." 
+        oninput="renderTrkCardPicker()" 
+        style="flex:1;min-width:140px;padding:6px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:12px">
+      <select id="trk-card-sort" onchange="renderTrkCardPicker()" 
+        style="padding:6px 8px;border:1px solid var(--bdr);border-radius:7px;font-size:11px">
+        <option value="mine">My Cards First</option>
+        <option value="alpha">A → Z</option>
+        <option value="bank">By Bank</option>
+      </select>
+    </div>
+    <div id="trk-cards-picker" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;max-height:130px;overflow-y:auto;padding:4px 2px"></div>
     <input type="hidden" id="trk-card-val">
 
     <!-- Note -->
@@ -2712,25 +2774,79 @@ function iExpRows() {
 }
 function calc() {
   let tot=0; const rows=[];
+  const planMode = document.getElementById('pm-toggle')?.dataset?.mode || 'all';
+  const useMyCards = planMode === 'mine' && myCards.length > 0;
+
   CATEGORIES.forEach(cat=>{
     const sp=parseFloat(document.getElementById('e-'+cat.id)?.value)||0;
     if(!sp)return;
     const rates=REWARD_MAP[cat.id]||{};
-    let bCard=null,bRate=0;
-    Object.entries(rates).forEach(([id,r])=>{if(r>bRate){bRate=r;bCard=id;}});
-    if(bCard){
-      const c=CARDS.find(cc=>cc.id===bCard);
-      const sav=sp*bRate/100; tot+=sav;
-      rows.push({cat:cat.label,icon:cat.icon,sp,bCard:c?.name||bCard,bRate,sav});
-    }
+
+    // Get ranked list of cards for this category
+    let ranked = Object.entries(rates)
+      .map(([id,r])=>({id,r,card:CARDS.find(c=>c.id===id)}))
+      .filter(x=>x.card)
+      .sort((a,b)=>b.r-a.r);
+
+    // My cards ranked separately
+    const myRanked = ranked.filter(x=>myCards.includes(x.id));
+
+    // Best overall
+    const best = ranked[0];
+    // Best among my cards
+    const bestMine = myRanked[0];
+
+    if(!best) return;
+    const sav = sp * best.r / 100;
+    tot += sav;
+
+    // Top 3 of my cards (if any)
+    const myTop3 = myRanked.slice(0,3);
+    // Top 3 all cards
+    const allTop3 = ranked.slice(0,3);
+
+    rows.push({
+      cat:cat.label, icon:cat.icon, sp,
+      best, bestMine,
+      myTop3, allTop3,
+      sav
+    });
   });
-  document.getElementById('rt').textContent='₹'+Math.round(tot).toLocaleString('en-IN');
-  document.getElementById('ra').textContent='Annual: ₹'+Math.round(tot*12).toLocaleString('en-IN');
-  document.getElementById('rb').innerHTML=`<div style="font-size:12px;font-weight:600;margin-bottom:7px">Best Card Per Category:</div>`
-    +rows.map(r=>`<div class="res-row">
-      <span>${r.icon} ${r.cat}</span>
-      <span><strong style="color:var(--g)">${r.bCard}</strong> <span style="color:var(--mut)">${r.bRate}%</span> = <strong>₹${Math.round(r.sav).toLocaleString('en-IN')}</strong></span>
-    </div>`).join('');
+
+  const totalMine = rows.reduce((s,r)=>s+(r.sp*(r.bestMine?.r||0)/100),0);
+  const totalBest = rows.reduce((s,r)=>s+(r.sp*(r.best?.r||0)/100),0);
+
+  document.getElementById('rt').textContent = '₹'+Math.round(useMyCards?totalMine:totalBest).toLocaleString('en-IN');
+  document.getElementById('ra').textContent = 'Annual: ₹'+Math.round((useMyCards?totalMine:totalBest)*12).toLocaleString('en-IN');
+
+  let html = '';
+  rows.forEach(r=>{
+    const showMine = useMyCards && r.myTop3.length > 0;
+    const listToShow = showMine ? r.myTop3 : r.allTop3;
+    const mineGap = r.best && r.bestMine && r.best.r > r.bestMine.r
+      ? `<div style="font-size:10px;color:var(--warn);margin-top:2px">⚠️ ${r.best.card.name} gives ${r.best.r}% — not in My Cards</div>` : '';
+
+    html += `<div style="background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+        <span style="font-size:13px;font-weight:600">${r.icon} ${r.cat}</span>
+        <span style="font-size:12px;color:var(--mut)">₹${r.sp.toLocaleString('en-IN')} spend</span>
+      </div>
+      ${listToShow.map((x,i)=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;${i<listToShow.length-1?'border-bottom:.5px solid var(--bdr)':''}">
+          <span style="font-size:10px;font-weight:700;color:var(--mut);min-width:16px">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
+          <span style="flex:1;font-size:12px;font-weight:${i===0?'600':'400'};color:${i===0?'var(--g)':'var(--txt)'}">${x.card.name}</span>
+          <span style="font-size:12px;color:var(--mut)">${x.r}%</span>
+          <span style="font-size:12px;font-weight:600">₹${Math.round(r.sp*x.r/100).toLocaleString('en-IN')}</span>
+          ${!myCards.includes(x.id)?'<span style="font-size:9px;color:var(--mut)">not mine</span>':'<span style="font-size:9px;color:var(--g)">✓ my card</span>'}
+        </div>`).join('')}
+      ${mineGap}
+    </div>`;
+  });
+
+  document.getElementById('rb').innerHTML = `<div style="font-size:12px;font-weight:600;margin-bottom:8px">
+    ${useMyCards?'Your Cards Ranked by Category:':'Best Cards by Category:'}
+    <span style="font-size:10px;color:var(--mut);font-weight:400;margin-left:6px">Switch to ${useMyCards?'"All Cards"':'"My Cards"'} mode above</span>
+  </div>` + html;
 }
 
 function fMCC(f,el) {
@@ -3255,7 +3371,7 @@ function sw(id,el) {
   if(id==='partners') rMatrix();
   if(id==='home') updatePortfolioSummary();
   // Update document title for SEO/browser tab
-  if(id==='tracker') { initTracker(); }
+  if(id==='tracker') { initTracker(); updatePrivacyBar(); }
   if(id==='lounge') { renderLounge(); }
   if(id==='finplan') { initFinPlan(); }
   const pageTitles = {
@@ -3519,6 +3635,84 @@ function saveTrkData(data) {
   localStorage.setItem('cs_tracker', JSON.stringify(data));
 }
 
+function renderTrkCardPicker() {
+  const cardEl = document.getElementById('trk-cards-picker');
+  if(!cardEl) return;
+  const search = (document.getElementById('trk-card-search')?.value||'').toLowerCase();
+  const sort = document.getElementById('trk-card-sort')?.value || 'mine';
+
+  // Payment method options (non-credit-card)
+  const paymentMethods = [
+    {id:'upi',     name:'UPI',           icon:'📲', group:'Digital'},
+    {id:'debit',   name:'Debit Card',    icon:'💳', group:'Digital'},
+    {id:'cash',    name:'Cash',          icon:'💵', group:'Cash'},
+    {id:'neft',    name:'NEFT/RTGS',     icon:'🏦', group:'Bank Transfer'},
+    {id:'netbank', name:'Net Banking',   icon:'🌐', group:'Bank Transfer'},
+    {id:'cheque',  name:'Cheque',        icon:'📄', group:'Bank Transfer'},
+  ];
+
+  let cards = CARDS.slice();
+
+  // Filter by search
+  if(search) {
+    const filtered = paymentMethods.filter(m=>m.name.toLowerCase().includes(search));
+    cards = cards.filter(c=>c.name.toLowerCase().includes(search)||c.bank.toLowerCase().includes(search));
+    cardEl.innerHTML = filtered.map(m=>chipHTML(m.id, m.name, m.icon, false, false)).join('') +
+      cards.map(c=>chipHTML(c.id, c.name, '', myCards.includes(c.id), true)).join('');
+    restoreSelectedChip();
+    return;
+  }
+
+  // Sort cards
+  if(sort==='mine') {
+    const mine = cards.filter(c=>myCards.includes(c.id)).sort((a,b)=>a.name.localeCompare(b.name));
+    const others = cards.filter(c=>!myCards.includes(c.id)).sort((a,b)=>a.name.localeCompare(b.name));
+    cards = [...mine, ...others];
+  } else if(sort==='bank') {
+    cards.sort((a,b)=>a.bank.localeCompare(b.bank)||a.name.localeCompare(b.name));
+  } else {
+    cards.sort((a,b)=>a.name.localeCompare(b.name));
+  }
+
+  // Build HTML
+  let html = '';
+  // Payment methods section
+  html += `<div style="width:100%;font-size:10px;color:var(--mut);font-weight:600;margin:2px 0;text-transform:uppercase">💰 Cash & Digital</div>`;
+  html += paymentMethods.map(m=>chipHTML(m.id, m.name, m.icon, false, false)).join('');
+
+  // My cards section
+  if(sort==='mine' && cards.filter(c=>myCards.includes(c.id)).length > 0) {
+    html += `<div style="width:100%;font-size:10px;color:var(--g);font-weight:600;margin:6px 0 2px;text-transform:uppercase">⭐ My Cards</div>`;
+    html += cards.filter(c=>myCards.includes(c.id)).map(c=>chipHTML(c.id, c.name, '', true, true)).join('');
+    html += `<div style="width:100%;font-size:10px;color:var(--mut);font-weight:600;margin:6px 0 2px;text-transform:uppercase">All Other Cards</div>`;
+    html += cards.filter(c=>!myCards.includes(c.id)).map(c=>chipHTML(c.id, c.name, '', false, true)).join('');
+  } else {
+    html += `<div style="width:100%;font-size:10px;color:var(--mut);font-weight:600;margin:6px 0 2px;text-transform:uppercase">💳 Credit Cards</div>`;
+    html += cards.map(c=>chipHTML(c.id, c.name, '', myCards.includes(c.id), true)).join('');
+  }
+
+  cardEl.innerHTML = html;
+  restoreSelectedChip();
+}
+
+function chipHTML(id, name, icon, isMine, isCard) {
+  const selected = trkSelectedCard === id;
+  const bg = selected ? (isCard?'var(--bl)':'var(--wl)') : '#fff';
+  const border = selected ? (isCard?'var(--blue)':'var(--warn)') : 'var(--bdr)';
+  const fw = selected ? '600' : '400';
+  return `<div class="trk-card-chip" id="trk-card-${id}"
+    onclick="selectTrkCard('${id}')"
+    style="padding:5px 9px;border:1px solid ${border};border-radius:7px;cursor:pointer;font-size:11px;background:${bg};font-weight:${fw};white-space:nowrap;flex-shrink:0">
+    ${icon?icon+' ':''}${isMine?'⭐ ':''}${name}
+  </div>`;
+}
+
+function restoreSelectedChip() {
+  if(!trkSelectedCard) return;
+  const el = document.getElementById('trk-card-'+trkSelectedCard);
+  if(el) { el.style.background='var(--bl)'; el.style.borderColor='var(--blue)'; el.style.fontWeight='600'; }
+}
+
 function initTracker() {
   // Set today's date
   const dateEl = document.getElementById('trk-date');
@@ -3588,16 +3782,15 @@ function selectTrkCat(id) {
   updateTrkRewardPreview();
 }
 
-function selectTrkCard(id, name) {
+function selectTrkCard(id) {
   trkSelectedCard = id;
-  document.querySelectorAll('.trk-card-chip').forEach(el => {
-    el.style.background = '#fff';
-    el.style.borderColor = 'var(--bdr)';
-    el.style.fontWeight = '400';
-  });
-  const el = document.getElementById(`trk-card-${id}`);
-  if(el) { el.style.background='var(--bl)'; el.style.borderColor='var(--blue)'; el.style.fontWeight='600'; }
   document.getElementById('trk-card-val').value = id;
+  // Update all chip styles
+  document.querySelectorAll('.trk-card-chip').forEach(el=>{
+    el.style.background='#fff'; el.style.borderColor='var(--bdr)'; el.style.fontWeight='400';
+  });
+  const el = document.getElementById('trk-card-'+id);
+  if(el) { el.style.background='var(--bl)'; el.style.borderColor='var(--blue)'; el.style.fontWeight='600'; }
   updateTrkRewardPreview();
 }
 
@@ -3660,7 +3853,12 @@ function addTrkTxn() {
   if(!date) { showToast('Select a date'); return; }
 
   const cat = TRK_CATS.find(c=>c.id===trkSelectedCat);
-  const card = CARDS.find(c=>c.id===trkSelectedCard);
+  const NON_CARD_METHODS = {
+    upi:'UPI', debit:'Debit Card', cash:'Cash',
+    neft:'NEFT/RTGS', netbank:'Net Banking', cheque:'Cheque'
+  };
+  const isNonCard = NON_CARD_METHODS[trkSelectedCard];
+  const card = isNonCard ? null : CARDS.find(c=>c.id===trkSelectedCard);
 
   // Calculate earned rewards
   let earnedRate = 0;
@@ -3687,7 +3885,7 @@ function addTrkTxn() {
     catLbl: cat ? cat.lbl : trkSelectedCat,
     catIcon: cat ? cat.icon : '💳',
     cardId: trkSelectedCard,
-    cardName: card ? card.name : (trkSelectedCard==='none'?'Cash/UPI':'Unknown'),
+    cardName: card ? card.name : (NON_CARD_METHODS[trkSelectedCard]||trkSelectedCard),
     note,
     earnedRate,
     earnedAmt: parseFloat((amt*earnedRate/100).toFixed(2)),
@@ -3712,6 +3910,7 @@ function addTrkTxn() {
 
   renderTrkLog();
   renderTrkTodayStats();
+  updatePrivacyBar();
   showToast(`✅ ₹${amt.toLocaleString('en-IN')} added! Earned ₹${txn.earnedAmt} in rewards.`);
 }
 
@@ -3878,6 +4077,7 @@ function deleteTrkTxn(id) {
   saveTrkData(data);
   renderTrkLog();
   renderTrkTodayStats();
+  updatePrivacyBar();
   showToast('Transaction deleted');
 }
 
@@ -3886,6 +4086,7 @@ function clearAllTrk() {
   localStorage.removeItem('cs_tracker');
   renderTrkLog();
   renderTrkTodayStats();
+  updatePrivacyBar();
   showToast('All tracker data cleared');
 }
 
@@ -3907,6 +4108,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const amtEl = document.getElementById('trk-amount');
   if(amtEl) amtEl.addEventListener('input', updateTrkRewardPreview);
 });
+
+// ── LOGIN / ACCOUNT MODAL ────────────────────────────────────
+function showLoginPrompt() {
+  document.getElementById('login-modal').style.display = 'flex';
+}
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+}
+function submitNotifyEmail() {
+  const email = document.getElementById('notify-email').value.trim();
+  if(!email || !email.includes('@')) { showToast('Enter a valid email'); return; }
+  // Store locally + show confirmation
+  const emails = JSON.parse(localStorage.getItem('cs_notify_emails')||'[]');
+  if(!emails.includes(email)) { emails.push(email); localStorage.setItem('cs_notify_emails', JSON.stringify(emails)); }
+  showToast('Notified! We will email you when accounts go live.');
+  closeLoginModal();
+}
+function exportFinPlan() {
+  const data = {
+    finplan: localStorage.getItem('cs_finplan'),
+    myCards: localStorage.getItem('cs_mycards'),
+    tracker: localStorage.getItem('cs_tracker'),
+    exported: new Date().toISOString()
+  };
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
+  a.download = 'cardsaathi_backup_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  showToast('📤 Full backup downloaded as JSON!');
+}
+
+// Show privacy bar only when tracker has data
+function updatePrivacyBar() {
+  const bar = document.getElementById('trk-privacy-bar');
+  if(!bar) return;
+  const data = getTrkData();
+  bar.style.display = data.length > 0 ? 'flex' : 'none';
+}
 
 function filterLounge(type,el){
   document.querySelectorAll('#tab-lounge .chip').forEach(c=>c.classList.remove('active'));
