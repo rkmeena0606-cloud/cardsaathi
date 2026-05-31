@@ -151,6 +151,82 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt)}
 .app{display:flex;min-height:100vh}
+
+/* ══ STATS CARDS ══ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.stat{background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center;transition:.15s}
+.stat[onclick]:hover{transform:translateY(-2px);box-shadow:0 3px 10px rgba(0,0,0,.08);cursor:pointer}
+.stat-n{font-size:22px;font-weight:700}
+.stat-l{font-size:11px;color:var(--mut);margin-top:3px}
+
+/* ══ RESULT ROWS ══ */
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid var(--bdr);font-size:12px}
+.res-row:last-child{border-bottom:none}
+
+/* ══ CC CARD ══ */
+.cc{background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:14px;position:relative;transition:.15s}
+.cc:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.cc.deval{border-left:3px solid var(--red)}
+.cc.mine{border-left:3px solid var(--g)}
+.cc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.cc-name{font-size:13px;font-weight:600;line-height:1.3}
+.cc-ba{font-size:10px;color:var(--mut);margin-top:2px}
+.cc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;background:var(--bl);color:var(--blue)}
+.tag.g{background:var(--gl);color:var(--g)}
+.tag.r{background:var(--rl);color:var(--red)}
+.tag.gold{background:#fff8e1;color:#f57f17}
+.cc-rewards{font-size:11px;margin-bottom:8px}
+.cc-rr{display:flex;justify-content:space-between;padding:3px 0;border-bottom:.5px solid var(--bdr)}
+.cc-rr:last-child{border-bottom:none}
+.cc-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.verified-strip{font-size:9px;color:var(--g);margin-bottom:6px;font-weight:600}
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+/* ══ BUTTONS ══ */
+.btn{padding:5px 12px;border-radius:7px;border:1px solid var(--bdr);background:#fff;cursor:pointer;font-size:12px;font-weight:500;transition:.12s;white-space:nowrap}
+.btn:hover{background:var(--bg)}
+.btn-g{background:var(--g);color:#fff;border-color:var(--g)}
+.btn-g:hover{background:#155a4d}
+.btn-o{background:#fff;color:var(--txt);border-color:var(--bdr)}
+.btn-o:hover{background:var(--bg)}
+
+/* ══ COMPARE BAR ══ */
+.cbar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--bdr);padding:10px 20px;display:flex;align-items:center;gap:10px;z-index:90;flex-wrap:wrap}
+
+/* ══ MODALS ══ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bdr)}
+.modal-title{font-size:15px;font-weight:700}
+.close-btn{background:none;border:none;cursor:pointer;font-size:18px;color:var(--mut);padding:2px 6px;border-radius:5px}
+.close-btn:hover{background:var(--bg)}
+
+/* ══ EXPENSE PLANNER ══ */
+.etbl{width:100%;border-collapse:collapse;font-size:13px}
+.etbl th{text-align:left;color:var(--mut);font-size:10px;font-weight:600;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--bdr)}
+.etbl td{padding:4px 8px;border-bottom:.5px solid var(--bdr)}
+.etbl input{width:130px;padding:5px 8px;border:1px solid var(--bdr);border-radius:6px;font-size:12px}
+.etbl input:focus{outline:none;border-color:var(--g)}
+
+/* ══ FILTER BAR ══ */
+.fbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:10px 0}
+.chip{padding:5px 12px;border-radius:16px;border:1px solid var(--bdr);background:#fff;cursor:pointer;font-size:12px;font-weight:500;color:var(--mut);transition:.12s;white-space:nowrap}
+.chip:hover{background:var(--bg)}
+.chip.active{background:var(--g);color:#fff;border-color:var(--g)}
+.srch{display:flex;align-items:center;background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;gap:6px;flex:1;min-width:180px}
+.srch input{border:none;outline:none;font-size:13px;flex:1;background:transparent}
+.srch .material-icons{font-size:16px;color:var(--mut)}
+
+/* ══ ALERTS ══ */
+.dalert{background:var(--wl);border:1px solid #ffe082;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:12px;color:var(--warn);display:flex;gap:8px}
+.gl{background:var(--gl)}
+.rl{background:var(--rl)}
+.wl{background:var(--wl)}
+
+/* ══ MISC ══ */
+.nbadge{background:rgba(255,255,255,.25);color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;margin-left:auto;flex-shrink:0}
+
 /* ══ TABS ══ */
 .tab{display:none}
 .tab.active{display:block}
@@ -393,7 +469,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="topbar-title" id="tt">🇮🇳 CardSaathi — India's Credit Card Optimizer</div>
   <div style="display:flex;gap:8px;align-items:center">
     <button class="btn btn-o" style="font-size:11px" id="profile-btn" onclick="openProfile()" title="Save your name for personalisation">👤 Set Name</button>
-    <button class="btn btn-g" style="font-size:11px" onclick="sw('database',document.querySelectorAll('.nav')[4])">
+    <button class="btn btn-g" style="font-size:11px" onclick="sw('database',document.getElementById('nav-database'))">
       Browse <strong id="dcb">0</strong> Cards
     </button>
   </div>
@@ -419,19 +495,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div><strong>⚠️ 2026 Devaluation Watch:</strong> 🆕 PhonePe SBI SELECT BLACK (Jul 1 2026 — insurance sub-cap ₹500/mo), SBI Cashback (Apr 2026), Airtel Axis (Apr 2026), HDFC Regalia Gold (May 2026), SBI BPCL (May 2026), Axis Magnus transfer partners removed (Apr 2026), ICICI Sapphiro lounge criteria added. Database verified May 2026 from official bank MITCs.</div>
   </div>
   <div class="stats">
-    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4])" style="cursor:pointer" title="Browse all credit cards">
+    <div class="stat" onclick="sw('database',document.getElementById('nav-database'))" style="cursor:pointer" title="Browse all credit cards">
       <div class="stat-n" id="cnt-total" style="color:var(--g)">0</div>
       <div class="stat-l">Credit Cards ↗</div>
     </div>
-    <div class="stat" onclick="sw('mcc',document.querySelectorAll('.nav')[2])" style="cursor:pointer" title="View MCC Guide">
+    <div class="stat" onclick="sw('mcc',document.getElementById('nav-mcc'))" style="cursor:pointer" title="View MCC Guide">
       <div class="stat-n" style="color:var(--blue)">33+</div>
       <div class="stat-l">MCC Codes ↗</div>
     </div>
-    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('Deval')||c.textContent.includes('deval'));if(chip)fDB('deval',chip);},250)" style="cursor:pointer" title="See devalued cards">
+    <div class="stat" onclick="sw('database',document.getElementById('nav-database'));setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('Deval'));if(chip)fDB('deval',chip);},300)" style="cursor:pointer" title="See devalued cards">
       <div class="stat-n" style="color:var(--red)">12</div>
       <div class="stat-l">2026 Devaluations ↗</div>
     </div>
-    <div class="stat" onclick="sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},250)" style="cursor:pointer" title="See lifetime free cards">
+    <div class="stat" onclick="sw('database',document.getElementById('nav-database'));setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},300)" style="cursor:pointer" title="See lifetime free cards">
+      <div class="stat-n" style="color:var(--gold)">Free</div>
+      <div class="stat-l">15 LTF Cards ↗</div>
+    </div>
+  </div>      <div class="stat-l">Credit Cards ↗</div>
+    </div>
+    <div class="stat" onclick="sw('mcc',document.getElementById('nav-mcc'))" style="cursor:pointer" title="View MCC Guide">
+      <div class="stat-n" style="color:var(--blue)">33+</div>
+      <div class="stat-l">MCC Codes ↗</div>
+    </div>
+    <div class="stat" onclick="sw('database',document.getElementById('nav-database'));setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('Deval'));if(chip)fDB('deval',chip);},300)" style="cursor:pointer" title="See devalued cards">
+      <div class="stat-n" style="color:var(--red)">12</div>
+      <div class="stat-l">2026 Devaluations ↗</div>
+    </div>
+    <div class="stat" onclick="sw('database',document.getElementById('nav-database'));setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},300)" style="cursor:pointer" title="See lifetime free cards">
       <div class="stat-n" style="color:var(--gold)">Free</div>
       <div class="stat-l">15 LTF Cards ↗</div>
     </div>
@@ -452,7 +542,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div style="font-size:14px;font-weight:600;color:var(--g);margin-bottom:4px">Get personalised rewards from your own cards</div>
         <div style="font-size:12px;color:var(--mut);margin-bottom:10px">Enter your spending below. We'll show the best card from <strong>all 89 cards</strong>.<br>Or add your cards first → switch to <strong>⭐ My Cards</strong> mode to see maximum rewards you can get from the cards you actually own.</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-g" style="font-size:12px" onclick="sw('database',document.querySelectorAll('.nav')[4])">+ Add My Cards First →</button>
+          <button class="btn btn-g" style="font-size:12px" onclick="sw('database',document.getElementById('nav-database'))">+ Add My Cards First →</button>
           <button class="btn btn-o" style="font-size:12px" onclick="document.getElementById('planner-onboard').style.display='none'">Skip, show all cards</button>
         </div>
       </div>
@@ -473,7 +563,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
   <!-- MY CARDS EMPTY STATE -->
   <div id="planner-no-cards" style="display:none;background:var(--wl);border:1px solid #ffe082;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:12px">
-    ⚠️ You haven't added any cards yet. <a onclick="sw('database',document.querySelectorAll('.nav')[4])" style="color:var(--g);cursor:pointer;font-weight:600">Go to Card Database → Add cards</a>, then come back to see your personalised rewards.
+    ⚠️ You haven't added any cards yet. <a onclick="sw('database',document.getElementById('nav-database'))" style="color:var(--g);cursor:pointer;font-weight:600">Go to Card Database → Add cards</a>, then come back to see your personalised rewards.
   </div>
 
   <div class="plan-grid">
@@ -495,7 +585,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div id="uncovered-cats" style="display:none;margin-top:10px;background:var(--rl);border-radius:8px;padding:10px 12px">
         <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px">⚠️ Categories your cards don't cover well:</div>
         <div id="uncovered-list" style="font-size:11px;color:var(--red)"></div>
-        <a onclick="sw('database',document.querySelectorAll('.nav')[4])" style="font-size:11px;color:var(--blue);cursor:pointer;display:block;margin-top:6px">→ Browse cards to fill these gaps</a>
+        <a onclick="sw('database',document.getElementById('nav-database'))" style="font-size:11px;color:var(--blue);cursor:pointer;display:block;margin-top:6px">→ Browse cards to fill these gaps</a>
       </div>
     </div>
   </div>
@@ -2691,7 +2781,7 @@ function rCard(c) {
     <div class="cc-btns">
       <button class="btn ${isMine?'btn-gld':'btn-o'}" onclick="tMyCard('${c.id}',this)">${isMine?'⭐ My Card':'+ Add'}</button>
       <button class="btn btn-o" onclick="tMax('${c.id}')" style="font-size:10px">💡 Tips</button>
-      ${c.portal&&c.portal!='—'?`<button class="btn btn-o" onclick="sw('portals',document.querySelectorAll('.nav')[5])" style="font-size:10px">🌐 Portal</button>`:''}</div>
+      ${c.portal&&c.portal!='—'?`<button class="btn btn-o" onclick="sw('portals',document.getElementById('nav-portals'))" style="font-size:10px">🌐 Portal</button>`:''}</div>
   </div>`;
 }
 
@@ -2946,7 +3036,7 @@ function rHomeBest() {
       <div style="font-size:18px;font-weight:700;color:var(--g);margin:2px 0">${rate}%</div>
       <div style="font-size:12px;font-weight:600">${c.name}</div>
       <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap">
-        ${c.ltf?`<span onclick="event.stopPropagation();sw('database',document.querySelectorAll('.nav')[4]);setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},250)" 
+        ${c.ltf?`<span onclick="event.stopPropagation();sw('database',document.getElementById('nav-database'));setTimeout(()=>{const chip=[...document.querySelectorAll('#tab-database .chip')].find(c=>c.textContent.includes('LTF'));if(chip)fDB('ltf',chip);},250)" 
           style="font-size:10px;background:var(--gl);color:var(--g);padding:1px 7px;border-radius:10px;cursor:pointer;font-weight:600">🆓 LTF</span>`:''}
         <span onclick="event.stopPropagation();openCardDetail('${c.id}')" 
           style="font-size:10px;background:var(--bl);color:var(--blue);padding:1px 7px;border-radius:10px;cursor:pointer">Details →</span>
@@ -3293,7 +3383,7 @@ function updatePortfolioSummary() {
   banner.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
     <div><span style="font-size:13px;font-weight:600;color:var(--g)">⭐ My Portfolio: ${myCards.length} card${myCards.length!==1?'s':''}</span>
     <span style="font-size:12px;color:var(--mut);margin-left:10px">Est. monthly rewards on avg Indian spending: <strong style="color:var(--g)">₹${Math.round(totalRewards).toLocaleString('en-IN')}</strong></span></div>
-    <button class="btn btn-g" style="font-size:11px" onclick="sw('planner',document.querySelectorAll('.nav')[1])">Run Expense Planner →</button>
+    <button class="btn btn-g" style="font-size:11px" onclick="sw('planner',document.getElementById('nav-planner'))">Run Expense Planner →</button>
   </div>`;
 }
 
@@ -3371,7 +3461,7 @@ function rCard(c) {
       <button class="btn ${isMine?'btn-gld':'btn-o'}" onclick="tMyCard('${c.id}',this)">${isMine?'⭐ My Card':'+ Add'}</button>
       <button class="btn btn-o" onclick="openCardDetail('${c.id}')" style="font-size:10px">🔍 Details</button>
       ${hasLink?`<button class="btn btn-apply" onclick="applyWithWarning('${c.id}')" style="font-size:10px">Apply →</button>`:''}
-      ${c.portal&&c.portal!=='—'?`<button class="btn btn-o" onclick="sw('portals',document.querySelectorAll('.nav')[5])" style="font-size:10px">🌐 Portal</button>`:''}
+      ${c.portal&&c.portal!=='—'?`<button class="btn btn-o" onclick="sw('portals',document.getElementById('nav-portals'))" style="font-size:10px">🌐 Portal</button>`:''}
     </div>
   </div>`;
 }
