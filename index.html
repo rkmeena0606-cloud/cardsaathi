@@ -543,7 +543,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="chip" onclick="fDB('premium',this)">👑 Premium</div>
     <div class="chip" onclick="fMine(this)">⭐ My Cards</div>
   </div>
-  <div class="fbar" id="bank-fbar" style="gap:5px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <span style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:600;letter-spacing:.4px">Filter by Bank</span>
+    <span id="bank-sel-count" style="font-size:10px;color:var(--mut)"></span>
+  </div>
+  <div class="fbar" id="bank-fbar" style="gap:5px;flex-wrap:wrap">
     <div class="chip active" onclick="fBnk('all',this)">All Banks</div>
     <div class="chip" onclick="fBnk('SBI Card',this)">SBI</div>
     <div class="chip" onclick="fBnk('HDFC Bank',this)">HDFC</div>
@@ -2646,7 +2650,7 @@ const CATEGORIES = [
 let myCards = JSON.parse(localStorage.getItem('cs_mycards')||'[]');
 let milestones = JSON.parse(localStorage.getItem('cs_milestones')||'[]');
 let compareSet = [];
-let dbF = {type:'all',bank:'all',mine:false};
+let dbF = {type:'all',banks:[],mine:false};
 let mccF = 'all';
 
 function sw(id,el) {
@@ -2745,22 +2749,38 @@ function fBnk(b,el) {
   const fbar = document.getElementById('bank-fbar');
   if(!fbar) return;
   const chips = fbar.querySelectorAll('.chip');
-  // Toggle: clicking active bank → deselect, go back to All Banks
-  if(el.classList.contains('active') && b !== 'all') {
+
+  if(b === 'all') {
+    // All Banks clicked — clear all selections
     chips.forEach(c=>c.classList.remove('active'));
-    fbar.querySelector('.chip')?.classList.add('active'); // first chip = All Banks
-    dbF.bank = 'all'; rDB(); return;
+    el.classList.add('active');
+    dbF.banks = [];
+    rDB(); return;
   }
-  chips.forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  dbF.bank = b; rDB();
+
+  // Multi-select: toggle this bank
+  const allChip = fbar.querySelector('.chip'); // first chip = All Banks
+  allChip?.classList.remove('active'); // deactivate All when any bank selected
+
+  if(el.classList.contains('active')) {
+    // Deselect this bank
+    el.classList.remove('active');
+    dbF.banks = dbF.banks.filter(x=>x!==b);
+    // If nothing selected, go back to All
+    if(dbF.banks.length === 0) allChip?.classList.add('active');
+  } else {
+    // Select this bank (add to selection)
+    el.classList.add('active');
+    if(!dbF.banks.includes(b)) dbF.banks.push(b);
+  }
+  rDB();
 }
 function fMine(el) {el.classList.toggle('active');dbF.mine=!dbF.mine;rDB();}
 function rDB() {
   const q=(document.getElementById('dbs')||{}).value?.toLowerCase()||'';
   const f=CARDS.filter(c=>{
     if(dbF.mine&&!myCards.includes(c.id))return false;
-    if(dbF.bank!=='all'&&c.bank!==dbF.bank)return false;
+    if(dbF.banks&&dbF.banks.length>0&&!dbF.banks.includes(c.bank))return false;
     if(dbF.type==='ltf'&&!c.ltf)return false;
     if(dbF.type==='deval'&&!c.devalued)return false;
     if(dbF.type==='travel'&&!c.isTravel)return false;
