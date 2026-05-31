@@ -937,11 +937,11 @@ const CARDS = [
     joining:499,annual:499,waiver:100000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"Reward Points",pointVal:0.25,
-    rewards:[[
+    rewards:[
       {cat:"10X Partners: Apollo 24x7, BookMyShow, Cleartrip, EazyDiner, Lenskart, Netmeds",rate:2.5,cap:0,unit:"SBI Reward Points",note:"10 RP/Rs100 = 2.5% at Rs0.25/pt"},
       {cat:"Amazon.in, All Other Online (5X)",rate:1.25,cap:0,unit:"SBI Reward Points",note:"5 RP/Rs100 = 1.25%. Amazon was 10X but reduced to 5X Jan 2023."},
       {cat:"All Offline Spends (1X)",rate:0.25,cap:0,unit:"SBI Reward Points"}
-    ]],
+    ],
     excluded:"Fuel,Wallet,Cash,Insurance,Jewellery",
     lounge:{domestic:0,intl:0,criteria:"N/A"},
     partners:"None",portal:"sbicard.com rewards",
@@ -1068,10 +1068,10 @@ const CARDS = [
     joining:1000,annual:1000,waiver:100000,ltf:false,
     forex:3.5,interest:3.75,
     rewardUnit:"CashPoints",pointVal:1,
-    rewards:[[
+    rewards:[
       {cat:"Amazon, BookMyShow, Cult.fit, Flipkart, Myntra, SonyLIV, Swiggy, Tata CLiQ, Uber, Zomato",rate:5,cap:1000,unit:"HDFC CashPoints",note:"Cap 1,000 CashPoints/CALENDAR MONTH (not statement cycle). 1 CashPoint = Rs1 as statement credit."},
       {cat:"All Other Eligible Spends",rate:1,cap:1000,unit:"HDFC CashPoints",note:"1% uncapped except monthly 1,000 CP redemption cap on cashback. Fuel/rent/EMI earn 1% but NOT eligible for CashBack redemption."}
-    ]],
+    ],
     excluded:"Fuel,Wallet,EMI,Jewellery,Insurance,Gaming,Govt",
     lounge:{domestic:4,intl:0,criteria:"₹1L/quarter"},
     partners:"None (CashPoints → statement only)",portal:"SmartBuy 5% CB alt",
@@ -1116,11 +1116,11 @@ const CARDS = [
     joining:12500,annual:12500,waiver:1000000,ltf:false,
     forex:2,interest:1.99,
     rewardUnit:"Reward Points",pointVal:1,
-    rewards:[[
+    rewards:[
       {cat:"SmartBuy Portal (Flights/Hotels/Apple/Tanishq/Vouchers)",rate:10,cap:0,unit:"HDFC Reward Points",note:"3X SmartBuy = 15 pts/Rs150 = 10% at Rs1/pt. Cap 15,000 pts/month. Devalued from 5X (16.67%) on Jan 16 2026."},
       {cat:"All Retail Spends (excl. fuel)",rate:3.33,cap:0,unit:"HDFC Reward Points",note:"5 pts/Rs150 = 3.33% at Rs1/pt. Insurance cap 10,000 pts/mo. Utility/grocery/telecom cap 2,000 pts/mo."},
       {cat:"Fuel Transactions",rate:0,cap:0,unit:"HDFC Reward Points",note:"0 RP on fuel. 1% surcharge waiver on Rs400-Rs1,00,000 txns."}
-    ]],
+    ],
     excluded:"Fuel,Wallet,Cash",
     lounge:{domestic:999,intl:999,criteria:"Unlimited"},
     partners:"Air India,IndiGo,Singapore Airlines,Krisflyer,Marriott,Aeroplan,United,Etihad",portal:"SmartBuy (10x flights/hotels/vouchers)",
@@ -1265,11 +1265,11 @@ const CARDS = [
     joining:499,annual:499,waiver:200000,ltf:false,
     forex:3.5,interest:3.6,
     rewardUnit:"Cashback ₹",pointVal:1,
-    rewards:[[
+    rewards:[
       {cat:"Utility Bills via Google Pay ANDROID ONLY (electricity/water/gas/DTH/mobile/broadband)",rate:5,cap:500,unit:"cashback",note:"COMBINED cap Rs500/month covers BOTH this 5% AND the 4% Swiggy/Zomato/Ola below. Android only - iPhone cannot access this."},
       {cat:"Swiggy, Zomato, Ola",rate:4,cap:500,unit:"cashback",note:"Shared Rs500/month cap with 5% Google Pay category above"},
       {cat:"All Other Spends (online + offline + supermarkets + medical + POS)",rate:1.5,cap:0,unit:"cashback",note:"1.5% UNCAPPED - no monthly limit. Auto-credited to statement."}
-    ]],
+    ],
     excluded:"Fuel,EMI,Wallet Loads,Rent,Gold/Jewellery,Insurance,Education,Govt,Utility (non-Google Pay platforms)",
     lounge:{domestic:4,intl:0,criteria:"₹50K/quarter"},
     partners:"None (direct cashback)",portal:"Google Pay (bill pay)",
@@ -1282,11 +1282,11 @@ const CARDS = [
     joining:12500,annual:12500,waiver:1500000,ltf:false,
     forex:2,interest:3,
     rewardUnit:"EDGE Miles",pointVal:1,
-    rewards:[[
+    rewards:[
       {cat:"All Eligible Spends (base - 12 EDGE pts/Rs200)",rate:1.2,cap:0,unit:"EDGE Miles",note:"12 pts/Rs200 = 6% in EDGE Miles at Rs0.20/pt catalog. Transfer 5 pts -> 2 partner miles (5:2 ratio). Group A/B annual caps apply."},
       {cat:"Spends above Rs1.5L/month (35 EDGE pts/Rs200)",rate:3.5,cap:0,unit:"EDGE Miles",note:"35 pts/Rs200 on incremental spend above Rs1.5L threshold. 3.5% in EDGE Miles at catalog rate."},
       {cat:"Travel via Travel EDGE Portal",rate:5.0,cap:0,unit:"EDGE Miles",note:"Booking via axisbank travel portal gives accelerated Miles. Use for flights/hotels booked through portal."}
-    ]],
+    ],
     excluded:"Wallet,Fuel,Govt,Insurance,Jewellery,Cash,Rent",
     lounge:{domestic:8,intl:999,criteria:"PP Unlimited (no DL visits via PP)"},
     partners:"Group A (2L pts/yr cap, 5:2 ratio): Singapore KrisFlyer, JAL Japan, Air Canada Aeroplan | Group B (8L pts/yr cap, 5:2 ratio): Air India, Flying Blue, ITC Hotels, IHG One Rewards | REMOVED Apr 2026: Accor ALL, Marriott Bonvoy, Qatar Airways | NEW (5:1 ratio worse): British Airways Avios, Finnair Plus, Vietnam Lotusmiles",portal:"TRAVEL EDGE (traveledge.axis.bank.in)",
@@ -2424,29 +2424,10 @@ function sw(id,el) {
   if(el) el.classList.add('active');
   const ttl={home:'🇮🇳 CardSaathi',planner:'💰 Expense Planner',mcc:'📊 MCC Guide',
     milestone:'🎯 Milestones',database:'💳 Card Database',portals:'✈️ Portals & Miles',
-    partners:'🔀 Transfer Matrix',lounge:'🛫 Lounge Access',
-    finplan:'💰 Financial Planner',score:'📈 Credit Score'};
+    partners:'🔀 Transfer Matrix',score:'📈 Credit Score'};
   document.getElementById('tt').textContent=ttl[id]||id;
-  if(id==='database') { rDB(); }
-  if(id==='portals') { rBestByCat(); }
-  if(id==='partners') { rMatrix(); }
-  if(id==='lounge') { renderLounge(); }
-  if(id==='finplan') { initFinPlan(); }
-  if(id==='home') { updatePortfolioSummary(); }
-  // Update document title for SEO
-  const pageTitles = {
-    home:'CardSaathi — Best Credit Card Optimizer India 2026',
-    database:'Compare '+CARDS.length+' Credit Cards India 2026 | CardSaathi',
-    planner:'Credit Card Rewards Calculator India | CardSaathi',
-    mcc:'MCC Code Guide India | CardSaathi',
-    milestone:'Credit Card Fee Waiver Tracker | CardSaathi',
-    portals:'HDFC SmartBuy, Axis Travel Edge, HSBC Miles | CardSaathi',
-    partners:'Credit Card Transfer Partners India 2026 | CardSaathi',
-    lounge:'Airport Lounge Access Guide India 2026 | CardSaathi',
-    finplan:'Financial Planner — Goals & Savings | CardSaathi',
-    score:'Credit Score Guide CIBIL India | CardSaathi'
-  };
-  document.title = pageTitles[id] || 'CardSaathi — India Credit Card Optimizer';
+  if(id==='portals') setTimeout(rBestByCat,100);
+  if(id==='partners') rMatrix();
 }
 
 function bBadges(c) {
