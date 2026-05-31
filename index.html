@@ -388,6 +388,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="nav" onclick="sw('database',this)"><span class="material-icons">credit_card</span><span>Card Database</span><span class="nbadge" id="nc">0</span></div>
   <div class="nav" onclick="sw('portals',this)"><span class="material-icons">open_in_new</span><span>Portals & Miles</span></div>
   <div class="nav" onclick="sw('partners',this)"><span class="material-icons">compare_arrows</span><span>Transfer Matrix</span></div>
+  <div class="nav" onclick="sw('tracker',this)"><span class="material-icons">receipt_long</span><span>Expense Tracker</span></div>
   <div class="nav" onclick="sw('lounge',this)"><span class="material-icons">local_bar</span><span>Lounge Access</span></div>
   <div class="nav" onclick="sw('finplan',this)"><span class="material-icons">savings</span><span>Financial Planner</span></div>
   <div class="nav" onclick="sw('score',this)"><span class="material-icons">monitoring</span><span>Credit Score</span></div>
@@ -858,6 +859,101 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
+<!-- EXPENSE TRACKER TAB -->
+<div class="tab" id="tab-tracker">
+<div style="padding:16px;max-width:900px;margin:0 auto">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+    <h2 style="font-size:16px;margin:0">💸 Daily Expense Tracker</h2>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button class="btn btn-o" onclick="showTrackerView('log')" id="trk-btn-log" style="font-size:11px;background:var(--g);color:#fff;border-color:var(--g)">📋 Log</button>
+      <button class="btn btn-o" onclick="showTrackerView('dashboard')" id="trk-btn-dash" style="font-size:11px">📊 Dashboard</button>
+      <button class="btn btn-o" onclick="exportTrackerCSV()" style="font-size:11px">📤 Export</button>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:14px">All data stored only on your device. Never sent anywhere. 🔒</p>
+
+  <!-- QUICK ADD FORM -->
+  <div id="trk-add-panel" style="background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">➕ Add Transaction</div>
+    
+    <!-- Amount + Date row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Amount (₹)</div>
+        <input type="number" id="trk-amount" placeholder="0" min="0" style="width:100%;padding:9px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:15px;font-weight:600">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Date</div>
+        <input type="date" id="trk-date" style="width:100%;padding:9px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:13px">
+      </div>
+    </div>
+
+    <!-- Category picker -->
+    <div style="font-size:11px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Category</div>
+    <div id="trk-cats" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+    <input type="hidden" id="trk-cat-val">
+
+    <!-- Card picker -->
+    <div style="font-size:11px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Card Used</div>
+    <div id="trk-cards-picker" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+    <input type="hidden" id="trk-card-val">
+
+    <!-- Note -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;font-weight:600;letter-spacing:.4px">Note (optional)</div>
+      <input type="text" id="trk-note" placeholder="e.g. Swiggy dinner, Petrol, Amazon order..." style="width:100%;padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:13px">
+    </div>
+
+    <!-- Reward preview -->
+    <div id="trk-reward-preview" style="display:none;background:var(--gl);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px"></div>
+
+    <button class="btn btn-g" onclick="addTrkTxn()" style="width:100%;padding:11px;font-size:14px;font-weight:600">Add Transaction ✓</button>
+  </div>
+
+  <!-- LOG VIEW -->
+  <div id="trk-view-log">
+    <!-- Today summary -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px" id="trk-today-stats"></div>
+
+    <!-- Filter bar -->
+    <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;flex-wrap:wrap">
+      <select id="trk-filter-month" onchange="renderTrkLog()" style="padding:6px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:12px">
+      </select>
+      <select id="trk-filter-cat" onchange="renderTrkLog()" style="padding:6px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:12px">
+        <option value="">All categories</option>
+      </select>
+      <button class="btn btn-o" onclick="clearAllTrk()" style="font-size:11px;color:var(--red);margin-left:auto">🗑 Clear All</button>
+    </div>
+
+    <!-- Transaction list -->
+    <div id="trk-log-list"></div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="trk-view-dashboard" style="display:none">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px" id="trk-dash-stats"></div>
+    
+    <!-- Missed rewards highlight -->
+    <div id="trk-missed-rewards" style="margin-bottom:14px"></div>
+    
+    <!-- Category breakdown -->
+    <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Spending by Category</div>
+      <div id="trk-cat-breakdown"></div>
+    </div>
+
+    <!-- Card performance -->
+    <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Card Performance</div>
+      <div id="trk-card-perf"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <!-- LOUNGE ACCESS TAB -->
 <div class="tab" id="tab-lounge">
 <div style="padding:20px">
@@ -983,6 +1079,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="mnav-item" onclick="sw('planner',null);mnavActive(this)"><span class="material-icons">calculate</span>Planner</div>
   <div class="mnav-item" onclick="sw('portals',null);mnavActive(this)"><span class="material-icons">open_in_new</span>Portals</div>
   <div class="mnav-item" onclick="sw('milestone',null);mnavActive(this)"><span class="material-icons">flag</span>Track</div>
+  <div class="mnav-item" onclick="sw('tracker',null);mnavActive(this)"><span class="material-icons">receipt_long</span>Tracker</div>
   <div class="mnav-item" onclick="sw('finplan',null);mnavActive(this)"><span class="material-icons">savings</span>Planner</div>
 </nav>
 </div>
@@ -3171,6 +3268,7 @@ function sw(id,el) {
   if(id==='partners') rMatrix();
   if(id==='home') updatePortfolioSummary();
   // Update document title for SEO/browser tab
+  if(id==='tracker') { initTracker(); }
   if(id==='lounge') { renderLounge(); }
   if(id==='finplan') { initFinPlan(); }
   const pageTitles = {
@@ -3403,6 +3501,424 @@ function submitFeedback() {
   });
 }
 
+
+// ════════════════════════════════════════════════════════════
+// EXPENSE TRACKER
+// ════════════════════════════════════════════════════════════
+const TRK_CATS = [
+  {id:'grocery',      lbl:'Groceries',    icon:'🛒', rewardKey:'groceries'},
+  {id:'dining',       lbl:'Dining/Food',  icon:'🍽️', rewardKey:'dining'},
+  {id:'fuel',         lbl:'Fuel',         icon:'⛽', rewardKey:'fuel'},
+  {id:'utility',      lbl:'Utility Bills',icon:'💡', rewardKey:'utility'},
+  {id:'online',       lbl:'Online Shop',  icon:'🛍️', rewardKey:'amazon_flipkart'},
+  {id:'travel',       lbl:'Travel',       icon:'✈️', rewardKey:'travel_flight'},
+  {id:'movies',       lbl:'Movies/Ent',   icon:'🎬', rewardKey:'entertainment'},
+  {id:'health',       lbl:'Health/Pharma',icon:'💊', rewardKey:'health'},
+  {id:'rent',         lbl:'Rent',         icon:'🏠', rewardKey:'rent'},
+  {id:'telecom',      lbl:'Mobile/Net',   icon:'📱', rewardKey:'telecom'},
+  {id:'international',lbl:'Forex/Intl',   icon:'🌍', rewardKey:'international_forex'},
+  {id:'other',        lbl:'Other',        icon:'💳', rewardKey:null},
+];
+
+let trkSelectedCat = '';
+let trkSelectedCard = '';
+let trkCurrentView = 'log';
+
+function getTrkData() {
+  return JSON.parse(localStorage.getItem('cs_tracker') || '[]');
+}
+function saveTrkData(data) {
+  localStorage.setItem('cs_tracker', JSON.stringify(data));
+}
+
+function initTracker() {
+  // Set today's date
+  const dateEl = document.getElementById('trk-date');
+  if(dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+
+  // Build category picker
+  const catEl = document.getElementById('trk-cats');
+  if(catEl && !catEl.children.length) {
+    catEl.innerHTML = TRK_CATS.map(c =>
+      `<div class="trk-cat-chip" id="trk-cat-${c.id}" onclick="selectTrkCat('${c.id}')"
+        style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;font-size:12px;background:#fff;display:flex;align-items:center;gap:5px;transition:.12s">
+        <span>${c.icon}</span><span>${c.lbl}</span>
+      </div>`
+    ).join('');
+  }
+
+  // Build card picker from ALL cards (not just My Cards — user picks what they own)
+  const cardEl = document.getElementById('trk-cards-picker');
+  if(cardEl && !cardEl.children.length) {
+    const allCards = CARDS.slice().sort((a,b)=>a.name.localeCompare(b.name));
+    cardEl.innerHTML = `<div class="trk-card-chip" id="trk-card-none" onclick="selectTrkCard('none','No Card/Cash')"
+      style="padding:6px 10px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;font-size:11px;background:#fff">
+      💵 Cash/UPI
+    </div>` + allCards.map(c =>
+      `<div class="trk-card-chip" id="trk-card-${c.id}" onclick="selectTrkCard('${c.id}','${c.name.replace(/'/g,"\\'")}') "
+        style="padding:6px 10px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;font-size:11px;background:#fff;white-space:nowrap">
+        ${c.name}
+      </div>`
+    ).join('');
+  }
+
+  // Populate month filter
+  const monthEl = document.getElementById('trk-filter-month');
+  if(monthEl && monthEl.options.length <= 1) {
+    const months = [];
+    const now = new Date();
+    for(let i=0; i<12; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      const val = d.toISOString().slice(0,7);
+      const lbl = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+      months.push(`<option value="${val}" ${i===0?'selected':''}>${lbl}</option>`);
+    }
+    monthEl.innerHTML = months.join('');
+  }
+
+  // Populate category filter
+  const catFEl = document.getElementById('trk-filter-cat');
+  if(catFEl && catFEl.options.length <= 1) {
+    catFEl.innerHTML = '<option value="">All categories</option>' +
+      TRK_CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.lbl}</option>`).join('');
+  }
+
+  renderTrkLog();
+  renderTrkTodayStats();
+}
+
+function selectTrkCat(id) {
+  trkSelectedCat = id;
+  document.querySelectorAll('.trk-cat-chip').forEach(el => {
+    el.style.background = '#fff';
+    el.style.borderColor = 'var(--bdr)';
+    el.style.color = 'var(--txt)';
+  });
+  const el = document.getElementById(`trk-cat-${id}`);
+  if(el) { el.style.background='var(--g)'; el.style.borderColor='var(--g)'; el.style.color='#fff'; }
+  document.getElementById('trk-cat-val').value = id;
+  updateTrkRewardPreview();
+}
+
+function selectTrkCard(id, name) {
+  trkSelectedCard = id;
+  document.querySelectorAll('.trk-card-chip').forEach(el => {
+    el.style.background = '#fff';
+    el.style.borderColor = 'var(--bdr)';
+    el.style.fontWeight = '400';
+  });
+  const el = document.getElementById(`trk-card-${id}`);
+  if(el) { el.style.background='var(--bl)'; el.style.borderColor='var(--blue)'; el.style.fontWeight='600'; }
+  document.getElementById('trk-card-val').value = id;
+  updateTrkRewardPreview();
+}
+
+function updateTrkRewardPreview() {
+  const amt = parseFloat(document.getElementById('trk-amount').value)||0;
+  const catId = trkSelectedCat;
+  const cardId = trkSelectedCard;
+  const previewEl = document.getElementById('trk-reward-preview');
+  if(!previewEl) return;
+
+  if(!amt || !catId || !cardId || cardId==='none') {
+    previewEl.style.display='none'; return;
+  }
+
+  const cat = TRK_CATS.find(c=>c.id===catId);
+  const card = CARDS.find(c=>c.id===cardId);
+  if(!cat || !card) { previewEl.style.display='none'; return; }
+
+  let earnedRate = 0;
+  if(cat.rewardKey && REWARD_MAP[cat.rewardKey] && REWARD_MAP[cat.rewardKey][cardId]) {
+    earnedRate = REWARD_MAP[cat.rewardKey][cardId];
+  } else {
+    // Fall back to card's base reward rate
+    const baseReward = card.rewards && card.rewards[card.rewards.length-1];
+    earnedRate = baseReward ? baseReward.rate : 0;
+  }
+
+  const earnedAmt = (amt * earnedRate/100).toFixed(0);
+
+  // Find best card for this category
+  let bestCard = null, bestRate = 0;
+  if(cat.rewardKey && REWARD_MAP[cat.rewardKey]) {
+    Object.entries(REWARD_MAP[cat.rewardKey]).forEach(([cId, rate]) => {
+      if(rate > bestRate) { bestRate = rate; bestCard = CARDS.find(c=>c.id===cId); }
+    });
+  }
+  const bestAmt = (amt * bestRate/100).toFixed(0);
+  const missed = bestAmt - earnedAmt;
+
+  previewEl.style.display='block';
+  if(missed > 0 && bestCard && bestCard.id !== cardId) {
+    previewEl.style.background = 'var(--wl)';
+    previewEl.innerHTML = `<strong>⚠️ Suboptimal card choice</strong><br>
+      ${card.name}: earns ₹${earnedAmt} (${earnedRate}%)<br>
+      <span style="color:var(--g)">Better: <strong>${bestCard.name}</strong> earns ₹${bestAmt} (${bestRate}%) — you'd save ₹${missed} more</span>`;
+  } else {
+    previewEl.style.background = 'var(--gl)';
+    previewEl.innerHTML = `<strong>✅ Great card choice!</strong> ${card.name} earns <strong>₹${earnedAmt}</strong> (${earnedRate}%) on this ₹${amt.toLocaleString('en-IN')} ${cat.lbl} spend.`;
+  }
+}
+
+function addTrkTxn() {
+  const amt = parseFloat(document.getElementById('trk-amount').value)||0;
+  const date = document.getElementById('trk-date').value;
+  const note = document.getElementById('trk-note').value.trim();
+
+  if(!amt) { showToast('Enter an amount'); return; }
+  if(!trkSelectedCat) { showToast('Select a category'); return; }
+  if(!trkSelectedCard) { showToast('Select a card'); return; }
+  if(!date) { showToast('Select a date'); return; }
+
+  const cat = TRK_CATS.find(c=>c.id===trkSelectedCat);
+  const card = CARDS.find(c=>c.id===trkSelectedCard);
+
+  // Calculate earned rewards
+  let earnedRate = 0;
+  if(cat && cat.rewardKey && REWARD_MAP[cat.rewardKey] && REWARD_MAP[cat.rewardKey][trkSelectedCard]) {
+    earnedRate = REWARD_MAP[cat.rewardKey][trkSelectedCard];
+  } else if(card) {
+    const base = card.rewards && card.rewards[card.rewards.length-1];
+    earnedRate = base ? base.rate : 0;
+  }
+
+  // Find best possible card
+  let bestRate = 0, bestCardId = trkSelectedCard;
+  if(cat && cat.rewardKey && REWARD_MAP[cat.rewardKey]) {
+    Object.entries(REWARD_MAP[cat.rewardKey]).forEach(([cId,rate])=>{
+      if(rate>bestRate){bestRate=rate;bestCardId=cId;}
+    });
+  }
+
+  const txn = {
+    id: Date.now(),
+    date,
+    amt,
+    cat: trkSelectedCat,
+    catLbl: cat ? cat.lbl : trkSelectedCat,
+    catIcon: cat ? cat.icon : '💳',
+    cardId: trkSelectedCard,
+    cardName: card ? card.name : (trkSelectedCard==='none'?'Cash/UPI':'Unknown'),
+    note,
+    earnedRate,
+    earnedAmt: parseFloat((amt*earnedRate/100).toFixed(2)),
+    bestRate,
+    bestCardId,
+    bestCardName: CARDS.find(c=>c.id===bestCardId)?.name || '',
+    missedAmt: parseFloat(Math.max(0,(amt*bestRate/100)-(amt*earnedRate/100)).toFixed(2))
+  };
+
+  const data = getTrkData();
+  data.unshift(txn);
+  saveTrkData(data);
+
+  // Reset form
+  document.getElementById('trk-amount').value = '';
+  document.getElementById('trk-note').value = '';
+  document.getElementById('trk-reward-preview').style.display='none';
+  trkSelectedCat=''; trkSelectedCard='';
+  document.querySelectorAll('.trk-cat-chip,.trk-card-chip').forEach(el=>{
+    el.style.background='#fff'; el.style.borderColor='var(--bdr)'; el.style.color=''; el.style.fontWeight='400';
+  });
+
+  renderTrkLog();
+  renderTrkTodayStats();
+  showToast(`✅ ₹${amt.toLocaleString('en-IN')} added! Earned ₹${txn.earnedAmt} in rewards.`);
+}
+
+function renderTrkTodayStats() {
+  const el = document.getElementById('trk-today-stats');
+  if(!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  const todayTxns = getTrkData().filter(t=>t.date===today);
+  const totalAmt = todayTxns.reduce((s,t)=>s+t.amt,0);
+  const totalEarned = todayTxns.reduce((s,t)=>s+t.earnedAmt,0);
+  const totalMissed = todayTxns.reduce((s,t)=>s+t.missedAmt,0);
+  el.innerHTML = [
+    ['₹'+Math.round(totalAmt).toLocaleString('en-IN'),'Today\'s spend','var(--txt)'],
+    [todayTxns.length,'Transactions','var(--blue)'],
+    ['₹'+Math.round(totalEarned).toLocaleString('en-IN'),'Rewards earned','var(--g)'],
+    ['₹'+Math.round(totalMissed).toLocaleString('en-IN'),'Missed rewards','var(--red)'],
+  ].map(([n,l,c])=>`<div class="stat"><div class="stat-n" style="font-size:18px;color:${c}">${n}</div><div class="stat-l">${l}</div></div>`).join('');
+}
+
+function renderTrkLog() {
+  const listEl = document.getElementById('trk-log-list');
+  if(!listEl) return;
+
+  const month = document.getElementById('trk-filter-month')?.value || new Date().toISOString().slice(0,7);
+  const catF = document.getElementById('trk-filter-cat')?.value || '';
+  let data = getTrkData().filter(t=>t.date && t.date.startsWith(month));
+  if(catF) data = data.filter(t=>t.cat===catF);
+
+  if(!data.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mut);font-size:13px">No transactions yet for this period.<br>Add your first expense above ↑</div>';
+    return;
+  }
+
+  // Group by date
+  const byDate = {};
+  data.forEach(t=>{ if(!byDate[t.date])byDate[t.date]=[]; byDate[t.date].push(t); });
+
+  listEl.innerHTML = Object.entries(byDate).sort((a,b)=>b[0].localeCompare(a[0])).map(([date, txns])=>{
+    const dayTotal = txns.reduce((s,t)=>s+t.amt,0);
+    const dayEarned = txns.reduce((s,t)=>s+t.earnedAmt,0);
+    const dateStr = new Date(date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:4px 0;border-bottom:1px solid var(--bdr);margin-bottom:6px">
+        <strong style="color:var(--txt)">${dateStr}</strong>
+        <span>₹${Math.round(dayTotal).toLocaleString('en-IN')} · earned ₹${Math.round(dayEarned)}</span>
+      </div>
+      ${txns.map(t=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:#fff;border:1px solid var(--bdr);border-radius:8px;margin-bottom:5px;${t.missedAmt>50?'border-left:3px solid var(--warn)':''}">
+          <span style="font-size:18px">${t.catIcon}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">${t.note||t.catLbl}</div>
+            <div style="font-size:11px;color:var(--mut)">${t.cardName} · ${t.catLbl}</div>
+            ${t.missedAmt>50?`<div style="font-size:10px;color:var(--warn)">⚠️ Could have earned ₹${Math.round(t.missedAmt)} more with ${t.bestCardName}</div>`:''}
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:14px;font-weight:600">₹${t.amt.toLocaleString('en-IN')}</div>
+            <div style="font-size:11px;color:var(--g)">+₹${Math.round(t.earnedAmt)} rewards</div>
+          </div>
+          <button onclick="deleteTrkTxn(${t.id})" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:14px;padding:0 4px">✕</button>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+}
+
+function showTrackerView(view) {
+  trkCurrentView = view;
+  document.getElementById('trk-view-log').style.display = view==='log'?'block':'none';
+  document.getElementById('trk-view-dashboard').style.display = view==='dashboard'?'block':'none';
+  document.getElementById('trk-btn-log').style.cssText = view==='log'?'font-size:11px;background:var(--g);color:#fff;border-color:var(--g)':'font-size:11px';
+  document.getElementById('trk-btn-dash').style.cssText = view==='dashboard'?'font-size:11px;background:var(--g);color:#fff;border-color:var(--g)':'font-size:11px';
+  if(view==='dashboard') renderTrkDashboard();
+}
+
+function renderTrkDashboard() {
+  const month = document.getElementById('trk-filter-month')?.value || new Date().toISOString().slice(0,7);
+  const data = getTrkData().filter(t=>t.date&&t.date.startsWith(month));
+
+  const totalAmt = data.reduce((s,t)=>s+t.amt,0);
+  const totalEarned = data.reduce((s,t)=>s+t.earnedAmt,0);
+  const totalMissed = data.reduce((s,t)=>s+t.missedAmt,0);
+  const optScore = totalAmt>0?Math.round((totalEarned/(totalEarned+totalMissed))*100):0;
+
+  // Stats
+  const statsEl = document.getElementById('trk-dash-stats');
+  if(statsEl) statsEl.innerHTML = [
+    ['₹'+Math.round(totalAmt).toLocaleString('en-IN'),'Total spend','var(--txt)'],
+    ['₹'+Math.round(totalEarned).toLocaleString('en-IN'),'Rewards earned','var(--g)'],
+    [optScore+'%','Optimisation score',optScore>=70?'var(--g)':optScore>=40?'var(--warn)':'var(--red)'],
+  ].map(([n,l,c])=>`<div class="stat"><div class="stat-n" style="color:${c}">${n}</div><div class="stat-l">${l}</div></div>`).join('');
+
+  // Missed rewards recommendations
+  const missedEl = document.getElementById('trk-missed-rewards');
+  if(missedEl && totalMissed>0) {
+    // Group missed by category
+    const catMissed = {};
+    data.filter(t=>t.missedAmt>0).forEach(t=>{
+      if(!catMissed[t.cat]) catMissed[t.cat]={lbl:t.catLbl,icon:t.catIcon,missed:0,bestCard:t.bestCardName,bestCardId:t.bestCardId};
+      catMissed[t.cat].missed += t.missedAmt;
+      catMissed[t.cat].bestCard = t.bestCardName;
+    });
+    const top = Object.values(catMissed).sort((a,b)=>b.missed-a.missed).slice(0,3);
+    missedEl.innerHTML = `<div style="background:var(--rl);border-radius:10px;padding:14px;border-left:3px solid var(--red)">
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px">💸 ₹${Math.round(totalMissed).toLocaleString('en-IN')} in rewards left on the table this month</div>
+      ${top.map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px">
+        <span>${c.icon}</span>
+        <span style="flex:1">${c.lbl}: switch to <strong>${c.bestCard}</strong></span>
+        <span style="color:var(--red);font-weight:600">+₹${Math.round(c.missed)}</span>
+        <button class="btn btn-o" onclick="applyWithWarning('${c.bestCardId}')" style="font-size:10px;padding:2px 8px">Apply →</button>
+      </div>`).join('')}
+    </div>`;
+  } else if(missedEl) {
+    missedEl.innerHTML = data.length?`<div style="background:var(--gl);border-radius:10px;padding:12px;font-size:13px;color:var(--g)">🏆 Great job! You're using optimal cards for your spending this month.</div>`:'';
+  }
+
+  // Category breakdown
+  const catEl = document.getElementById('trk-cat-breakdown');
+  if(catEl && data.length) {
+    const catData = {};
+    data.forEach(t=>{
+      if(!catData[t.cat])catData[t.cat]={lbl:t.catLbl,icon:t.catIcon,amt:0,earned:0};
+      catData[t.cat].amt+=t.amt; catData[t.cat].earned+=t.earnedAmt;
+    });
+    const sorted = Object.values(catData).sort((a,b)=>b.amt-a.amt);
+    const maxAmt = sorted[0]?.amt||1;
+    catEl.innerHTML = sorted.map(c=>`
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+          <span>${c.icon} ${c.lbl}</span>
+          <span>₹${Math.round(c.amt).toLocaleString('en-IN')} <span style="color:var(--g)">· +₹${Math.round(c.earned)}</span></span>
+        </div>
+        <div style="background:var(--bg);border-radius:4px;height:7px">
+          <div style="background:var(--g);width:${Math.round(c.amt/maxAmt*100)}%;height:100%;border-radius:4px"></div>
+        </div>
+      </div>
+    `).join('');
+  } else if(catEl) catEl.innerHTML='<div style="color:var(--mut);font-size:13px;text-align:center;padding:16px">No transactions this month yet</div>';
+
+  // Card performance
+  const cardEl = document.getElementById('trk-card-perf');
+  if(cardEl && data.length) {
+    const cardData = {};
+    data.filter(t=>t.cardId!=='none').forEach(t=>{
+      if(!cardData[t.cardId])cardData[t.cardId]={name:t.cardName,amt:0,earned:0,txns:0};
+      cardData[t.cardId].amt+=t.amt; cardData[t.cardId].earned+=t.earnedAmt; cardData[t.cardId].txns++;
+    });
+    cardEl.innerHTML = Object.values(cardData).sort((a,b)=>b.earned-a.earned).map(c=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:.5px solid var(--bdr)">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500">${c.name}</div>
+          <div style="font-size:11px;color:var(--mut)">${c.txns} transactions · ₹${Math.round(c.amt).toLocaleString('en-IN')} spent</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:14px;font-weight:600;color:var(--g)">₹${Math.round(c.earned)}</div>
+          <div style="font-size:10px;color:var(--mut)">${c.amt>0?(c.earned/c.amt*100).toFixed(1):'0'}% back</div>
+        </div>
+      </div>
+    `).join('');
+  } else if(cardEl) cardEl.innerHTML='<div style="color:var(--mut);font-size:13px;text-align:center;padding:16px">No card transactions yet</div>';
+}
+
+function deleteTrkTxn(id) {
+  const data = getTrkData().filter(t=>t.id!==id);
+  saveTrkData(data);
+  renderTrkLog();
+  renderTrkTodayStats();
+  showToast('Transaction deleted');
+}
+
+function clearAllTrk() {
+  if(!confirm('Delete all expense tracker data?')) return;
+  localStorage.removeItem('cs_tracker');
+  renderTrkLog();
+  renderTrkTodayStats();
+  showToast('All tracker data cleared');
+}
+
+function exportTrackerCSV() {
+  const data = getTrkData();
+  if(!data.length){ showToast('No data to export'); return; }
+  const rows = [['Date','Category','Note','Card','Amount','Rewards Earned','Best Card','Missed Rewards']];
+  data.forEach(t=>rows.push([t.date,t.catLbl,t.note||'',t.cardName,t.amt,t.earnedAmt,t.bestCardName,t.missedAmt]));
+  const csv = rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'cardsaathi_expenses_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  showToast('📤 CSV downloaded!');
+}
+
+// Wire amount input to update preview on change
+document.addEventListener('DOMContentLoaded', () => {
+  const amtEl = document.getElementById('trk-amount');
+  if(amtEl) amtEl.addEventListener('input', updateTrkRewardPreview);
+});
 
 function filterLounge(type,el){
   document.querySelectorAll('#tab-lounge .chip').forEach(c=>c.classList.remove('active'));
